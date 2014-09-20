@@ -1,0 +1,685 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{49F78256-82FB-4D59-B0D5-9DD689FD25A1}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BlitzChat</RootNamespace>
+    <AssemblyName>BlitzChat</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile />
+    <PublishUrl>veröffentlichen\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <FodyPath>..\packages\Fody.1.14.0</FodyPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>BlitzChat.App</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="bliGoodgame">
+      <HintPath>..\bliGoodgame\bin\Debug\bliGoodgame.dll</HintPath>
+    </Reference>
+    <Reference Include="dotCybergame">
+      <HintPath>E:\Ubiquitous\dotCybergame\bin\Debug\dotCybergame.dll</HintPath>
+    </Reference>
+    <Reference Include="dotInterfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Ubiquitous\dotSC2TV\bin\Debug\dotInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="dotIRC, Version=0.4.1.20677, Culture=neutral, PublicKeyToken=1f67a0ba34110caa, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Ubiquitous\dotIRC\bin\Debug\net40\dotIRC.dll</HintPath>
+    </Reference>
+    <Reference Include="dotJson, Version=4.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Ubiquitous\dotSC2TV\bin\Debug\dotJson.dll</HintPath>
+    </Reference>
+    <Reference Include="dotSC2TV, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Ubiquitous\dotSC2TV\bin\Debug\dotSC2TV.dll</HintPath>
+    </Reference>
+    <Reference Include="dotWebSocket">
+      <HintPath>E:\Ubiquitous\dotCybergame\bin\Debug\dotWebSocket.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.4.8.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Ubiquitous\dotHtmlParser\bin\Debug\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="StickyWindow, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Users\Dimitry\Desktop\StickyWindowWinWpfLibrary\StickyWindowLibrary\bin\Debug\StickyWindow.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.Toolkit">
+      <HintPath>O:\Users\T3rmit\Downloads\Extended WPF Toolkit Binaries\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Serialized\ChannelsSaveXML.cs" />
+    <Compile Include="Serialized\ChatSettingsXML.cs" />
+    <Compile Include="ChatControls\Constants.cs" />
+    <Compile Include="ChatControls\Cybergame.cs" />
+    <Compile Include="Utilities\HTMLParsing.cs" />
+    <Compile Include="Utilities\Irc.cs" />
+    <Compile Include="Forms\frmSettings.xaml.cs">
+      <DependentUpon>frmSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmAddChat.xaml.cs">
+      <DependentUpon>frmAddChat.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\NewWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ChatControls\Sc2Tv.cs" />
+    <Compile Include="ChatControls\Smiles.cs" />
+    <Compile Include="ChatControls\TwitchTV.cs" />
+    <Compile Include="Utilities\UrlTools.cs" />
+    <Compile Include="Forms\frmViewers.xaml.cs">
+      <DependentUpon>frmViewers.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Exceptions\WrongChannelNameException.cs" />
+    <Compile Include="Utilities\XMLSerializer.cs" />
+    <Compile Include="Version.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Version.tt</DependentUpon>
+    </Compile>
+    <Page Include="Forms\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Forms\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="Forms\frmAddChat.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Forms\frmSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Forms\frmViewers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Fody.targets" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+    <None Include="Version.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Version.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\close_delete_remove_exit_cross-512.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\twitch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\sc2tv.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Smiles\2.png" />
+    <Resource Include="Smiles\666.png" />
+    <Resource Include="Smiles\a.gif" />
+    <Resource Include="Smiles\a.png" />
+    <Resource Include="Smiles\aangry.png" />
+    <Resource Include="Smiles\adolf-moroz.gif" />
+    <Resource Include="Smiles\adolf.png" />
+    <Resource Include="Smiles\alfi-crown.png" />
+    <Resource Include="Smiles\alfi.png" />
+    <Resource Include="Smiles\alone.png" />
+    <Resource Include="Smiles\angryling.png" />
+    <Resource Include="Smiles\apochai.png" />
+    <Resource Include="Smiles\arbitooor.png" />
+    <Resource Include="Smiles\asuka.png" />
+    <Resource Include="Smiles\atata.png" />
+    <Resource Include="Smiles\awesome.png" />
+    <Resource Include="Smiles\banan.png" />
+    <Resource Include="Smiles\bear.png" />
+    <Resource Include="Smiles\bin.png" />
+    <Resource Include="Smiles\bisu.png" />
+    <Resource Include="Smiles\blue.png" />
+    <Resource Include="Smiles\bm-ny.png" />
+    <Resource Include="Smiles\bm.png" />
+    <Resource Include="Smiles\bobr.png" />
+    <Resource Include="Smiles\box.png" />
+    <Resource Include="Smiles\boyan.png" />
+    <Resource Include="Smiles\br.png" />
+    <Resource Include="Smiles\bratok.png" />
+    <Resource Include="Smiles\bruce.png" />
+    <Resource Include="Smiles\brucelove.png" />
+    <Resource Include="Smiles\butth.png" />
+    <Resource Include="Smiles\candy.png" />
+    <Resource Include="Smiles\cap.png" />
+    <Resource Include="Smiles\casterling.png" />
+    <Resource Include="Smiles\chan.png" />
+    <Resource Include="Smiles\cheese.png" />
+    <Resource Include="Smiles\cougar.png" />
+    <Resource Include="Smiles\coupeka.png" />
+    <Resource Include="Smiles\cow.png" />
+    <Resource Include="Smiles\crab.png" />
+    <Resource Include="Smiles\crazy.png" />
+    <Resource Include="Smiles\cry.png" />
+    <Resource Include="Smiles\daaa.png" />
+    <Resource Include="Smiles\daladno.png" />
+    <Resource Include="Smiles\dark.png" />
+    <Resource Include="Smiles\daya.png" />
+    <Resource Include="Smiles\db.png" />
+    <Resource Include="Smiles\denrus.png" />
+    <Resource Include="Smiles\dimaga.png" />
+    <Resource Include="Smiles\djigurda.png" />
+    <Resource Include="Smiles\dobre.png" />
+    <Resource Include="Smiles\donate_01.png" />
+    <Resource Include="Smiles\drama.png" />
+    <Resource Include="Smiles\drone.png" />
+    <Resource Include="Smiles\ehai.png" />
+    <Resource Include="Smiles\ejik.png" />
+    <Resource Include="Smiles\elka.png" />
+    <Resource Include="Smiles\epeka.png" />
+    <Resource Include="Smiles\ewbte.png" />
+    <Resource Include="Smiles\facepalm.png" />
+    <Resource Include="Smiles\ff.png" />
+    <Resource Include="Smiles\fire.png" />
+    <Resource Include="Smiles\five.png" />
+    <Resource Include="Smiles\flash1.png" />
+    <Resource Include="Smiles\fp.png" />
+    <Resource Include="Smiles\fredy18.png" />
+    <Resource Include="Smiles\full.jpeg" />
+    <Resource Include="Smiles\fuuuu.png" />
+    <Resource Include="Smiles\fyeah.png" />
+    <Resource Include="Smiles\gay.png" />
+    <Resource Include="Smiles\genius.png" />
+    <Resource Include="Smiles\gg.png" />
+    <Resource Include="Smiles\gglord.png" />
+    <Resource Include="Smiles\ggwp.png" />
+    <Resource Include="Smiles\globus.png" />
+    <Resource Include="Smiles\glory.png" />
+    <Resource Include="Smiles\gml.png" />
+    <Resource Include="Smiles\gogo.png" />
+    <Resource Include="Smiles\gold.png" />
+    <Resource Include="Smiles\grafon.png" />
+    <Resource Include="Smiles\grey.png" />
+    <Resource Include="Smiles\grumpy.png" />
+    <Resource Include="Smiles\guf.png" />
+    <Resource Include="Smiles\happy.png" />
+    <Resource Include="Smiles\happycry.png" />
+    <Resource Include="Smiles\harupeka.png" />
+    <Resource Include="Smiles\hat.png" />
+    <Resource Include="Smiles\heroes-3.gif" />
+    <Resource Include="Smiles\heroes-3.jpg" />
+    <Resource Include="Smiles\heroes3.png" />
+    <Resource Include="Smiles\hg.png" />
+    <Resource Include="Smiles\hmpeka.png" />
+    <Resource Include="Smiles\huh.gif" />
+    <Resource Include="Smiles\huh.png" />
+    <Resource Include="Smiles\idra.png" />
+    <Resource Include="Smiles\ii.png" />
+    <Resource Include="Smiles\ilied.png" />
+    <Resource Include="Smiles\imbaimba.png" />
+    <Resource Include="Smiles\infe.png" />
+    <Resource Include="Smiles\izi.png" />
+    <Resource Include="Smiles\jaedong.png" />
+    <Resource Include="Smiles\jangbi.png" />
+    <Resource Include="Smiles\kas.png" />
+    <Resource Include="Smiles\kawai.png" />
+    <Resource Include="Smiles\kawailing.png" />
+    <Resource Include="Smiles\kesha.png" />
+    <Resource Include="Smiles\kid.png" />
+    <Resource Include="Smiles\kid2.png" />
+    <Resource Include="Smiles\kid3.png" />
+    <Resource Include="Smiles\kim.png" />
+    <Resource Include="Smiles\konata.png" />
+    <Resource Include="Smiles\kor.png" />
+    <Resource Include="Smiles\kot.png" />
+    <Resource Include="Smiles\leefacepalm.png" />
+    <Resource Include="Smiles\lgun.png" />
+    <Resource Include="Smiles\ling.png" />
+    <Resource Include="Smiles\lknife.png" />
+    <Resource Include="Smiles\lol.png" />
+    <Resource Include="Smiles\mad.png" />
+    <Resource Include="Smiles\mandarin.png" />
+    <Resource Include="Smiles\manul.png" />
+    <Resource Include="Smiles\marine.png" />
+    <Resource Include="Smiles\mario.png" />
+    <Resource Include="Smiles\maro.png" />
+    <Resource Include="Smiles\mee.png" />
+    <Resource Include="Smiles\megusta.png" />
+    <Resource Include="Smiles\mhu.png" />
+    <Resource Include="Smiles\miku.png" />
+    <Resource Include="Smiles\mimo.png" />
+    <Resource Include="Smiles\mine.png" />
+    <Resource Include="Smiles\minecraft.png" />
+    <Resource Include="Smiles\mini-happy-ny.png" />
+    <Resource Include="Smiles\mini-happy.png" />
+    <Resource Include="Smiles\money.png" />
+    <Resource Include="Smiles\moon.png" />
+    <Resource Include="Smiles\mother-of-the-god.png" />
+    <Resource Include="Smiles\mule.png" />
+    <Resource Include="Smiles\mvp.png" />
+    <Resource Include="Smiles\nelson.png" />
+    <Resource Include="Smiles\neponi.png" />
+    <Resource Include="Smiles\no-okay.png" />
+    <Resource Include="Smiles\no.png" />
+    <Resource Include="Smiles\nocomments.png" />
+    <Resource Include="Smiles\norma.png" />
+    <Resource Include="Smiles\notbad.png" />
+    <Resource Include="Smiles\notch.png" />
+    <Resource Include="Smiles\num1.png" />
+    <Resource Include="Smiles\ocry.png" />
+    <Resource Include="Smiles\okay.png" />
+    <Resource Include="Smiles\olsilove.png" />
+    <Resource Include="Smiles\omg.png" />
+    <Resource Include="Smiles\omsk.png" />
+    <Resource Include="Smiles\op.png" />
+    <Resource Include="Smiles\opeka.png" />
+    <Resource Include="Smiles\orcl.png" />
+    <Resource Include="Smiles\oscar.png" />
+    <Resource Include="Smiles\osu.png" />
+    <Resource Include="Smiles\panda.png" />
+    <Resource Include="Smiles\pekaking.png" />
+    <Resource Include="Smiles\pekling.png" />
+    <Resource Include="Smiles\photon.png" />
+    <Resource Include="Smiles\plasma.png" />
+    <Resource Include="Smiles\pled.png" />
+    <Resource Include="Smiles\ploho.png" />
+    <Resource Include="Smiles\poker.png" />
+    <Resource Include="Smiles\pool.png" />
+    <Resource Include="Smiles\povar.png" />
+    <Resource Include="Smiles\pri21.png" />
+    <Resource Include="Smiles\primetime_bot.png" />
+    <Resource Include="Smiles\probe.png" />
+    <Resource Include="Smiles\purp.png" />
+    <Resource Include="Smiles\pushka.png" />
+    <Resource Include="Smiles\putin.png" />
+    <Resource Include="Smiles\pvrt.png" />
+    <Resource Include="Smiles\q3.png" />
+    <Resource Include="Smiles\ra.png" />
+    <Resource Include="Smiles\rage.png" />
+    <Resource Include="Smiles\really.png" />
+    <Resource Include="Smiles\reaper.png" />
+    <Resource Include="Smiles\red.png" />
+    <Resource Include="Smiles\reimu.png" />
+    <Resource Include="Smiles\rgun.png" />
+    <Resource Include="Smiles\richpeka.png" />
+    <Resource Include="Smiles\rip.png" />
+    <Resource Include="Smiles\rknife.png" />
+    <Resource Include="Smiles\rnbw.png" />
+    <Resource Include="Smiles\roach.png" />
+    <Resource Include="Smiles\ronaldo.png" />
+    <Resource Include="Smiles\rus.png" />
+    <Resource Include="Smiles\sad.png" />
+    <Resource Include="Smiles\sc2_smile.gif" />
+    <Resource Include="Smiles\scv.png" />
+    <Resource Include="Smiles\sex.png" />
+    <Resource Include="Smiles\sir.png" />
+    <Resource Include="Smiles\slavik.png" />
+    <Resource Include="Smiles\slowpoke.png" />
+    <Resource Include="Smiles\sm1.png" />
+    <Resource Include="Smiles\smith.png" />
+    <Resource Include="Smiles\spok.png" />
+    <Resource Include="Smiles\stalk.png" />
+    <Resource Include="Smiles\strelok.png" />
+    <Resource Include="Smiles\sunl.png" />
+    <Resource Include="Smiles\support.png" />
+    <Resource Include="Smiles\sweetden.png" />
+    <Resource Include="Smiles\terminator.png" />
+    <Resource Include="Smiles\tigrica.png" />
+    <Resource Include="Smiles\tort.png" />
+    <Resource Include="Smiles\trash.png" />
+    <Resource Include="Smiles\trollface.png" />
+    <Resource Include="Smiles\ukr.png" />
+    <Resource Include="Smiles\ukrpeka.png" />
+    <Resource Include="Smiles\uprls.png" />
+    <Resource Include="Smiles\usa.png" />
+    <Resource Include="Smiles\vaganych.png" />
+    <Resource Include="Smiles\vat.png" />
+    <Resource Include="Smiles\vesir.png" />
+    <Resource Include="Smiles\vitya.png" />
+    <Resource Include="Smiles\volnov.png" />
+    <Resource Include="Smiles\voOlchik1.png" />
+    <Resource Include="Smiles\vsem.png" />
+    <Resource Include="Smiles\vuvu.png" />
+    <Resource Include="Smiles\warn.png" />
+    <Resource Include="Smiles\wat.png" />
+    <Resource Include="Smiles\weedle.png" />
+    <Resource Include="Smiles\white-ra.png" />
+    <Resource Include="Smiles\why.png" />
+    <Resource Include="Smiles\winry.png" />
+    <Resource Include="Smiles\wormban.png" />
+    <Resource Include="Smiles\wow.png" />
+    <Resource Include="Smiles\wtf.png" />
+    <Resource Include="Smiles\yao.png" />
+    <Resource Include="Smiles\yeah.png" />
+    <Resource Include="Smiles\yoko.png" />
+    <Resource Include="Smiles\yopeka.png" />
+    <Resource Include="Smiles\zayka.png" />
+    <Resource Include="Smiles\zeal.png" />
+    <Resource Include="Smiles\ziga.png" />
+    <Resource Include="Smiles\zmbeka.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Smiles\4head.png" />
+    <Resource Include="Smiles\aneleanele.png" />
+    <Resource Include="Smiles\angry.png" />
+    <Resource Include="Smiles\arsonnosexy.png" />
+    <Resource Include="Smiles\asianglow.png" />
+    <Resource Include="Smiles\atgl.png" />
+    <Resource Include="Smiles\ativy.png" />
+    <Resource Include="Smiles\atww.png" />
+    <Resource Include="Smiles\batchest.png" />
+    <Resource Include="Smiles\bcwarrior.png" />
+    <Resource Include="Smiles\biblethump.png" />
+    <Resource Include="Smiles\big_grin.png" />
+    <Resource Include="Smiles\bionicbunion.png" />
+    <Resource Include="Smiles\blargnaut.png" />
+    <Resource Include="Smiles\bloodtrail.png" />
+    <Resource Include="Smiles\bored.png" />
+    <Resource Include="Smiles\bort.png" />
+    <Resource Include="Smiles\brainslug.png" />
+    <Resource Include="Smiles\brokeback.png" />
+    <Resource Include="Smiles\confused.png" />
+    <Resource Include="Smiles\cool.png" />
+    <Resource Include="Smiles\cougarhunt.png" />
+    <Resource Include="Smiles\daesuppy.png" />
+    <Resource Include="Smiles\dansgame.png" />
+    <Resource Include="Smiles\datsheffy.png" />
+    <Resource Include="Smiles\dbstyle.png" />
+    <Resource Include="Smiles\dogface.png" />
+    <Resource Include="Smiles\dunce.png" />
+    <Resource Include="Smiles\eagleeye.png" />
+    <Resource Include="Smiles\elegiggle.png" />
+    <Resource Include="Smiles\evilfetus.png" />
+    <Resource Include="Smiles\failfish.png" />
+    <Resource Include="Smiles\fpsmarksman.png" />
+    <Resource Include="Smiles\frankerz.png" />
+    <Resource Include="Smiles\freakinstinkin.png" />
+    <Resource Include="Smiles\fungineer.png" />
+    <Resource Include="Smiles\fuzzyotteroo.png" />
+    <Resource Include="Smiles\gasjoker.png" />
+    <Resource Include="Smiles\gingerpower.png" />
+    <Resource Include="Smiles\grammarking.png" />
+    <Resource Include="Smiles\hassanchop.png" />
+    <Resource Include="Smiles\heartsc.png" />
+    <Resource Include="Smiles\hotpokket.png" />
+    <Resource Include="Smiles\itsboshytime.png" />
+    <Resource Include="Smiles\jebaited.png" />
+    <Resource Include="Smiles\jkanstyle.png" />
+    <Resource Include="Smiles\joncarnage.png" />
+    <Resource Include="Smiles\kapow.png" />
+    <Resource Include="Smiles\kappa.png" />
+    <Resource Include="Smiles\kappahd.png" />
+    <Resource Include="Smiles\keepo.png" />
+    <Resource Include="Smiles\kevinturtle.png" />
+    <Resource Include="Smiles\kippa.png" />
+    <Resource Include="Smiles\kreygasm.png" />
+    <Resource Include="Smiles\kzassault.png" />
+    <Resource Include="Smiles\kzcover.png" />
+    <Resource Include="Smiles\kzguerilla.png" />
+    <Resource Include="Smiles\kzhelghast.png" />
+    <Resource Include="Smiles\kzowl.png" />
+    <Resource Include="Smiles\kzskull.png" />
+    <Resource Include="Smiles\love_it.png" />
+    <Resource Include="Smiles\mechasupes.png" />
+    <Resource Include="Smiles\minik.png" />
+    <Resource Include="Smiles\mouth_shut.png" />
+    <Resource Include="Smiles\mrdestructoid.png" />
+    <Resource Include="Smiles\mvgame.png" />
+    <Resource Include="Smiles\nightbat.png" />
+    <Resource Include="Smiles\ninja.png" />
+    <Resource Include="Smiles\ninjatroll.png" />
+    <Resource Include="Smiles\nonospot.png" />
+    <Resource Include="Smiles\noscope420.png" />
+    <Resource Include="Smiles\omgscoots.png" />
+    <Resource Include="Smiles\onehand.png" />
+    <Resource Include="Smiles\opieop.png" />
+    <Resource Include="Smiles\optimizeprime.png" />
+    <Resource Include="Smiles\panicvis.png" />
+    <Resource Include="Smiles\pazpazowitz.png" />
+    <Resource Include="Smiles\peopleschamp.png" />
+    <Resource Include="Smiles\picomause.png" />
+    <Resource Include="Smiles\pipehype.png" />
+    <Resource Include="Smiles\pirate.png" />
+    <Resource Include="Smiles\pjharley.png" />
+    <Resource Include="Smiles\pjsalt.png" />
+    <Resource Include="Smiles\pmstwin.png" />
+    <Resource Include="Smiles\pogchamp.png" />
+    <Resource Include="Smiles\poooound.png" />
+    <Resource Include="Smiles\punchtrees.png" />
+    <Resource Include="Smiles\ralpherz.png" />
+    <Resource Include="Smiles\redcoat.png" />
+    <Resource Include="Smiles\residentsleeper.png" />
+    <Resource Include="Smiles\ritzmitz.png" />
+    <Resource Include="Smiles\rulefive.png" />
+    <Resource Include="Smiles\sadsc.png" />
+    <Resource Include="Smiles\shazam.png" />
+    <Resource Include="Smiles\shazamicon.png" />
+    <Resource Include="Smiles\shazbotstix.png" />
+    <Resource Include="Smiles\sleeping.png" />
+    <Resource Include="Smiles\smile.png" />
+    <Resource Include="Smiles\smoking.png" />
+    <Resource Include="Smiles\smorc.png" />
+    <Resource Include="Smiles\smskull.png" />
+    <Resource Include="Smiles\sobayed.png" />
+    <Resource Include="Smiles\soonerlater.png" />
+    <Resource Include="Smiles\ssssss.png" />
+    <Resource Include="Smiles\sticking_tongue_out.png" />
+    <Resource Include="Smiles\stonelightning.png" />
+    <Resource Include="Smiles\strawbeary.png" />
+    <Resource Include="Smiles\supervinlin.png" />
+    <Resource Include="Smiles\surprised.png" />
+    <Resource Include="Smiles\swiftrage.png" />
+    <Resource Include="Smiles\tehfunrun.png" />
+    <Resource Include="Smiles\tf2john.png" />
+    <Resource Include="Smiles\theringer.png" />
+    <Resource Include="Smiles\thetarfu.png" />
+    <Resource Include="Smiles\thething.png" />
+    <Resource Include="Smiles\thunbeast.png" />
+    <Resource Include="Smiles\tinyface.png" />
+    <Resource Include="Smiles\toospicy.png" />
+    <Resource Include="Smiles\trihard.png" />
+    <Resource Include="Smiles\uleetbackup.png" />
+    <Resource Include="Smiles\unclenox.png" />
+    <Resource Include="Smiles\undecided.png" />
+    <Resource Include="Smiles\unsane.png" />
+    <Resource Include="Smiles\volcania.png" />
+    <Resource Include="Smiles\wholewheat.png" />
+    <Resource Include="Smiles\wink.png" />
+    <Resource Include="Smiles\winking.png" />
+    <Resource Include="Smiles\winwaker.png" />
+    <Resource Include="Smiles\wtruck.png" />
+    <Resource Include="Smiles\youwhy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Smiles\heart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Smiles\loool.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\cybergame.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\goodgame.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="FodyWeavers.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties BuildVersion_DetectChanges="False" BuildVersion_IncrementBeforeBuild="False" BuildVersion_UseUniversalClock="False" BuildVersion_StartDate="2014/9/1" BuildVersion_AssemblyInfoFilename="" BuildVersion_UpdateFileVersion="False" BuildVersion_UpdateAssemblyVersion="False" BuildVersion_BuildAction="Both" BuildVersion_BuildVersioningStyle="None.None.None.None" />
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup>
+    <PreBuildEvent>set textTemplatingPath="%25CommonProgramFiles(x86)%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe"
+if %25textTemplatingPath%25=="\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe" set textTemplatingPath="%25CommonProgramFiles%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe"
+%25textTemplatingPath%25 "$(ProjectDir)Version.tt"</PreBuildEvent>
+  </PropertyGroup>
+  <Import Project="Fody.targets" />
+  <UsingTask TaskName="CosturaCleanup" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" TaskFactory="CodeTaskFactory">
+    <ParameterGroup>
+      <Config Output="false" Required="true" ParameterType="Microsoft.Build.Framework.ITaskItem" />
+      <Files Output="false" Required="true" ParameterType="Microsoft.Build.Framework.ITaskItem[]" />
+    </ParameterGroup>
+    <Task Evaluate="true">
+      <Reference xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Include="System.Xml" />
+      <Reference xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Include="System.Xml.Linq" />
+      <Using xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Namespace="System" />
+      <Using xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Namespace="System.IO" />
+      <Using xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Namespace="System.Xml.Linq" />
+      <Code xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Type="Fragment" Language="cs">
+<![CDATA[
+var config = XElement.Load(Config.ItemSpec).Elements("Costura").FirstOrDefault();
+
+if (config == null) return true;
+
+var excludedAssemblies = new List<string>();
+var attribute = config.Attribute("ExcludeAssemblies");
+if (attribute != null)
+    foreach (var item in attribute.Value.Split('|').Select(x => x.Trim()).Where(x => x != string.Empty))
+        excludedAssemblies.Add(item);
+var element = config.Element("ExcludeAssemblies");
+if (element != null)
+    foreach (var item in element.Value.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).Where(x => x != string.Empty))
+        excludedAssemblies.Add(item);
+
+var filesToCleanup = Files.Select(f => f.ItemSpec).Where(f => !excludedAssemblies.Contains(Path.GetFileNameWithoutExtension(f), StringComparer.InvariantCultureIgnoreCase));
+
+foreach (var item in filesToCleanup)
+  File.Delete(item);
+]]>
+      </Code></Task>
+  </UsingTask>
+  <Target Name="CleanReferenceCopyLocalPaths" AfterTargets="AfterBuild;NonWinFodyTarget">
+    <CosturaCleanup Config="FodyWeavers.xml" Files="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
