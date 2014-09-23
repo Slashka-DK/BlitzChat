@@ -25,6 +25,7 @@ using System.Net;
 using HtmlAgilityPack;
 using bliGoodgame;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 namespace BlitzChat
 {
     /// <summary>
@@ -78,11 +79,11 @@ namespace BlitzChat
             Topmost = true;
             textWeight = FontWeights.Normal;
             nicknameWeight = FontWeights.Bold;
-            richChat.Height = Height;
-            richChat.Width = Width - 4;
+            richChat.Height = Row1.ActualHeight;
+            richChat.Width = Column0.ActualWidth;
             richChat.IsReadOnly = true;
             richChat.SelectionOpacity = 0;
-            mainbackBrush = new SolidColorBrush(Colors.Black);
+            mainbackBrush = new SolidColorBrush(Colors.Transparent);
             contextBrush = new SolidColorBrush(Colors.Black);
             textBrush = new SolidColorBrush(Colors.White);
             quoteBrush = new SolidColorBrush(Colors.Orange);
@@ -92,7 +93,6 @@ namespace BlitzChat
             nicknameBrush = new SolidColorBrush(nicknameColor);
             richChat.Foreground = textBrush;
             //Background = mainBrush;
-            borderMain.Background = mainbackBrush;
             mainContextMenu.Background = contextBrush;
             mainContextMenu.Foreground = new SolidColorBrush(Colors.White);
             deserializeSettings();
@@ -104,6 +104,7 @@ namespace BlitzChat
             Version vers = Assembly.GetExecutingAssembly().GetName().Version;
             this.lblBlitzChatName.Content = "BlitzСhat v." + vers.ToString() + " Alpha";
             preSetSettings();
+            RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
         }
         #endregion
 
@@ -224,6 +225,7 @@ namespace BlitzChat
         private void richChat_MouseEnter(object sender, MouseEventArgs e)
         {
             richChat.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
+            richChat.Document.Focus();
         }
 
         private void richChat_MouseLeave(object sender, MouseEventArgs e)
@@ -286,7 +288,7 @@ namespace BlitzChat
             if (this.ResizeMode == System.Windows.ResizeMode.NoResize)
             {
                 // restore resize grips
-                this.ResizeMode = System.Windows.ResizeMode.CanResizeWithGrip;
+                this.ResizeMode = System.Windows.ResizeMode.CanResize;
                 this.UpdateLayout();
             }
         }
@@ -363,7 +365,7 @@ namespace BlitzChat
             Color newColor = frmSettings.ClrPcker_Background.SelectedColor;
             mainbackBrush.Color = newColor;
             //Background = mainBrush;
-            borderMain.Background = mainbackBrush;
+
             settingsChat.BackgroundColor = ToHexColor(newColor);
             XMLSerializer.serialize(settingsChat, "ChatSettings.xml");
         }
@@ -741,11 +743,11 @@ namespace BlitzChat
                         int index = 0;
                         foreach (Inline inl in p.Inlines)
                         {
-                            if (index == 2)
+                            if (index == 3)
                             {
                                 inl.FontWeight = nicknameWeight;
                             }
-                            else if (index > 2)
+                            else if (index > 3)
                             {
                                 inl.FontWeight = textWeight;
                             }
@@ -788,7 +790,7 @@ namespace BlitzChat
             frmSettings.chkOnTop.IsChecked = frmChat.Topmost;
             frmSettings.ClrPcker_Text.SelectedColor = textBrush.Color;
             frmSettings.ClrPcker_Nickname.SelectedColor = fromHexColor(settingsChat.NicknameColor);
-            frmSettings.numSizeText.Value = Convert.ToInt32(richChat.Document.Blocks.LastBlock.FontSize);
+            frmSettings.numSizeText.Value = Convert.ToInt32(settingsChat.TextFontSize);
             frmSettings.cmbFonts.SelectedValue = font.Source;
             frmSettings.sliderOpacity.Value = mainbackBrush.Opacity * 100;
             frmSettings.lblOpacity.Content = Convert.ToInt32(mainbackBrush.Opacity * 100) + "%";
@@ -984,9 +986,20 @@ namespace BlitzChat
                 MatchCollection m = regex.Matches(uri);
                 link = m[0].Groups[1].Value;
             }
-            hl.NavigateUri = new Uri(link);
-            hl.Foreground = new SolidColorBrush(fromHexColor("#FFB2DFEE"));
-            hl.RequestNavigate += UrlTools.Hyperlink_Click;
+            try
+            {
+                if(!link.Contains("http")){
+                    link = "http://"+link;
+                }
+                hl.NavigateUri = new Uri(link);
+                hl.FontSize = settingsChat.TextFontSize;
+                hl.FontFamily = font;
+                hl.Foreground = new SolidColorBrush(fromHexColor("#FFB2DFEE"));
+                hl.RequestNavigate += UrlTools.Hyperlink_Click;
+            }
+            catch {
+                Debug.Print("Error found in link");
+            }
         }
 
         TextRange FindWordFromPosition(TextPointer position, string word)
@@ -1119,6 +1132,7 @@ namespace BlitzChat
             return char.ToUpper(s[0]) + s.Substring(1);
         }
         #endregion
-    
+
+        
     }
 }

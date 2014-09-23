@@ -47,7 +47,7 @@ namespace BlitzChat
             emotions.Add(":s", path+"mouth_shut.png");
             emotions.Add(":>", path+"love_it.png");
             emotions.Add("<]", path+"dunce.png");
-            emotions.Add("4Head", path+"_4head.png");
+            emotions.Add("4Head", path+"4head.png");
             emotions.Add("ArsonNoSexy", path+"arsonnosexy.png");
             emotions.Add("AsianGlow", path+"asianglow.png");
             emotions.Add("AtGL", path+"atgl.png");
