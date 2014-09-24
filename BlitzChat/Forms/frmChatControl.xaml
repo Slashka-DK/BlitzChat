@@ -1,7 +1,7 @@
 ﻿<Window x:Name="frmAddChat" x:Class="BlitzChat.ChatControl"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Add chat" Height="300" Width="300" WindowStyle="None" BorderBrush="#FF00BFBF" BorderThickness="2" AllowsTransparency="False" ResizeMode="NoResize" Background="Transparent" MouseDown="frmAddChat_MouseDown" >
+        Title="Add chat" Height="300" Width="300" WindowStyle="None" Topmost="True" BorderBrush="#FF00BFBF" BorderThickness="2" AllowsTransparency="False" ResizeMode="NoResize" Background="Transparent" MouseDown="frmAddChat_MouseDown" >
     <Grid Background="#FF444141" Margin="0,-1,0,1">
         <Button x:Name="bttnClose" RenderTransformOrigin="0.717,0.5" BorderBrush="#FF00BFBF" Click="bttnClose_Click" Foreground="Transparent" BorderThickness="0" OpacityMask="#FF36A68D" Margin="265,10,10,266">
             <Button.Style>
@@ -25,29 +25,36 @@
             </Button.Style>
             <Image Width="16" Height="16" Source="pack://application:,,,/BlitzChat;component/Images/CloseButton.png" />
         </Button>
-        <Label Content="Choose streaming service:" HorizontalAlignment="Center" Foreground="White"  Margin="47,6,17,0" VerticalAlignment="Top" Height="40" Width="226" FontSize="16"/>
-        <ComboBox x:Name="cmbAddChat" HorizontalAlignment="Left" Margin="53,36,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Width="183" />
-        <TextBox x:Name="txtChannel" IsEnabled="true" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="23" Margin="53,211,0,0" TextWrapping="Wrap" Text="StreamerName" VerticalAlignment="Top" Width="182" MouseEnter="txtChannel_MouseEnter" TextChanged="txtChannel_TextChanged" MouseLeftButtonDown="txtChannel_MouseLeftButtonDown"/>
+        <Label Content="Choose streaming service:" Foreground="#FF00BFBF" HorizontalAlignment="Center" Margin="47,6,17,0" VerticalAlignment="Top" Height="40" Width="226" FontSize="16"/>
+        <ComboBox x:Name="cmbAddChat" BorderBrush="#FF00BFBF" BorderThickness="2" HorizontalAlignment="Left" Margin="53,36,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Width="183" >
+            <ComboBox.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="#FFF0F0F0" Offset="0"/>
+                    <GradientStop Color="White" Offset="1"/>
+                </LinearGradientBrush>
+            </ComboBox.Background>
+        </ComboBox>
+        <TextBox x:Name="txtChannel" BorderBrush="#FF00BFBF" IsEnabled="true" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="23" Margin="53,211,0,0" TextWrapping="Wrap" Text="StreamerName" VerticalAlignment="Top" Width="182" MouseEnter="txtChannel_MouseEnter" TextChanged="txtChannel_TextChanged" MouseLeftButtonDown="txtChannel_MouseLeftButtonDown"/>
         <Button x:Name="bttnAddChat" Content="Add" HorizontalAlignment="Left" Margin="53,246,0,0" VerticalAlignment="Top" Width="75" FontSize="14" Foreground="#FFFFFDFD" FontFamily="Global Serif" FontWeight="Bold" RenderTransformOrigin="0.604,2.19">
             <Button.BorderBrush>
-                <SolidColorBrush Color="#FFF9F9F9" Opacity="0.6"/>
+                <SolidColorBrush Color="#FF00BFBF" Opacity="0.6"/>
             </Button.BorderBrush>
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
                     <GradientStop Color="#FF070807" Offset="1"/>
-                    <GradientStop Color="#FF62D85C" Offset="0.377"/>
+                    <GradientStop Color="#FF00BFBF" Offset="0.377"/>
                 </LinearGradientBrush>
             </Button.Background>
         </Button>
-        <ListBox x:Name="listStreamers" HorizontalAlignment="Left" Height="131" Margin="53,76,0,0" VerticalAlignment="Top" Width="183"/>
-        <Button x:Name="bttnRemove" Content="Remove" HorizontalAlignment="Left" Margin="159,246,0,0" VerticalAlignment="Top" Width="76" FontSize="14" Foreground="#FFFFFDFD" FontFamily="Global Serif" FontWeight="Bold" RenderTransformOrigin="0.604,2.19" IsEnabled="False">
+        <ListBox x:Name="listStreamers" BorderBrush="#FF00BFBF" HorizontalAlignment="Left" Height="131" Margin="53,76,0,0" VerticalAlignment="Top" Width="183"/>
+        <Button x:Name="bttnRemove"  Content="Delete" HorizontalAlignment="Left" Margin="159,246,0,0" VerticalAlignment="Top" Width="76" FontSize="14" Foreground="#FFFFFDFD" FontFamily="Global Serif" FontWeight="Bold" RenderTransformOrigin="0.604,2.19" IsEnabled="False">
             <Button.BorderBrush>
-                <SolidColorBrush Color="#FFF9F9F9" Opacity="0.6"/>
+                <SolidColorBrush Color="#FF00BFBF" Opacity="0.6"/>
             </Button.BorderBrush>
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
                     <GradientStop Color="#FF070807" Offset="1"/>
-                    <GradientStop Color="#FFEC421D" Offset="0.377"/>
+                    <GradientStop Color="#FF00BFBF" Offset="0.377"/>
                 </LinearGradientBrush>
             </Button.Background>
         </Button>

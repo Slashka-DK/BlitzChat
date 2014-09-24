@@ -929,8 +929,8 @@ namespace BlitzChat
                 else
                     paragraph.Inlines.Add("");
                 string imagesource = "";
-                double imagewidth = 0;
-                double imageheight = 0;
+                double imagewidth = 16;
+                double imageheight = 16;
                 bool quoteColor = false;
 
                 switch (chattype)
@@ -941,8 +941,6 @@ namespace BlitzChat
                             quoteColor = true;
                         }
                         imagesource = path + "twitch.png";
-                        imageheight = settingsChat.TextFontSize;
-                        imagewidth = settingsChat.TextFontSize;
                         nickname = UppercaseFirst(nickname);
                         break;
                     case 1:
@@ -951,8 +949,6 @@ namespace BlitzChat
                             quoteColor = true;
                         }
                         imagesource = path + "sc2tv.png";
-                        imageheight = settingsChat.TextFontSize;
-                        imagewidth = settingsChat.TextFontSize;
                         break;
                     case 2:
                         if (msg.ToLower().Contains(channels.Cybergame.ToLower()))
@@ -960,8 +956,6 @@ namespace BlitzChat
                             quoteColor = true;
                         }
                         imagesource = path + "cybergame.png";
-                        imageheight = settingsChat.TextFontSize;
-                        imagewidth = settingsChat.TextFontSize;
                         break;
                     case 3:
                         if (!String.IsNullOrEmpty(to) && to.ToLower().Contains(channels.GoodGame.ToLower()))
@@ -969,8 +963,6 @@ namespace BlitzChat
                             quoteColor = true;
                         }
                         imagesource = path + "goodgame.png";
-                        imageheight = settingsChat.TextFontSize;
-                        imagewidth = settingsChat.TextFontSize;
                         break;
                     case 4:
                         break;
@@ -1074,6 +1066,7 @@ namespace BlitzChat
             image.Width = w;
             image.Height = h;
             InlineUIContainer container = new InlineUIContainer(image);
+            container.BaselineAlignment = BaselineAlignment.Center;
             paragraph.Inlines.Add(container);
         }
         #endregion

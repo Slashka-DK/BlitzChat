@@ -4,16 +4,16 @@
   <BackgroundColor>#FF444141</BackgroundColor>
   <NicknameColor>#FF48D1CC</NicknameColor>
   <DateColor>#FFFFFFFF</DateColor>
-  <ChatOpacity>0.85</ChatOpacity>
+  <ChatOpacity>1</ChatOpacity>
   <TextFont>Verdana</TextFont>
-  <TextFontSize>16</TextFontSize>
+  <TextFontSize>17</TextFontSize>
   <TopMost>true</TopMost>
   <SmileSize>0</SmileSize>
   <NicknameBold>true</NicknameBold>
   <TextBold>false</TextBold>
-  <DateEnabled>true</DateEnabled>
-  <Left>1620</Left>
-  <Top>0</Top>
+  <DateEnabled>false</DateEnabled>
+  <Left>46</Left>
+  <Top>236</Top>
   <Width>300</Width>
-  <Height>930</Height>
+  <Height>660</Height>
 </ChatSettingsXML>

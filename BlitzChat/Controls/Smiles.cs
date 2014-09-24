@@ -385,14 +385,14 @@ namespace BlitzChat
             TextRange texR = new TextRange(par.ContentStart, par.ContentEnd);
             foreach (DictionaryEntry emote in emotions)
             {
-                if (texR.Text.Contains(emote.Key.ToString())) {
-                    for (int j=3;j<par.Inlines.Count;j++)
+                while (texR.Text.Contains(emote.Key.ToString())) {
+                    for (int j=2;j<par.Inlines.Count;j++)
                     {
-                        texR = new TextRange(par.Inlines.ElementAt(j).ContentStart, par.Inlines.ElementAt(j).ContentEnd);
+                        TextRange tr = new TextRange(par.Inlines.ElementAt(j).ContentStart, par.Inlines.ElementAt(j).ContentEnd);
                         string em = emote.Key.ToString();
                         em = em.Replace("(", "\\(");
                         em = em.Replace(")", "\\)");
-                        if (texR.Text.Contains(emote.Key.ToString()) && Regex.IsMatch(texR.Text, String.Format(@"(^|\s){0}(\s|$)", em))) //Smiley in Text
+                        if (texR.Text.Contains(emote.Key.ToString()) && Regex.IsMatch(tr.Text, String.Format(@"(^|\s){0}(\s|$)", em))) //Smiley in Text
                         {
                             TextPointer tp = par.Inlines.ElementAt(j).ContentStart;
                             while (!tp.GetTextInRun(LogicalDirection.Forward).StartsWith(emote.Key.ToString()))
@@ -400,42 +400,17 @@ namespace BlitzChat
                             TextPointer endPoint = tp;
                             for (int i = 0; i < emote.Key.ToString().Length; i++)
                                 endPoint = endPoint.GetNextInsertionPosition(LogicalDirection.Forward);
-                            texR = new TextRange(tp, endPoint);
-                            texR.Text = "";
+                            tr = new TextRange(tp, endPoint);
+                            tr.Text = "";
                             Image img = new Image();
                             BitmapImage bitmapImage = new BitmapImage(new Uri(@emote.Value.ToString()));
-                            //System.Drawing.Bitmap bitm = (System.Drawing.Bitmap)emotions[emote.Key];
                             double width = bitmapImage.Width; 
                             double height = bitmapImage.Height;
-                            //width = (Math.Max(width, par.FontSize) - Math.Min(width, par.FontSize)) + Math.Min(width, par.FontSize);
-                            //height = (Math.Max(height, par.FontSize) - Math.Min(height, par.FontSize)) + Math.Min(height, par.FontSize);
-                            //width += width - par.FontSize;
-                            //height += height - par.FontSize;
-                            //System.Drawing.Color c;
-                            //System.Drawing.Color replaceColor = System.Drawing.Color.FromArgb(255, 0, 0, 128);
-                            //for (int w = 0; w < width; w++)
-                            //    for (int h = 0; h < height; h++)
-                            //    {
-                            //        c = bitm.GetPixel(w, h);
-                            //        bitm.SetPixel(w, h, ((((short)(c.A)) & 0x00FF) <= 0) ? replaceColor : c); //replace 0 here with some higher tolerance if needed
-                            //    }
-                            //bitm.MakeTransparent(System.Drawing.Color.FromArgb(255, 0, 0, 128));
-                            //using (MemoryStream memory = new MemoryStream())
-                            //{
-                            //    bitm.Save(memory, System.Drawing.Imaging.ImageFormat.Png);
-                            //    memory.Position = 0;
-                            //    bitmapImage = new BitmapImage();
-                            //    bitmapImage.BeginInit();
-                            //    bitmapImage.StreamSource = memory;
-                            //    bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                            //    bitmapImage.EndInit();
-                            //}
                             img.Source = bitmapImage;
                             img.Stretch = Stretch.Fill;
                             img.Width = width+scalesize;
                             img.Height = height + scalesize;
                             new InlineUIContainer(img, tp);
-                            //rtb.Focus();
                             break;
                         }
                     }
