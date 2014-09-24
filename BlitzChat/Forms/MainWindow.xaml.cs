@@ -112,6 +112,7 @@ namespace BlitzChat
             header.lblProgramName.Content = "BlitzСhat v." + vers.ToString() + " Alpha";
             preSetSettings();
             RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
+
         }
         #endregion
 
@@ -330,6 +331,13 @@ namespace BlitzChat
         private void contextMenu_Settings_Click(object sender, RoutedEventArgs e)
         {
             settingsInit();
+            if (this.AllowsTransparency == false)
+            {
+                this.frmSettings.sliderOpacity.IsEnabled = false;
+                mainbackBrush.Opacity = 1;
+            }
+            else
+                this.frmSettings.sliderOpacity.IsEnabled = true;
             frmSettings.Show();
         }
 

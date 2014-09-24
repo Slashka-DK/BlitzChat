@@ -1,4 +1,4 @@
-﻿//23
+﻿//26
 //23
 //0
 //1
@@ -8,5 +8,5 @@
 
 using System.Reflection;
 
-[assembly: AssemblyFileVersion("1.0.23.23")]
-[assembly: AssemblyVersion("1.0.23.23")]
+[assembly: AssemblyFileVersion("1.0.23.26")]
+[assembly: AssemblyVersion("1.0.23.26")]
