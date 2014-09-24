@@ -14,5 +14,8 @@ namespace BlitzChat
         public const string GOODGAME = "GoodGame";
         public const string HITBOX = "Hitbox";
         public const string EMPIRE = "Empire";
+        public const string CONFIGPATH = "Config/";
+        public const string CHANNELSFILE = "Channels.xml";
+        public const string SETTINGSFILE = "ChatSettings.xml";
     }
 }

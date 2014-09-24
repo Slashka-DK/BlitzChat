@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ChatSettingsXML xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ForeColor>#FFFFFFFF</ForeColor>
+  <BackgroundColor>#FF444141</BackgroundColor>
+  <NicknameColor>#FF48D1CC</NicknameColor>
+  <DateColor>#FFFFFFFF</DateColor>
+  <ChatOpacity>0.85</ChatOpacity>
+  <TextFont>Verdana</TextFont>
+  <TextFontSize>16</TextFontSize>
+  <TopMost>true</TopMost>
+  <SmileSize>0</SmileSize>
+  <NicknameBold>true</NicknameBold>
+  <TextBold>false</TextBold>
+  <DateEnabled>true</DateEnabled>
+  <Left>1620</Left>
+  <Top>0</Top>
+  <Width>300</Width>
+  <Height>930</Height>
+</ChatSettingsXML>

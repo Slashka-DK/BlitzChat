@@ -14,6 +14,11 @@ namespace BlitzChat
         public static void serialize(object ob, string file) {
             lock (ob)
             {
+                FileInfo fileInfo = new FileInfo(file);
+
+                if (!fileInfo.Exists)
+                    Directory.CreateDirectory(fileInfo.Directory.FullName);
+
                 if (!File.Exists(file))
                 {
                     FileStream fs = File.Create(file);

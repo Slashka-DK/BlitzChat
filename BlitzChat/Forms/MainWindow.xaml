@@ -4,8 +4,9 @@
         xmlns:shell="clr-namespace:Microsoft.Windows.Shell;assembly=Microsoft.Windows.Shell"
         xmlns:local="clr-namespace:BlitzChat" x:Name="frmChat" x:Class="BlitzChat.MainWindow"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
-        Title="BlitzChat" Opacity="1.0" Background="#FF444141"  Height="491" Width="379" AllowsTransparency="False" ResizeMode="CanResize" WindowStyle="None" MouseDown="chat_MouseDown" SizeChanged="frmChat_SizeChanged" UseLayoutRounding="False" LocationChanged="frmChat_LocationChanged" MouseUp="frmChat_MouseUp" Closing="frmChat_Closing">
-        <shell:WindowChrome.WindowChrome>
+        xmlns:forms="clr-namespace:BlitzChat.Forms"
+        Title="BlitzChat" Opacity="1.0" Background="#FF444141"  Height="491" Width="379" AllowsTransparency="False" ResizeMode="CanResize" WindowStyle="None" MouseDown="chat_MouseDown" SizeChanged="frmChat_SizeChanged" UseLayoutRounding="False" LocationChanged="frmChat_LocationChanged" MouseUp="frmChat_MouseUp" Closing="frmChat_Closing" Loaded="frmChat_Loaded">
+    <shell:WindowChrome.WindowChrome>
         <shell:WindowChrome
             ResizeBorderThickness="5"
             CornerRadius="20,20,20,20"
@@ -13,6 +14,7 @@
             GlassFrameThickness="0">
         </shell:WindowChrome>
     </shell:WindowChrome.WindowChrome>
+    
     <Window.Resources>
         <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">10</sys:Double>
         <Style x:Key="{x:Type ContextMenu}" TargetType="{x:Type ContextMenu}">
@@ -47,10 +49,10 @@
         </ControlTemplate>
 
     </Window.Resources>
-    
+
     <Grid  x:Name="grid" HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition x:Name="gridRowHeader" Height="Auto" />
             <RowDefinition Height="*" x:Name="Row1" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -58,13 +60,16 @@
         </Grid.ColumnDefinitions>
         <Grid.ContextMenu>
             <ContextMenu x:Name="mainContextMenu" Background="Transparent" BorderBrush="Transparent">
-                <MenuItem Header="Add chat" Background="#FF444141" Click="MenuItem_AddChat_Click"/>
+                <MenuItem Header="Chat control" Background="#FF444141" Click="MenuItem_AddChat_Click"/>
                 <MenuItem Header="Clear сhat" Background="#FF444141" Click="clear_Chat_Click" />
+                <MenuItem Header="Windows control" Background="#FF444141" Click="addWindows_Click" />
                 <MenuItem x:Name="viewersMenuItem" Background="#FF444141" Header="Show viewers" Click="show_Viewers_Click"/>
+                <MenuItem x:Name="menuHeader" Header="Hide header" Background="#FF444141" Click="contextMenu_hideHeader_Click"/>
                 <MenuItem Header="Settings" Background="#FF444141" Click="contextMenu_Settings_Click"/>
                 <MenuItem Header="Close" Background="#FF444141" Click="contextMenu_Close_Click"/>
             </ContextMenu>
         </Grid.ContextMenu>
+        <forms:usrHeader x:Name="header" Grid.Row="0" ></forms:usrHeader>
         <Label Grid.Row="0" Grid.Column="0" DockPanel.Dock="Top"  Foreground="AliceBlue"  HorizontalContentAlignment="Right"  HorizontalAlignment="Stretch" VerticalAlignment="Top" RenderTransformOrigin="0.053,0.308" FontSize="16" Grid.RowSpan="1" FontWeight="Bold" FontStyle="Italic" FontFamily="Rockwell Extra Bold" BorderThickness="0,0,0,10" Background="{x:Null}">
     
             <Button x:Name="bttnClose" shell:WindowChrome.IsHitTestVisibleInChrome="True" Height="18" Width="18" RenderTransformOrigin="0.717,0.5" BorderBrush="#FF00BFBF" Click="bttnClose_Click" Foreground="Transparent" BorderThickness="0" OpacityMask="#FF36A68D">
@@ -87,15 +92,11 @@
                         </Style.Triggers>
                     </Style>
                 </Button.Style>
-                <Image Width="16" Height="16" Source="pack://application:,,,/BlitzChat;component/Images/close_delete_remove_exit_cross-512.png" />
+                <Image Width="16" Height="16" Source="pack://application:,,,/BlitzChat;component/Images/CloseButton.png" />
             </Button>
         </Label>
 
-        <Label Grid.Row="0" x:Name="lblBlitzChatName" Grid.Column="0" Content="BlitzChat v. 0.1a" Foreground="#FF00BFBF" HorizontalAlignment="Center" FontSize="14" FontWeight="Bold" FontFamily="Rockwell" Background="{x:Null}">
-            <Label.Effect>
-                <DropShadowEffect Color="#FF00BFBF" BlurRadius="6" ShadowDepth="3" Opacity="0.5"/>
-            </Label.Effect>
-        </Label>
+
         <RichTextBox Grid.Row="1" Grid.Column="0" Padding="4" x:Name="richChat" 
                          Background="Transparent" Height="Auto" Width="{Binding ActualWidth, ElementName=Column0}"
                          Opacity="1" ScrollViewer.VerticalScrollBarVisibility="Auto" 
@@ -111,9 +112,7 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate>
-                                <Border x:Name="Bd" Margin="5"
-										BorderBrush="#FF00BFBF" 
-										BorderThickness="0.5"
+                                <Border x:Name="Bd" 
 										SnapsToDevicePixels="True"
 										Background="{TemplateBinding Background}">
                                     <ScrollViewer x:Name="PART_ContentHost"/>

@@ -144,17 +144,24 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Forms\frmWindowsControl.xaml.cs">
+      <DependentUpon>frmWindowsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\usrHeader.xaml.cs">
+      <DependentUpon>usrHeader.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Serialized\ChannelsSaveXML.cs" />
     <Compile Include="Serialized\ChatSettingsXML.cs" />
-    <Compile Include="ChatControls\Constants.cs" />
-    <Compile Include="ChatControls\Cybergame.cs" />
+    <Compile Include="Controls\Constants.cs" />
+    <Compile Include="Controls\Cybergame.cs" />
+    <Compile Include="Serialized\Windows.cs" />
     <Compile Include="Utilities\HTMLParsing.cs" />
     <Compile Include="Utilities\Irc.cs" />
     <Compile Include="Forms\frmSettings.xaml.cs">
       <DependentUpon>frmSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmAddChat.xaml.cs">
-      <DependentUpon>frmAddChat.xaml</DependentUpon>
+    <Compile Include="Forms\frmChatControl.xaml.cs">
+      <DependentUpon>frmChatControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utilities\NewWebClient.cs">
       <SubType>Component</SubType>
@@ -164,9 +171,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ChatControls\Sc2Tv.cs" />
-    <Compile Include="ChatControls\Smiles.cs" />
-    <Compile Include="ChatControls\TwitchTV.cs" />
+    <Compile Include="Controls\Sc2Tv.cs" />
+    <Compile Include="Controls\Smiles.cs" />
+    <Compile Include="Controls\TwitchTV.cs" />
     <Compile Include="Utilities\UrlTools.cs" />
     <Compile Include="Forms\frmViewers.xaml.cs">
       <DependentUpon>frmViewers.xaml</DependentUpon>
@@ -178,6 +185,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Version.tt</DependentUpon>
     </Compile>
+    <Compile Include="Controls\WindowControl.cs" />
+    <Page Include="Forms\frmWindowsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Forms\usrHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Forms\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -190,7 +206,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Forms\frmAddChat.xaml">
+    <Page Include="Forms\frmChatControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -656,10 +672,13 @@
   <ItemGroup>
     <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\CloseButton.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_DetectChanges="False" BuildVersion_IncrementBeforeBuild="False" BuildVersion_UseUniversalClock="False" BuildVersion_StartDate="2014/9/1" BuildVersion_AssemblyInfoFilename="" BuildVersion_UpdateFileVersion="False" BuildVersion_UpdateAssemblyVersion="False" BuildVersion_BuildAction="Both" BuildVersion_BuildVersioningStyle="None.None.None.None" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.None" BuildVersion_BuildAction="Both" BuildVersion_UpdateAssemblyVersion="False" BuildVersion_UpdateFileVersion="False" BuildVersion_AssemblyInfoFilename="" BuildVersion_StartDate="2014/9/1" BuildVersion_UseUniversalClock="False" BuildVersion_IncrementBeforeBuild="False" BuildVersion_DetectChanges="False" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>

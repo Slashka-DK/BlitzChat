@@ -17,9 +17,9 @@ namespace BlitzChat
     /// <summary>
     /// Interaktionslogik für Window1.xaml
     /// </summary>
-    public partial class AddChat : Window
+    public partial class ChatControl : Window
     {
-        public AddChat()
+        public ChatControl()
         {
             InitializeComponent();
             cmbAddChat.Items.Add(Constants.TWITCH);

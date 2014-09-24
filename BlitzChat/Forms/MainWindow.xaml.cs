@@ -26,6 +26,7 @@ using HtmlAgilityPack;
 using bliGoodgame;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
+using BlitzChat.Forms;
 namespace BlitzChat
 {
     /// <summary>
@@ -42,7 +43,7 @@ namespace BlitzChat
         SolidColorBrush quoteBrush;
         Settings frmSettings;
         Color nicknameColor { get; set; }
-        AddChat frmAddChat;
+        ChatControl frmAddChat;
         ChatSettingsXML settingsChat;
         ChannelsSaveXML channels;
         TwitchTV twitch;
@@ -54,18 +55,24 @@ namespace BlitzChat
         private volatile bool bCybergameEnd;
         private volatile bool bGoodgameEnd;
         private volatile bool bViewersEnd = true;
-
+        public string WindowName { get; set; }
         List<string> listChats;
         FontWeight nicknameWeight { get; set; }
         FontWeight textWeight { get; set; }
         FontFamily font { get; set; }
         private Smiles smiles { get; set; }
         public frmViewers viewers { get; set; }
+        public event EventHandler<MainWindow> OnAdditionalWindows; 
         #endregion
 
         #region Constructors
-        public MainWindow()
+        public MainWindow(string name)
         {
+            header = new usrHeader();
+            header.lblProgramName.Content = name;
+            header.Width = double.NaN;
+            header.Height = double.NaN;
+            WindowName = name;
             this.smiles = new Smiles(this);
             listChats = new List<string>();
             InitializeComponent();
@@ -92,7 +99,7 @@ namespace BlitzChat
             nicknameColor = Colors.BlueViolet;
             nicknameBrush = new SolidColorBrush(nicknameColor);
             richChat.Foreground = textBrush;
-            //Background = mainBrush;
+            Background = mainbackBrush;
             mainContextMenu.Background = contextBrush;
             mainContextMenu.Foreground = new SolidColorBrush(Colors.White);
             deserializeSettings();
@@ -102,17 +109,23 @@ namespace BlitzChat
             deserializeChannels();
             richChat.ContextMenu = this.ContextMenu;
             Version vers = Assembly.GetExecutingAssembly().GetName().Version;
-            this.lblBlitzChatName.Content = "BlitzСhat v." + vers.ToString() + " Alpha";
+            header.lblProgramName.Content = "BlitzСhat v." + vers.ToString() + " Alpha";
             preSetSettings();
             RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
         }
         #endregion
 
         #region UI Events
+        private void addWindows_Click(object sender, RoutedEventArgs e)
+        {
+            if (OnAdditionalWindows != null)
+                OnAdditionalWindows(sender, this);
+        }
+
         private void chkDateEnabled_Click(object sender, RoutedEventArgs e)
         {
             settingsChat.DateEnabled = frmSettings.chkDateEnabled.IsChecked.Value;
-            XMLSerializer.serialize(settingsChat, "ChatSettings.xml");
+            serializeSettings();
             applySettingsToBlocks();
         }
 
@@ -121,7 +134,7 @@ namespace BlitzChat
             Color newColor = frmSettings.ClrPcker_Date.SelectedColor;
             dateBrush.Color = newColor;
             settingsChat.DateColor = ToHexColor(newColor);
-            XMLSerializer.serialize(settingsChat, "ChatSettings.xml");
+            serializeSettings();
         }
 
         void chkNicknameBold_Click(object sender, RoutedEventArgs e)
@@ -136,7 +149,7 @@ namespace BlitzChat
                 nicknameWeight = FontWeights.Normal;
             }
             applySettingsToBlocks();
-            XMLSerializer.serialize(settingsChat, "ChatSettings.xml");
+            serializeSettings();
         }
 
         private void chkTextBold_Click(object sender, RoutedEventArgs e)
@@ -151,7 +164,7 @@ namespace BlitzChat
                 textWeight = FontWeights.Normal;
             }
             applySettingsToBlocks();
-            XMLSerializer.serialize(settingsChat, "ChatSettings.xml");
+            serializeSettings();
         }
         void bttnSmileSmaller_Click(object sender, RoutedEventArgs e)
         {
@@ -187,7 +200,7 @@ namespace BlitzChat
                 settingsChat.SmileSize--;
                 frmSettings.lblSmileSize.Content = settingsChat.SmileSize;
             }
-            XMLSerializer.serialize(settingsChat, "ChatSettings.xml");
+            serializeSettings();
         }
         private void bttnSmileBigger_Click(object sender, RoutedEventArgs e)
         {
@@ -220,7 +233,7 @@ namespace BlitzChat
                 settingsChat.SmileSize++;
                 frmSettings.lblSmileSize.Content = settingsChat.SmileSize;
             }
-            XMLSerializer.serialize(settingsChat, "ChatSettings.xml");
+            serializeSettings();
         }
         private void richChat_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -241,6 +254,7 @@ namespace BlitzChat
         private void frmChat_Loaded(object sender, RoutedEventArgs e)
         {
             StickyWindow.RegisterExternalReferenceForm(this);
+            header.lblWindowName.Content = WindowName;
         }
 
 
@@ -279,7 +293,7 @@ namespace BlitzChat
                 viewers.Left = this.Left;
             }
             if(this.WindowState != System.Windows.WindowState.Minimized)
-                XMLSerializer.serialize(settingsChat, "ChatSettings.xml");
+                serializeSettings();
             
         }
 
@@ -327,7 +341,7 @@ namespace BlitzChat
             richChat.FontFamily = font;
             richChat.Document.FontFamily = font;
             settingsChat.TextFont = newFont;
-            XMLSerializer.serialize(settingsChat, "ChatSettings.xml");
+            serializeSettings();
             applySettingsToBlocks();
         }
 
@@ -337,7 +351,7 @@ namespace BlitzChat
             //TODO: Maybe need loop change all blocks
             richChat.Document.Blocks.LastBlock.FontSize = newSize;
             settingsChat.TextFontSize = newSize;
-            XMLSerializer.serialize(settingsChat, "ChatSettings.xml");
+            serializeSettings();
             applySettingsToBlocks();
         }
 
@@ -347,7 +361,7 @@ namespace BlitzChat
             nicknameColor = newColor;
             settingsChat.NicknameColor = ToHexColor(newColor);
             nicknameBrush.Color = nicknameColor;
-            XMLSerializer.serialize(settingsChat, "ChatSettings.xml");
+            serializeSettings();
         }
 
         private void ClrPcker_Text_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
@@ -356,7 +370,7 @@ namespace BlitzChat
             textBrush.Color = newColor;
             richChat.Foreground = textBrush;
             settingsChat.ForeColor = ToHexColor(newColor);
-            XMLSerializer.serialize(settingsChat, "ChatSettings.xml");
+            serializeSettings();
             //applySettingsToBlocks();
         }
 
@@ -367,7 +381,7 @@ namespace BlitzChat
             //Background = mainBrush;
 
             settingsChat.BackgroundColor = ToHexColor(newColor);
-            XMLSerializer.serialize(settingsChat, "ChatSettings.xml");
+            serializeSettings();
         }
 
         private void chkOnTop_Unchecked(object sender, RoutedEventArgs e)
@@ -385,23 +399,23 @@ namespace BlitzChat
             double newOpacity = e.NewValue / 100;
             mainbackBrush.Opacity = newOpacity;
             settingsChat.ChatOpacity = newOpacity;
-            XMLSerializer.serialize(settingsChat, "ChatSettings.xml");
+            serializeSettings();
         }
 
         private void contextMenu_Close_Click(object sender, RoutedEventArgs e)
         {
-            System.Environment.Exit(0);
+            if (WindowName == "Main")
+                System.Environment.Exit(0);
+            else
+                this.Close();
         }
 
         private void bttnClose_Click(object sender, RoutedEventArgs e)
         {
-            System.Environment.Exit(0);
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            System.Environment.Exit(0);
-
+            if (WindowName == "Main")
+                System.Environment.Exit(0);
+            else
+                this.Close();
         }
 
         private void frmChat_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -415,14 +429,14 @@ namespace BlitzChat
                 viewers.Width = this.ActualWidth;
                 viewers.Top = this.Top + this.ActualHeight;
             }
-            XMLSerializer.serialize(settingsChat, "ChatSettings.xml");
+            serializeSettings();
         }
 
         private void MenuItem_AddChat_Click(object sender, RoutedEventArgs e)
         {
             if (frmAddChat != null && frmAddChat.IsLoaded)
                 return;
-            frmAddChat = new AddChat();
+            frmAddChat = new ChatControl();
             frmAddChat.bttnAddChat.Click += bttnAddChat_Click;
             frmAddChat.listStreamers.SelectionChanged += listStreamers_SelectionChanged;
             frmAddChat.bttnRemove.Click += bttnRemove_Click;
@@ -463,8 +477,21 @@ namespace BlitzChat
 
         private void frmChat_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            this.WindowState = System.Windows.WindowState.Normal;
-            System.Environment.Exit(0);
+        }
+
+        private void contextMenu_hideHeader_Click(object sender, RoutedEventArgs e)
+        {
+            if (header.Visibility != Visibility.Hidden)
+            {
+                header.Visibility = Visibility.Hidden;
+                menuHeader.Header = "Show header";
+            }
+            else
+            {
+                header.Visibility = Visibility.Visible;
+                menuHeader.Header = "Hide header";
+            }
+
         }
         #endregion
 
@@ -646,7 +673,7 @@ namespace BlitzChat
             {
                 frmAddChat.bttnRemove.IsEnabled = false;
             }
-            XMLSerializer.serialize(channels, "Channels.xml");
+            serializeChannels();
 
         }
 
@@ -727,7 +754,7 @@ namespace BlitzChat
                     default:
                         break;
                 }
-                XMLSerializer.serialize(channels, "Channels.xml");
+                serializeChannels();
 
             }
         }
@@ -804,6 +831,8 @@ namespace BlitzChat
                 // FontFamily.Source contains the font family name.
                 frmSettings.cmbFonts.Items.Add(fontFamily.Source);
             }
+            frmSettings.cmbFonts.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("",
+            System.ComponentModel.ListSortDirection.Ascending));
 
         }
 
@@ -833,7 +862,7 @@ namespace BlitzChat
 
             frmChat.Topmost = flag;
             settingsChat.TopMost = flag;
-            XMLSerializer.serialize(settingsChat, "ChatSettings.xml");
+            serializeSettings();
         }
 
         private void addGoodgame()
@@ -965,9 +994,11 @@ namespace BlitzChat
 
                 smiles.checkEmotions(ref paragraph, settingsChat.SmileSize);
                 richChat.Document.Blocks.Add(paragraph);
-                string uri = UrlTools.DetectURLs(ref paragraph);
-                if (!String.IsNullOrEmpty(uri))
+                string uri = "";
+                while (!String.IsNullOrEmpty(uri = UrlTools.DetectURLs(ref paragraph)))
+                {
                     replaceLink(paragraph, uri);
+                }
                 if (richChat.VerticalScrollBarVisibility != ScrollBarVisibility.Visible)
                     richChat.ScrollToEnd();
             }));
@@ -1042,9 +1073,9 @@ namespace BlitzChat
         #region Deserializing
         private void deserializeSettings()
         {
-            if (File.Exists("ChatSettings.xml"))
+            if (File.Exists("Config/" + WindowName + "_" + "ChatSettings.xml"))
             {
-                ChatSettingsXML newSettings = (ChatSettingsXML)XMLSerializer.deserialize(settingsChat, "ChatSettings.xml");
+                ChatSettingsXML newSettings = (ChatSettingsXML)XMLSerializer.deserialize(settingsChat, "Config/" + WindowName + "_" + "ChatSettings.xml");
                 settingsChat.BackgroundColor = newSettings.BackgroundColor;
                 settingsChat.ChatOpacity = newSettings.ChatOpacity;
                 settingsChat.ForeColor = newSettings.ForeColor;
@@ -1067,9 +1098,9 @@ namespace BlitzChat
 
         private void deserializeChannels()
         {
-            if (File.Exists("Channels.xml"))
+            if (File.Exists("Config/" + WindowName + "_" + "Channels.xml"))
             {
-                ChannelsSaveXML desChannels = (ChannelsSaveXML)XMLSerializer.deserialize(channels, "Channels.xml");
+                ChannelsSaveXML desChannels = (ChannelsSaveXML)XMLSerializer.deserialize(channels, "Config/" + WindowName + "_" + "Channels.xml");
                 channels.Twitch = desChannels.Twitch;
                 channels.SC2TV = desChannels.SC2TV;
                 channels.Cybergame = desChannels.Cybergame;
@@ -1085,6 +1116,15 @@ namespace BlitzChat
 
             }
 
+        }
+        #endregion
+
+        #region Serializing
+        private void serializeSettings(){
+            XMLSerializer.serialize(settingsChat, "Config/" + WindowName + "_" + "ChatSettings.xml");
+        }
+        private void serializeChannels() {
+            XMLSerializer.serialize(channels, "Config/" + WindowName + "_" + "Channels.xml");
         }
         #endregion
 
@@ -1133,6 +1173,5 @@ namespace BlitzChat
         }
         #endregion
 
-        
     }
 }
