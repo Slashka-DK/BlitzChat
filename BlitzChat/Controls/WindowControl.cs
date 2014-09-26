@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 using BlitzChat.Forms;
 using System.Windows;
 using System.IO;
+using NCrash.WinForms;
+using NCrash;
+using NCrash.Plugins;
+using NCrash.WPF;
 namespace BlitzChat
 {
     class WindowControl
@@ -15,6 +19,7 @@ namespace BlitzChat
         Windows windows;
         frmWindowsControl frmControl;
         public WindowControl(){
+
             listMainWindows = new Dictionary<string, MainWindow>();
             windows = new Windows();
             deserializeWindows();

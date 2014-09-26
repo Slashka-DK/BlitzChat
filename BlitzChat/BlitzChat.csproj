@@ -113,8 +113,20 @@
     <Reference Include="Microsoft.Windows.Shell">
       <HintPath>..\..\..\..\..\Users\Dimitry\Desktop\WpfCustomChromeLib\Libraries\CustomChromeLibrary\bin\Debug\Microsoft.Windows.Shell.dll</HintPath>
     </Reference>
+    <Reference Include="NCrash">
+      <HintPath>E:\GitHub\NCrash\NCrash.WPF\bin\Debug\NCrash.dll</HintPath>
+    </Reference>
+    <Reference Include="NCrash.WinForms">
+      <HintPath>E:\GitHub\NCrash\NCrash.WinForms\bin\Debug\NCrash.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="NCrash.WPF">
+      <HintPath>E:\GitHub\NCrash\NCrash.WPF\bin\Debug\NCrash.WPF.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Ookii.Dialogs.Wpf">
+      <HintPath>E:\GitHub\NCrash\NCrash.WPF\bin\Debug\Ookii.Dialogs.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="StickyWindow, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -144,6 +156,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ErrorLog.cs" />
     <Compile Include="Forms\frmWindowsControl.xaml.cs">
       <DependentUpon>frmWindowsControl.xaml</DependentUpon>
     </Compile>
@@ -678,7 +691,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.None" BuildVersion_BuildAction="Both" BuildVersion_UpdateAssemblyVersion="False" BuildVersion_UpdateFileVersion="False" BuildVersion_AssemblyInfoFilename="" BuildVersion_StartDate="2014/9/1" BuildVersion_UseUniversalClock="False" BuildVersion_IncrementBeforeBuild="False" BuildVersion_DetectChanges="False" />
+      <UserProperties BuildVersion_DetectChanges="False" BuildVersion_IncrementBeforeBuild="False" BuildVersion_UseUniversalClock="False" BuildVersion_StartDate="2014/9/1" BuildVersion_AssemblyInfoFilename="" BuildVersion_UpdateFileVersion="False" BuildVersion_UpdateAssemblyVersion="False" BuildVersion_BuildAction="Both" BuildVersion_BuildVersioningStyle="None.None.None.None" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
