@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bliGoodgame", "bliGoodgame\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bliWebClient", "bliWebClient\bliWebClient.csproj", "{41D9B56F-C8F1-400B-96CC-8BE73D2AE8E8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Launcher", "..\..\..\..\Users\Dimitry\Documents\Visual Studio 2012\Projects\BlitzChatLauncher\BlitzChatLauncher\Launcher.csproj", "{F300A968-4DD5-4E97-BCD8-20AB5A5E9D63}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,15 +34,19 @@ Global
 		{41D9B56F-C8F1-400B-96CC-8BE73D2AE8E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41D9B56F-C8F1-400B-96CC-8BE73D2AE8E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41D9B56F-C8F1-400B-96CC-8BE73D2AE8E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F300A968-4DD5-4E97-BCD8-20AB5A5E9D63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F300A968-4DD5-4E97-BCD8-20AB5A5E9D63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F300A968-4DD5-4E97-BCD8-20AB5A5E9D63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F300A968-4DD5-4E97-BCD8-20AB5A5E9D63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		BuildVersion_UseGlobalSettings = False
-		BuildVersion_UpdateFileVersion = False
-		BuildVersion_UpdateAssemblyVersion = False
-		BuildVersion_BuildVersioningStyle = None.None.None.None
 		BuildVersion_AssemblyInfoFilename = 
+		BuildVersion_BuildVersioningStyle = None.None.None.None
+		BuildVersion_UpdateAssemblyVersion = False
+		BuildVersion_UpdateFileVersion = False
+		BuildVersion_UseGlobalSettings = False
 	EndGlobalSection
 EndGlobal
