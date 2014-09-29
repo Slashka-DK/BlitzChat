@@ -22,7 +22,6 @@ namespace bliGoodgame
         private int lastMessageId = 0;
         private object locker = new object();
         private bool loadHistory;
-        private uint userId = 0;
         private uint channelId = 0;
         private string token = "";
 

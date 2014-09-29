@@ -27,6 +27,7 @@ using bliGoodgame;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
 using BlitzChat.UI;
+using bliTwitch;
 namespace BlitzChat
 {
     /// <summary>
@@ -46,7 +47,7 @@ namespace BlitzChat
         ChatControl frmAddChat;
         ChatSettingsXML settingsChat;
         ChannelsSaveXML channels;
-        TwitchTV twitch;
+        Twitch twitch;
         Sc2Tv sc2tv;
         CybergameTV cyberg;
         Goodgame goodgame;
@@ -61,7 +62,6 @@ namespace BlitzChat
         FontWeight nicknameWeight { get; set; }
         FontWeight textWeight { get; set; }
         FontFamily font { get; set; }
-        private Smiles smiles { get; set; }
         public frmViewers viewers { get; set; }
         public event EventHandler<MainWindow> OnAdditionalWindows; 
         #endregion
@@ -73,7 +73,6 @@ namespace BlitzChat
             header = new usrHeader();
             header.lblProgramName.Content = name;
             WindowName = name;
-            this.smiles = new Smiles(this);
             listChats = new List<string>();
             InitializeComponent();
             settingsChat = new ChatSettingsXML();
@@ -281,6 +280,10 @@ namespace BlitzChat
         {
             //StickyWindow.RegisterExternalReferenceForm(this);
             header.lblWindowName.Content = WindowName;
+            Thread threadHist = new Thread(threadSaveHistory);
+            threadHist.Name = "Save history";
+            threadHist.IsBackground = true;
+            threadHist.Start();
         }
 
 
@@ -290,7 +293,7 @@ namespace BlitzChat
             {
                 viewers = new frmViewers();
                 viewers.Topmost = settingsChat.TopMost;
-                viewers.borderViewers.Background = mainbackBrush;
+                viewers.Background = mainbackBrush;
                 viewers.Top = this.Top + this.ActualHeight;
                 viewers.Width = this.Width;
                 viewers.Left = this.Left;
@@ -298,6 +301,8 @@ namespace BlitzChat
                 bViewersEnd = false;
                 viewersMenuItem.Header = "Close viewers";
                 Thread threadViewers = new Thread(threadViewersShow);
+                threadViewers.IsBackground = true;
+                threadViewers.Name = "Viewers thread";
                 threadViewers.Start();
             }
             else
@@ -437,18 +442,14 @@ namespace BlitzChat
 
         private void contextMenu_Close_Click(object sender, RoutedEventArgs e)
         {
-            if (WindowName == "Main")
-                System.Environment.Exit(0);
-            else
-                this.Close();
+            saveHistory();
+            this.Close();
         }
 
         private void bttnClose_Click(object sender, RoutedEventArgs e)
         {
-            if (WindowName == "Main")
-                System.Environment.Exit(0);
-            else
-                this.Close();
+            saveHistory();
+            this.Close();
         }
 
         private void frmChat_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -511,7 +512,9 @@ namespace BlitzChat
 
         private void frmChat_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Thread.Sleep(1000);
+            if (WindowName == "Main") {
+                System.Environment.Exit(0);
+            }
         }
 
         private void contextMenu_hideHeader_Click(object sender, RoutedEventArgs e)
@@ -556,9 +559,9 @@ namespace BlitzChat
             addMessageToChat(1, e.message.name, msg, to);
         }
 
-        private void twitch_MessageReceived(object sender, dotIRC.IrcMessageEventArgs e)
+        private void twitch_MessageReceived(object sender, TwitchMessage e)
         {
-            string nick = e.Source.Name;
+            string nick = e.Name;
             string message = e.Text;
             string to = "";
             addMessageToChat(0, nick, message, to);
@@ -637,15 +640,16 @@ namespace BlitzChat
         {
             try
             {
-                twitch = new TwitchTV(channels.Twitch);
+                twitch = new Twitch(channels.Twitch, "irc.twitch.tv", 6667);
+                twitch.Start();
             }
-            catch (WrongChannelNameException)
+            catch(Exception e)
             {
-                MessageBox.Show("Wrong channelname was saved to the file. If it happens again. Please delete data from file Channels.xml or use Add chat form to delete it.");
+                MessageBox.Show("Exception: "+e.Message);
             }
-            twitch.irc.client.Channels[0].MessageReceived += twitch_MessageReceived;
+            twitch.messageReceived += twitch_MessageReceived;
             while (!bTwitchEnd) { Thread.Sleep(100); }
-            twitch.irc.client.Disconnect();
+            twitch.Stop();
         }
 
         private void threadViewersShow(object obj)
@@ -654,9 +658,10 @@ namespace BlitzChat
             {
                 Dispatcher.BeginInvoke(new Action(delegate
                 {
-                    if (twitch != null && twitch.irc.client.Users.Count >= 2)
+                    if (twitch != null)
                     {
-                        viewers.lblViewersTwitch.Content = twitch.irc.client.Users.Count - 2;
+                        viewers.twitchName.Content = twitch.getChannelName;
+                        viewers.lblViewersTwitch.Content = twitch.getViewersCount();
                     }
 
                     if (sc2tv != null)
@@ -669,7 +674,15 @@ namespace BlitzChat
                         viewers.lblViewersGG.Content = goodgame.getViewersCount();
 
                 }));
-                Thread.Sleep(1000);
+                Thread.Sleep(20000);
+            }
+        }
+
+        public void threadSaveHistory(object obj)
+        {
+            while(true){
+                Thread.Sleep(60000);
+                saveHistory();
             }
         }
         #endregion
@@ -719,19 +732,17 @@ namespace BlitzChat
                 switch (frmAddChat.cmbAddChat.SelectedItem.ToString())
                 {
                     case Constants.TWITCH:
-                        try
+
+                        if (Twitch.channelExists(frmAddChat.txtChannel.Text))
                         {
-                            new TwitchTV(frmAddChat.txtChannel.Text);
                             channels.Twitch = frmAddChat.txtChannel.Text;
                             frmAddChat.listStreamers.Items.Add(Constants.TWITCH + ": " + channels.Twitch);
                             frmAddChat.cmbAddChat.Items.Remove(Constants.TWITCH);
                             frmAddChat.cmbAddChat.SelectedIndex = 0;
                             addTwitch();
                         }
-                        catch (WrongChannelNameException)
-                        {
+                        else
                             MessageBox.Show("Twitch channel " + frmAddChat.txtChannel.Text + " not exists! Please try again!", "Channel not exists", MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
                         break;
                     case Constants.SC2TV:
                         try
@@ -964,7 +975,7 @@ namespace BlitzChat
                 switch (chattype)
                 {
                     case 0:
-                        if (msg.ToLower().Contains(channels.Twitch.ToLower()))
+                        if (msg.ToLower().Contains(channels.Twitch.ToLower()) && !String.IsNullOrEmpty(channels.Twitch))
                         {
                             quoteColor = true;
                         }
@@ -972,21 +983,21 @@ namespace BlitzChat
                         nickname = UppercaseFirst(nickname);
                         break;
                     case 1:
-                        if (to != "" && to.ToLower().Contains(channels.SC2TV.ToLower()))
+                        if (to != "" && to.ToLower().Contains(channels.SC2TV.ToLower()) && !String.IsNullOrEmpty(channels.SC2TV))
                         {
                             quoteColor = true;
                         }
                         imagesource = path + "sc2tv.png";
                         break;
                     case 2:
-                        if (msg.ToLower().Contains(channels.Cybergame.ToLower()))
+                        if (msg.ToLower().Contains(channels.Cybergame.ToLower()) && !String.IsNullOrEmpty(channels.Cybergame))
                         {
                             quoteColor = true;
                         }
                         imagesource = path + "cybergame.png";
                         break;
                     case 3:
-                        if (!String.IsNullOrEmpty(to) && to.ToLower().Contains(channels.GoodGame.ToLower()))
+                        if (!String.IsNullOrEmpty(to) && to.ToLower().Contains(channels.GoodGame.ToLower()) && !String.IsNullOrEmpty(channels.GoodGame))
                         {
                             quoteColor = true;
                         }
@@ -1027,28 +1038,93 @@ namespace BlitzChat
                 {
                     replaceLink(paragraph, uri);
                 }
+
+                replaceAllSmiles(chattype, msg, paragraph);
+                
                 if (usrRTB.richChat.VerticalScrollBarVisibility != ScrollBarVisibility.Visible)
                     usrRTB.richChat.ScrollToEnd();
-                saveHistory(paragraph);
             }));
         }
 
-        private void saveHistory(Paragraph p)
+        private void replaceAllSmiles(int type,string msg, Paragraph p)
         {
-            if (!File.Exists(Constants.HISTORYDIR + WindowName + "_" + DateTime.Now.ToString("dd.MM.yyyy") + ".hist"))
-                historydoc.Blocks.Clear();
-            AddBlock(p, historydoc);
+            switch (type) { 
+                case 0:
+                    TwitchSmile smile;
+                    TextRange tr = new TextRange(p.ContentStart, p.ContentEnd);
+                    while ((smile = twitch.checkSmiles(tr.Text)) != null)
+                    {
+                        replaceTwitchSmile(smile, p);
+                    }
+                    break;
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                default:
+                    break;
+            }
+
+        }
+
+        private void replaceTwitchSmile(TwitchSmile smile, Paragraph p)
+        {
+            TextRange tr = FindWordFromPosition(p.ContentStart,smile.regex);
+            if (tr != null)
+            {
+                tr.Text = "";
+                Image img = new Image();
+                BitmapImage bitmapImage = new BitmapImage(smile.uri);
+                img.Source = bitmapImage;
+                //img.Stretch = Stretch.Fill;
+                img.Width = smile.width + settingsChat.SmileSize;
+                img.Height = smile.height + settingsChat.SmileSize;
+                new InlineUIContainer(img, tr.Start);
+            }
+        }
+
+        private void saveHistory()
+        {
+            if (Dispatcher.CheckAccess())
+            {
+                if (!File.Exists(Constants.HISTORYDIR + WindowName + "_" + DateTime.Now.ToString("dd.MM.yyyy") + ".hist"))
+                    historydoc.Blocks.Clear();
+                AddDocument(usrRTB.richChat.Document, historydoc);
+            }
+            else
+                Dispatcher.BeginInvoke(new Action(delegate
+            {
+                if (!File.Exists(Constants.HISTORYDIR + WindowName + "_" + DateTime.Now.ToString("dd.MM.yyyy") + ".hist"))
+                    historydoc.Blocks.Clear();
+                AddDocument(usrRTB.richChat.Document, historydoc);
+            }));
+            
             if (!Directory.Exists(Constants.HISTORYDIR)) {
                 Directory.CreateDirectory(Constants.HISTORYDIR);
             }
-            using (FileStream fs = new FileStream(Constants.HISTORYDIR+WindowName+"_"+DateTime.Now.ToString("dd.MM.yyyy")+".hist", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+            if (Dispatcher.CheckAccess())
             {
-                TextRange tr = new TextRange(historydoc.ContentStart, historydoc.ContentEnd);
-                if (tr.CanSave(DataFormats.XamlPackage))
+                using (FileStream fs = new FileStream(Constants.HISTORYDIR + WindowName + "_" + DateTime.Now.ToString("dd.MM.yyyy") + ".hist", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
-                    tr.Save(fs, DataFormats.XamlPackage, true);
+                    TextRange tr = new TextRange(historydoc.ContentStart, historydoc.ContentEnd);
+                    if (tr.CanSave(DataFormats.XamlPackage))
+                    {
+                        tr.Save(fs, DataFormats.XamlPackage, true);
+                    }
                 }
-            }
+            }else
+            Dispatcher.BeginInvoke(new Action(delegate
+            {
+                using (FileStream fs = new FileStream(Constants.HISTORYDIR + WindowName + "_" + DateTime.Now.ToString("dd.MM.yyyy") + ".hist", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    TextRange tr = new TextRange(historydoc.ContentStart, historydoc.ContentEnd);
+                    if (tr.CanSave(DataFormats.XamlPackage))
+                    {
+                        tr.Save(fs, DataFormats.XamlPackage, true);
+                    }
+                }
+            }));
         }
 
         public static void AddBlock(Block from, FlowDocument to)
@@ -1088,9 +1164,9 @@ namespace BlitzChat
 
         private void loadHistory() {
             string file = Constants.HISTORYDIR + WindowName + "_" + DateTime.Now.ToString("dd.MM.yyyy") + ".hist";
+            TextRange tr = new TextRange(historydoc.ContentStart, historydoc.ContentEnd);
             if (File.Exists(file))
             {
-                TextRange tr = new TextRange(historydoc.ContentStart, historydoc.ContentEnd);
                 using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read))
                 {
                     if (tr.CanLoad(DataFormats.XamlPackage))
@@ -1099,6 +1175,8 @@ namespace BlitzChat
                     }
                 }
             }
+            else
+                tr.Text = "";
         }
         private void replaceLink(Paragraph paragraph, string uri)
         {

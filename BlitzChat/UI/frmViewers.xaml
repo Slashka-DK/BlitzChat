@@ -1,29 +1,30 @@
 ﻿<Window x:Class="BlitzChat.frmViewers"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Viewers" Height="97.304" Width="375" Background="Transparent" WindowStyle="None" AllowsTransparency="True" MouseDown="Window_MouseDown">
-    <Border x:Name="borderViewers" Background="#FF444141" CornerRadius="15,15,15,15">
+        Title="Viewers" Height="97.304" Width="Auto" Background="#FF444141" WindowStyle="None" ResizeMode="NoResize" AllowsTransparency="False" MouseDown="Window_MouseDown">
     <Grid UseLayoutRounding="False">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="1.5*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+            </Grid.ColumnDefinitions>
         <Label Content="Viewers" Grid.ColumnSpan="6" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="0" Grid.Row="0" FontSize="10" Foreground="White"  VerticalAlignment="Center" FontFamily="Lucida Sans" FontStyle="Italic"/>
-        <Label Content="Twitch" Grid.Column="0"  HorizontalAlignment="Center" Grid.Row="1" FontSize="10" Foreground="White"  VerticalAlignment="Top"/>
-        <Label Content="SC2TV" Grid.Column="1" HorizontalAlignment="Center" Grid.Row="1" FontSize="10" Foreground="White"   VerticalAlignment="Top" />
-        <Label Content="Cybergame" Grid.Column="2" HorizontalAlignment="Center" Grid.Row="1" FontSize="10" Foreground="White"  VerticalAlignment="Top"/>
-        <Label Content="Goodgame" Grid.Column="3" HorizontalAlignment="Center" Grid.Row="1" FontSize="10" Foreground="White"  VerticalAlignment="Top"/>
-        <Label Content="Hitbox" Grid.Column="4" HorizontalAlignment="Center" Grid.Row="1" FontSize="10" Foreground="White"  VerticalAlignment="Top"/>
-        <Label Content="Empire" Grid.Column="5" HorizontalAlignment="Center" Grid.Row="1" FontSize="10" Foreground="White"  VerticalAlignment="Top"/>
+        <Label x:Name="twitchName" Grid.Column="0"  HorizontalAlignment="Center" Grid.Row="1" FontSize="10" Foreground="White"  VerticalAlignment="Bottom"/>
+        <Label x:Name="sc2tvName" Grid.Column="1" HorizontalAlignment="Center" Grid.Row="1" FontSize="10" Foreground="White"   VerticalAlignment="Bottom" />
+        <Label x:Name="cybergameName"  Grid.Column="2" HorizontalAlignment="Center" Grid.Row="1" FontSize="10" Foreground="White"  VerticalAlignment="Bottom"/>
+        <Label x:Name="goodgameName" Grid.Column="3" HorizontalAlignment="Center" Grid.Row="1" FontSize="10" Foreground="White"  VerticalAlignment="Bottom"/>
+        <Label x:Name="Hitbox" Grid.Column="4" HorizontalAlignment="Center" Grid.Row="1" FontSize="10" Foreground="White"  VerticalAlignment="Bottom"/>
+        <Label x:Name="Empire" Grid.Column="5" HorizontalAlignment="Center" Grid.Row="1" FontSize="10" Foreground="White"  VerticalAlignment="Bottom"/>
+        <Image Source="pack://application:,,,/BlitzChat;component/Images/twitch.png" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Center" Width="20" Height="20" />
+        <Image Source="pack://application:,,,/BlitzChat;component/Images/sc2tv.png" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center" Width="20" Height="20" />
+        <Image Source="pack://application:,,,/BlitzChat;component/Images/cybergame.png" Grid.Row="1" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Center" Width="20" Height="20" />
+        <Image Source="pack://application:,,,/BlitzChat;component/Images/goodgame.png" Grid.Row="1" Grid.Column="3" VerticalAlignment="Top" HorizontalAlignment="Center" Width="20" Height="20" />
         <Label Content="0" x:Name="lblViewersTwitch" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
         <Label Content="0" x:Name="lblViewersSC2TV" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
         <Label Content="0" x:Name="lblViewersCyber" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
@@ -31,5 +32,4 @@
         <Label Content="0" x:Name="lblViewersHit" Grid.Column="4" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
         <Label Content="0" x:Name="lblViewersEmp" Grid.Column="5" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
     </Grid>
-    </Border>
 </Window>
