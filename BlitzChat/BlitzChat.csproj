@@ -156,24 +156,30 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ErrorLog.cs" />
-    <Compile Include="Forms\frmWindowsControl.xaml.cs">
+    <Compile Include="UI\frmHistory.xaml.cs">
+      <DependentUpon>frmHistory.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\usrRichTextBox.xaml.cs">
+      <DependentUpon>usrRichTextBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\ErrorLog.cs" />
+    <Compile Include="UI\frmWindowsControl.xaml.cs">
       <DependentUpon>frmWindowsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Forms\usrHeader.xaml.cs">
+    <Compile Include="UI\usrHeader.xaml.cs">
       <DependentUpon>usrHeader.xaml</DependentUpon>
     </Compile>
     <Compile Include="Serialized\ChannelsSaveXML.cs" />
     <Compile Include="Serialized\ChatSettingsXML.cs" />
-    <Compile Include="Controls\Constants.cs" />
+    <Compile Include="Utilities\Constants.cs" />
     <Compile Include="Controls\Cybergame.cs" />
     <Compile Include="Serialized\Windows.cs" />
     <Compile Include="Utilities\HTMLParsing.cs" />
     <Compile Include="Utilities\Irc.cs" />
-    <Compile Include="Forms\frmSettings.xaml.cs">
+    <Compile Include="UI\frmSettings.xaml.cs">
       <DependentUpon>frmSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmChatControl.xaml.cs">
+    <Compile Include="UI\frmChatControl.xaml.cs">
       <DependentUpon>frmChatControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utilities\NewWebClient.cs">
@@ -188,7 +194,7 @@
     <Compile Include="Controls\Smiles.cs" />
     <Compile Include="Controls\TwitchTV.cs" />
     <Compile Include="Utilities\UrlTools.cs" />
-    <Compile Include="Forms\frmViewers.xaml.cs">
+    <Compile Include="UI\frmViewers.xaml.cs">
       <DependentUpon>frmViewers.xaml</DependentUpon>
     </Compile>
     <Compile Include="Exceptions\WrongChannelNameException.cs" />
@@ -199,15 +205,19 @@
       <DependentUpon>Version.tt</DependentUpon>
     </Compile>
     <Compile Include="Controls\WindowControl.cs" />
-    <Page Include="Forms\frmWindowsControl.xaml">
+    <Page Include="UI\frmHistory.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Forms\usrHeader.xaml">
+    <Page Include="UI\frmWindowsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Forms\MainWindow.xaml">
+    <Page Include="UI\usrHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -215,19 +225,23 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Forms\MainWindow.xaml.cs">
+    <Compile Include="UI\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Forms\frmChatControl.xaml">
+    <Page Include="UI\frmChatControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Forms\frmSettings.xaml">
+    <Page Include="UI\frmSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Forms\frmViewers.xaml">
+    <Page Include="UI\frmViewers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\usrRichTextBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

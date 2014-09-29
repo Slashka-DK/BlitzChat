@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace BlitzChat.Forms
+namespace BlitzChat.UI
 {
     /// <summary>
-    /// Interaktionslogik für Header.xaml
+    /// Interaktionslogik für usrRichTextBox.xaml
     /// </summary>
-    public partial class usrHeader : UserControl
+    public partial class usrRichTextBox : UserControl
     {
-        public usrHeader()
+        public usrRichTextBox()
         {
             InitializeComponent();
         }

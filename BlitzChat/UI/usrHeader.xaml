@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="BlitzChat.UI.usrHeader"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" Height="Auto" Width="Auto" Background="Transparent">
+    <UserControl.ContextMenu>
+        <ContextMenu x:Name="headerContextMenu" />
+    </UserControl.ContextMenu>
+    <Grid x:Name="grid">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Label x:Name="lblProgramName" Grid.Row="0" Grid.Column="0" Content="BlitzChat v. 0.1a" Foreground="#FF00BFBF" Width="Auto" HorizontalAlignment="Center" FontSize="14" FontWeight="Bold" FontFamily="Rockwell" Background="{x:Null}">
+            <Label.Effect>
+                <DropShadowEffect Color="#FF00BFBF" BlurRadius="6" ShadowDepth="3" Opacity="0.5"/>
+            </Label.Effect>
+        </Label>
+        <Label x:Name="lblWindowName" Grid.Row="1" Content="Name" Grid.Column="0" HorizontalAlignment="Center" Width="Auto" VerticalAlignment="Bottom" Opacity="0.7" Foreground="#FF00BFBF" />
+    </Grid>
+</UserControl>

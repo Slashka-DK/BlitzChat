@@ -4,18 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BlitzChat.Forms;
+using BlitzChat.UI;
 using System.Windows;
 using System.IO;
 using NCrash.WinForms;
 using NCrash;
 using NCrash.Plugins;
 using NCrash.WPF;
+using System.Threading;
 namespace BlitzChat
 {
     class WindowControl
     {
-        Dictionary<string,MainWindow> listMainWindows;
+        volatile Dictionary<string,MainWindow> listMainWindows;
         Windows windows;
         frmWindowsControl frmControl;
         public WindowControl(){
@@ -66,6 +67,10 @@ namespace BlitzChat
                 File.Delete(fileChannels);
             if (File.Exists(fileSettings))
                 File.Delete(fileSettings);
+            string[] files = Directory.GetFiles(Constants.HISTORYDIR, "*"+windowToDelete+"*");
+            foreach (string file in files) {
+                File.Delete(file);
+            }
             serializeWindows();
         }
 
@@ -87,7 +92,7 @@ namespace BlitzChat
             MainWindow newWindow = new MainWindow(name);
             newWindow.OnAdditionalWindows += newWindow_OnAdditionalWindows;
             listMainWindows.Add(name,newWindow);
-            newWindow.Show();
+            listMainWindows[name].Show();
         }
         
         private void serializeWindows(){

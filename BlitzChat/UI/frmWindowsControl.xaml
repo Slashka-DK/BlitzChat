@@ -1,4 +1,4 @@
-﻿<Window x:Name="windowsControl" x:Class="BlitzChat.Forms.frmWindowsControl"
+﻿<Window x:Name="windowsControl" x:Class="BlitzChat.UI.frmWindowsControl"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:shell="clr-namespace:Microsoft.Windows.Shell;assembly=Microsoft.Windows.Shell"

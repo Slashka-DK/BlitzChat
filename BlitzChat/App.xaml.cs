@@ -29,6 +29,11 @@ namespace BlitzChat
             WindowControl wc = new WindowControl();
         }
 
+        void App_Exit(object sender, ExitEventArgs e)
+        {
+            Thread.Sleep(1000);
+        }
+
         void Current_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             try

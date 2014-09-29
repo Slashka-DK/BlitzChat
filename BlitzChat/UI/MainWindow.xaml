@@ -1,0 +1,101 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"
+        xmlns:shell="clr-namespace:Microsoft.Windows.Shell;assembly=Microsoft.Windows.Shell"
+        xmlns:local="clr-namespace:BlitzChat" x:Name="frmChat" x:Class="BlitzChat.MainWindow"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:ui="clr-namespace:BlitzChat.UI"
+        Title="BlitzChat" Opacity="1.0" Background="#FF444141"  Height="491" Width="379" AllowsTransparency="False" ResizeMode="CanResize" WindowStyle="None" MouseDown="chat_MouseDown" SizeChanged="frmChat_SizeChanged" UseLayoutRounding="False" LocationChanged="frmChat_LocationChanged" MouseUp="frmChat_MouseUp" Closing="frmChat_Closing" Loaded="frmChat_Loaded">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome
+            ResizeBorderThickness="5"
+            CornerRadius="20,20,20,20"
+            CaptionHeight="40"
+            GlassFrameThickness="0">
+        </shell:WindowChrome>
+    </shell:WindowChrome.WindowChrome>
+    
+    <Window.Resources>
+        <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">10</sys:Double>
+        <Style x:Key="{x:Type ContextMenu}" TargetType="{x:Type ContextMenu}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ContextMenu}">
+                        <Border Background="#FF00BFBF" BorderBrush="#FF00BFBF" BorderThickness="0.6">
+                            <StackPanel ClipToBounds="True" Orientation="Vertical" IsItemsHost="True"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <ControlTemplate x:Key="{x:Static MenuItem.TopLevelItemTemplateKey}" TargetType="{x:Type MenuItem}">
+            <Border Name="Border" >
+                <Grid>
+                    <ContentPresenter Margin="6,3,6,3" ContentSource="Header" RecognizesAccessKey="True" />
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsHighlighted" Value="true">
+                    <Setter TargetName="Border" Property="Background" Value="White"/>
+                    <Setter TargetName="Border" Property="BorderBrush" Value="Transparent"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="Gray"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+    </Window.Resources>
+
+    <Grid  x:Name="grid">
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="gridRowHeader" shell:WindowChrome.IsHitTestVisibleInChrome="True" Height="Auto" />
+            <RowDefinition Height="*" x:Name="Row1" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" x:Name="Column0" />
+        </Grid.ColumnDefinitions>
+        <Grid.ContextMenu>
+            <ContextMenu x:Name="mainContextMenu" Background="Transparent" BorderBrush="Transparent">
+                <MenuItem Header="Chat control" Background="#FF444141" Click="MenuItem_AddChat_Click"/>
+                <MenuItem Header="Clear сhat" Background="#FF444141" Click="clear_Chat_Click" />
+                <MenuItem Header="Windows control" Background="#FF444141" Click="addWindows_Click" />
+                <MenuItem Header="History" Background="#FF444141" Click="history_Click" />
+                <MenuItem x:Name="viewersMenuItem" Background="#FF444141" Header="Show viewers" Click="show_Viewers_Click"/>
+                <MenuItem x:Name="menuHeader" Header="Hide header" Background="#FF444141" Click="contextMenu_hideHeader_Click"/>
+                <MenuItem Header="Settings" Background="#FF444141" Click="contextMenu_Settings_Click"/>
+                <MenuItem Header="Close" Background="#FF444141" Click="contextMenu_Close_Click"/>
+            </ContextMenu>
+        </Grid.ContextMenu>
+        <ui:usrHeader  shell:WindowChrome.IsHitTestVisibleInChrome="True" Opacity="1" x:Name="header" Grid.Row="0" Grid.Column="0" />
+        <Label Grid.Row="0" Grid.Column="0" DockPanel.Dock="Top"  Foreground="AliceBlue"  HorizontalContentAlignment="Right"  HorizontalAlignment="Stretch" VerticalAlignment="Top" RenderTransformOrigin="0.053,0.308" FontSize="16" Grid.RowSpan="1" FontWeight="Bold" FontStyle="Italic" FontFamily="Rockwell Extra Bold" BorderThickness="0,0,0,10" Background="{x:Null}">
+    
+            <Button x:Name="bttnClose" shell:WindowChrome.IsHitTestVisibleInChrome="True" Height="18" Width="18" RenderTransformOrigin="0.717,0.5" BorderBrush="#FF00BFBF" Click="bttnClose_Click" Foreground="Transparent" BorderThickness="0" OpacityMask="#FF36A68D">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF36A68D"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <Image Width="16" Height="16" Source="pack://application:,,,/BlitzChat;component/Images/CloseButton.png" />
+            </Button>
+        </Label>
+        <ui:usrRichTextBox x:Name="usrRTB" Grid.Row="1"/>
+    </Grid>
+</Window>

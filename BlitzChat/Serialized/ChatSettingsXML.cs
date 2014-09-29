@@ -33,7 +33,7 @@ namespace BlitzChat
             ForeColor = "#FFFFFFFF";
             NicknameColor = "#FF48D1CC";
             DateColor = "#FFFFFFFF";
-            ChatOpacity = 0.85;
+            ChatOpacity = 1;
             TextFont = "Verdana";
             TextFontSize = 16.00;
             TopMost = true;

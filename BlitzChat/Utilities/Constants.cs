@@ -17,5 +17,7 @@ namespace BlitzChat
         public const string CONFIGPATH = "Config/";
         public const string CHANNELSFILE = "Channels.xml";
         public const string SETTINGSFILE = "ChatSettings.xml";
+        public const string HISTORYDIR = "History/";
+        public const string HISTORYPREFIX = "history_";
     }
 }
