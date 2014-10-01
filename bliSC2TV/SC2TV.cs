@@ -1,4 +1,5 @@
-﻿using HtmlAgilityPack;
+﻿using bliWebClient;
+using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -21,10 +22,11 @@ namespace bliSC2TV
         private const string channelUri = @"http://sc2tv.ru/channel/";
         private const string chatUri = @"http://chat.sc2tv.ru/memfs/channel-{0}.json";
         private const string imageUri = @"http://chat.sc2tv.ru/img/";
-        private int lastMsgId = 0;
-        private int lastMsgIndex = 0;
+        public int lastMsgId {get;set;}
         public event EventHandler<SC2TVMessage> messageReceived;
+
         public SC2TV(string channelName) {
+            lastMsgId = 0;
             smiles = new Dictionary<string, SC2TVSmile>();
             this.channelName = channelName.ToLower();
             loadSmiles();
@@ -117,7 +119,7 @@ namespace bliSC2TV
 
         public void loadChat() {
             bool completed = false;
-            using (WebClient wc = new WebClient())
+            using (WebClientTimeOut wc = new WebClientTimeOut(2000))
             {
                 
                 wc.Headers.Add("user-agent", "BlitzChat");
@@ -137,10 +139,8 @@ namespace bliSC2TV
                         {
                             Debug.Print("Chat messages deserializing exception: " + e.Message);
                         }
-                        finally {
-                            completed = true;
-                        }
                     }
+                    completed = true;
                 };
                 wc.DownloadStringAsync(new Uri(string.Format(chatUri, channelId)));
                 while (!completed) { Thread.Sleep(20); }

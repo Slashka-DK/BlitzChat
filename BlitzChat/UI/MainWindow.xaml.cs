@@ -43,7 +43,7 @@ namespace BlitzChat
         SolidColorBrush nicknameBrush;
         SolidColorBrush dateBrush;
         SolidColorBrush quoteBrush;
-        Settings frmSettings;
+        frmSettings frmSettings;
         Color nicknameColor { get; set; }
         ChatControl frmAddChat;
         ChatSettingsXML settingsChat;
@@ -111,7 +111,7 @@ namespace BlitzChat
             mainContextMenu.Foreground = new SolidColorBrush(Colors.White);
             header.Background = mainbackBrush;
             deserializeSettings();
-            frmSettings = new Settings();
+            frmSettings = new frmSettings();
             usrRTB.richChat.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
             setEvents();
             deserializeChannels();
@@ -374,6 +374,8 @@ namespace BlitzChat
 
         private void cmbFonts_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!frmSettings.IsLoaded)
+                return;
             //TODO: Maybe need loop change all blocks
             string newFont = frmSettings.cmbFonts.SelectedItem.ToString();
             font = new FontFamily(newFont);
@@ -386,9 +388,10 @@ namespace BlitzChat
 
         private void numSizeText_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
+            if (!frmSettings.IsLoaded)
+                return;
             double newSize = Convert.ToDouble(frmSettings.numSizeText.Value.Value);
             //TODO: Maybe need loop change all blocks
-            usrRTB.richChat.Document.Blocks.LastBlock.FontSize = newSize;
             settingsChat.TextFontSize = newSize;
             serializeSettings();
             applySettingsToBlocks();
@@ -443,7 +446,7 @@ namespace BlitzChat
 
         private void contextMenu_Close_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Do you want to save your chat to history?", "Save history?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Do you want to save your chat history?", "Save history?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 saveHistory();
             }
@@ -452,7 +455,7 @@ namespace BlitzChat
 
         private void bttnClose_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Do you want to save your chat to history?", "Save history?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Do you want to save your chat istory?", "Save history?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 saveHistory();
             }
@@ -614,19 +617,15 @@ namespace BlitzChat
         {
             try
             {
-                //do
-                //{
                 sc2tv = new SC2TV(channels.SC2TV);
+                sc2tv.lastMsgId = channels.SC2TVLastMessageId;
                 sc2tv.messageReceived += sc2tv_MessageReceived;
-                //    if (sc2tv.chat.chat.messages == null)
-                //    {
-                //        //MessageBox.Show("SC2TV chat is not loaded. There are some problems with server or you have not loaded chat on sc2tv. Try write something in channel.");
-                //        Thread.Sleep(1000);
-                //    }
-                //} while (sc2tv.chat.chat.messages == null);
+
                 while (!bSC2TVEnd)
                 {
                     sc2tv.loadChat();
+                    channels.SC2TVLastMessageId = sc2tv.lastMsgId;
+                    serializeChannels();
                     Thread.Sleep(100);
                 }
             }
@@ -698,40 +697,28 @@ namespace BlitzChat
             if (frmAddChat.listStreamers.SelectedItem.ToString().Contains(Constants.TWITCH))
             {
                 frmAddChat.cmbAddChat.Items.Add(Constants.TWITCH);
-                Paragraph p = new Paragraph();
-                p.Foreground = Brushes.Red;
-                p.Inlines.Add(String.Format("~~~~{0} Channel: \"{1}\" disconnected;", Constants.TWITCH, channels.Twitch));
-                usrRTB.richChat.Document.Blocks.Add(p);
+                notificateToChat(String.Format("~~~~{0} Channel: \"{1}\" disconnected;", Constants.TWITCH, channels.Twitch), Brushes.Red);
                 channels.Twitch = "";
                 bTwitchEnd = true;
             }
             else if (frmAddChat.listStreamers.SelectedItem.ToString().Contains(Constants.SC2TV))
             {
                 frmAddChat.cmbAddChat.Items.Add(Constants.SC2TV);
-                Paragraph p = new Paragraph();
-                p.Foreground = Brushes.Red;
-                p.Inlines.Add(String.Format("~~~~{0} Channel: \"{1}\" disconnected;", Constants.SC2TV, channels.SC2TV));
-                usrRTB.richChat.Document.Blocks.Add(p);
+                notificateToChat(String.Format("~~~~{0} Channel: \"{1}\" disconnected;", Constants.SC2TV, channels.SC2TV), Brushes.Red);
                 channels.SC2TV = "";
                 bSC2TVEnd = true;
             }
             else if (frmAddChat.listStreamers.SelectedItem.ToString().Contains(Constants.CYBERGAME))
             {
                 frmAddChat.cmbAddChat.Items.Add(Constants.CYBERGAME);
-                Paragraph p = new Paragraph();
-                p.Foreground = Brushes.Red;
-                p.Inlines.Add(String.Format("~~~~{0} Channel: \"{1}\" disconnected;", Constants.CYBERGAME, channels.Cybergame));
-                usrRTB.richChat.Document.Blocks.Add(p);
+                notificateToChat(String.Format("~~~~{0} Channel: \"{1}\" disconnected;", Constants.CYBERGAME, channels.Cybergame), Brushes.Red); 
                 channels.Cybergame = "";
                 bCybergameEnd = true;
             }
             else if (frmAddChat.listStreamers.SelectedItem.ToString().Contains(Constants.GOODGAME))
             {
                 frmAddChat.cmbAddChat.Items.Add(Constants.GOODGAME);
-                Paragraph p = new Paragraph();
-                p.Foreground = Brushes.Red;
-                p.Inlines.Add(String.Format("~~~~{0} Channel: \"{1}\" disconnected;", Constants.GOODGAME, channels.GoodGame));
-                usrRTB.richChat.Document.Blocks.Add(p);
+                notificateToChat(String.Format("~~~~{0} Channel: \"{1}\" disconnected;", Constants.GOODGAME, channels.GoodGame), Brushes.Red); 
                 channels.GoodGame = "";
                 bGoodgameEnd = true;
             }
@@ -940,10 +927,7 @@ namespace BlitzChat
             threadGoodg.Name = "Goodgame Thread";
             threadGoodg.IsBackground = true;
             bGoodgameEnd = false;
-            Paragraph p = new Paragraph();
-            p.Foreground = Brushes.Green;
-            p.Inlines.Add(String.Format("~~~~{0} Channel: \"{1}\" connected;", Constants.GOODGAME, channels.GoodGame));
-            usrRTB.richChat.Document.Blocks.Add(p);
+            notificateToChat(String.Format("~~~~{0} Channel: \"{1}\" connected;", Constants.GOODGAME, channels.GoodGame), Brushes.Green);
             threadGoodg.Start();
         }
 
@@ -954,10 +938,7 @@ namespace BlitzChat
             threadCyber.Name = "Cybergame Thread";
             threadCyber.IsBackground = true;
             bCybergameEnd = false;
-            Paragraph p = new Paragraph();
-            p.Foreground = Brushes.Green;
-            p.Inlines.Add(String.Format("~~~~{0} Channel: \"{1}\" connected;", Constants.CYBERGAME, channels.Cybergame));
-            usrRTB.richChat.Document.Blocks.Add(p);
+            notificateToChat(String.Format("~~~~{0} Channel: \"{1}\" connected;", Constants.CYBERGAME, channels.Cybergame), Brushes.Green);
             threadCyber.Start();
         }
 
@@ -968,10 +949,7 @@ namespace BlitzChat
             thrSC2TV.IsBackground = true;
             thrSC2TV.Name = "SC2TV Thread";
             bSC2TVEnd = false;
-            Paragraph p = new Paragraph();
-            p.Foreground = Brushes.Green;
-            p.Inlines.Add(String.Format("~~~~{0} Channel: \"{1}\" connected;", Constants.SC2TV, channels.SC2TV));
-            usrRTB.richChat.Document.Blocks.Add(p);
+            notificateToChat(String.Format("~~~~{0} Channel: \"{1}\" connected;", Constants.SC2TV, channels.SC2TV), Brushes.Green);
             thrSC2TV.Start();
         }
 
@@ -982,11 +960,17 @@ namespace BlitzChat
             twitchThread.IsBackground = true;
             twitchThread.Name = "Twitch Thread";
             bTwitchEnd = false;
-            Paragraph p = new Paragraph();
-            p.Foreground = Brushes.Green;
-            p.Inlines.Add(String.Format("~~~~{0} Channel: \"{1}\" connected;", Constants.TWITCH, channels.Twitch));
-            usrRTB.richChat.Document.Blocks.Add(p);
+            notificateToChat(String.Format("~~~~{0} Channel: \"{1}\" connected;", Constants.TWITCH, channels.Twitch), Brushes.Green);
             twitchThread.Start();
+        }
+
+        private void notificateToChat(string msg, Brush brush) {
+            Paragraph p = new Paragraph();
+            p.Foreground = brush;
+            p.FontSize = settingsChat.TextFontSize;
+            p.FontFamily = new FontFamily(settingsChat.TextFont);
+            p.Inlines.Add(msg);
+            usrRTB.richChat.Document.Blocks.Add(p);
         }
 
         /**
@@ -1375,6 +1359,7 @@ namespace BlitzChat
                 channels.SC2TV = desChannels.SC2TV;
                 channels.Cybergame = desChannels.Cybergame;
                 channels.GoodGame = desChannels.GoodGame;
+                channels.SC2TVLastMessageId = desChannels.SC2TVLastMessageId;
                 if (!String.IsNullOrEmpty(channels.Twitch))
                     addTwitch();
                 if (!String.IsNullOrEmpty(channels.SC2TV))

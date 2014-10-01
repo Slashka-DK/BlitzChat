@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="bliWebClient">
+      <HintPath>..\bliWebClient\bin\Debug\bliWebClient.dll</HintPath>
+    </Reference>
     <Reference Include="HtmlAgilityPack">
       <HintPath>E:\Ubiquitous\dotHtmlParser\bin\Debug\HtmlAgilityPack.dll</HintPath>
     </Reference>

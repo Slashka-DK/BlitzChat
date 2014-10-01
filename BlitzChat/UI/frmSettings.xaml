@@ -1,4 +1,4 @@
-﻿<Window x:Name="frmSettings" x:Class="BlitzChat.Settings"
+﻿<Window x:Name="frmSetting" x:Class="BlitzChat.frmSettings"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

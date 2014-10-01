@@ -10,6 +10,8 @@ namespace bliWebClient
     public  class NewWebClient : WebClient
     {
         public bool HeadOnly { get; set; }
+
+
         protected override WebRequest GetWebRequest(Uri address)
         {
             WebRequest req = base.GetWebRequest(address);
@@ -19,5 +21,6 @@ namespace bliWebClient
             }
             return req;
         }
+
     }
 }

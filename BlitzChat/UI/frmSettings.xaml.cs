@@ -17,9 +17,9 @@ namespace BlitzChat
     /// <summary>
     /// Interaktionslogik für Settings.xaml
     /// </summary>
-    public partial class Settings : Window
+    public partial class frmSettings : Window
     {
-        public Settings()
+        public frmSettings()
         {
             InitializeComponent();
 
