@@ -9,7 +9,7 @@
     <shell:WindowChrome.WindowChrome>
         <shell:WindowChrome
             ResizeBorderThickness="5"
-            CornerRadius="20,20,20,20"
+            CornerRadius="0"
             CaptionHeight="40"
             GlassFrameThickness="0">
         </shell:WindowChrome>
@@ -60,9 +60,9 @@
         </Grid.ColumnDefinitions>
         <Grid.ContextMenu>
             <ContextMenu x:Name="mainContextMenu" Background="Transparent" BorderBrush="Transparent">
-                <MenuItem Header="Chat control" Background="#FF444141" Click="MenuItem_AddChat_Click"/>
+                <MenuItem Header="Chat manager" Background="#FF444141" Click="MenuItem_AddChat_Click"/>
                 <MenuItem Header="Clear сhat" Background="#FF444141" Click="clear_Chat_Click" />
-                <MenuItem Header="Windows control" Background="#FF444141" Click="addWindows_Click" />
+                <MenuItem Header="Windows manager" Background="#FF444141" Click="addWindows_Click" />
                 <MenuItem Header="History" Background="#FF444141" Click="history_Click" />
                 <MenuItem x:Name="viewersMenuItem" Background="#FF444141" Header="Show viewers" Click="show_Viewers_Click"/>
                 <MenuItem x:Name="menuHeader" Header="Hide header" Background="#FF444141" Click="contextMenu_hideHeader_Click"/>

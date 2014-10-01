@@ -37,10 +37,10 @@ namespace BlitzChat
             TextFont = "Verdana";
             TextFontSize = 16.00;
             TopMost = true;
-            SmileSize = 0.0;
+            SmileSize = 15.0;
             NicknameBold = true;
             TextBold = false;
-            DateEnabled = true;
+            DateEnabled = false;
         }
     }
 }

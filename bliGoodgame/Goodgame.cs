@@ -17,17 +17,20 @@ namespace bliGoodgame
     {
         private WebSocket socket;
         private string channelName;
-        private const string socketAdress = "ws://chat.goodgame.ru:8080/chat/websocket";
+        private const string socketAdress = @"ws://chat.goodgame.ru:8080/chat/websocket";
+        private const string smileSpriteUri = @"http://goodgame.ru/images/chat/new-smiles-big-sprite.png";
         private int viewers = 0;
         private int lastMessageId = 0;
         private object locker = new object();
         private bool loadHistory;
         private uint channelId = 0;
         private string token = "";
-
+        private Dictionary<string, GoodGameSmile> smiles;
         public Goodgame(string channel, bool loadHistory = false) {
             this.channelName = channel;
             this.loadHistory = loadHistory;
+            smiles = new Dictionary<string, GoodGameSmile>();
+            loadSmiles();
         }
 
         public static bool channelExists(string channel) {
@@ -46,6 +49,74 @@ namespace bliGoodgame
             {
                 return false;
             }
+        }
+
+        private void loadSmiles(){
+            string[] array = new string[]{"peka",
+                                          "fp",
+                                          "bobr",
+                                          "pirat",
+                                          "gg",
+                                          "crab",
+                                          "gta",
+                                          "grin",
+                                          "shoked",
+                                          "smile",
+                                          "cry",
+                                          "rage",
+                                          "cool",
+                                          "slow",
+                                          "flame",
+                                          "car",
+                                          "love",
+                                          "tort",
+                                          "muta",
+                                          "bane",
+                                          "dm",
+                                          "bratok",
+                                          "grumpy",
+                                          "cat",
+                                          "zerg",
+                                          "thup",
+                                          "terran",
+                                          "toss",
+                                          "gend",
+                                          "rocket",
+                                          "rail",
+                                          "shaft",
+                                          "dog1",
+                                          "dog2",
+                                          "daun",
+                                          "getout",
+                                          "fireext",
+                                          "fry",
+                                          "bender",
+                                          "jackie",
+                                          "moscow",
+                                          "gabe",
+                                          "dendi",
+                                          "gglord",
+                                          "ggwp"
+            };
+            foreach(string code in array){
+                    smiles.Add(":" + code + ":", new GoodGameSmile(":" + code + ":", code + ".png", 0, 0));
+            }
+            
+        }
+
+        public Dictionary<string, GoodGameSmile> checkSmiles(string msg) {
+            Dictionary<string,GoodGameSmile> dictSmiles = new Dictionary<string,GoodGameSmile>();
+            string[] arrWords = msg.Split(' ');
+
+            foreach (string word in arrWords)
+            {
+                if (smiles.ContainsKey(word))
+                {
+                    dictSmiles.Add(word, smiles[word]);
+                }
+            }
+
+            return dictSmiles;
         }
 
         #region GoodGame Events
@@ -182,6 +253,16 @@ namespace bliGoodgame
                 {
                     newMessage.ToName = text.Substring(0, channelName.Length);
                     newMessage.Text = text.Substring(channelName.Length+1, text.Length-channelName.Length-1);
+                }
+                if(newMessage.Text.Contains("href=")){
+                    int linkStartIndex = newMessage.Text.IndexOf("<a");
+                    int linkStartLength = newMessage.Text.IndexOf("href=\"")+6 - linkStartIndex;
+                    string linkStart = newMessage.Text.Substring(linkStartIndex, linkStartLength);
+                    newMessage.Text = newMessage.Text.Replace(linkStart, "");
+                    int linkEndIndex = newMessage.Text.IndexOf("\">");
+                    int linkEndLength = newMessage.Text.IndexOf("</a>") + 4 - linkEndIndex;
+                    string linkEnd = newMessage.Text.Substring(linkEndIndex, linkEndLength);
+                    newMessage.Text = newMessage.Text.Replace(linkEnd, "");
                 }
                 if (OnMessageReceived != null)
                     OnMessageReceived(this, newMessage);

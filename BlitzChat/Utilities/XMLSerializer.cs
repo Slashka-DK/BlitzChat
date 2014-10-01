@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -34,12 +35,19 @@ namespace BlitzChat
         public static object deserialize(object ob, string file) {
             if (File.Exists(file))
             {
-                XmlSerializer deserializer = new XmlSerializer(ob.GetType());
-                TextReader reader = new StreamReader(@file);
-                object obj = deserializer.Deserialize(reader);
-                //Address XmlData = (Address)obj;
-                reader.Close();
-                return obj;
+                try
+                {
+                    XmlSerializer deserializer = new XmlSerializer(ob.GetType());
+                    TextReader reader = new StreamReader(@file);
+                    object obj = deserializer.Deserialize(reader);
+                    //Address XmlData = (Address)obj;
+                    reader.Close();
+                    return obj;
+                }
+                catch (Exception e) { 
+                    Debug.Print("Deserializing Exception: " +e.Message);
+                    return null;
+                }
             }else
                 return null;
         }

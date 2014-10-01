@@ -6,6 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlitzChat", "BlitzChat\Blit
 		{41D9B56F-C8F1-400B-96CC-8BE73D2AE8E8} = {41D9B56F-C8F1-400B-96CC-8BE73D2AE8E8}
 		{144B0B75-CA29-4221-A8E8-AF4E14F40AFD} = {144B0B75-CA29-4221-A8E8-AF4E14F40AFD}
 		{544CDF90-72BB-4349-A9F1-B050BA712F7D} = {544CDF90-72BB-4349-A9F1-B050BA712F7D}
+		{11C5CDDC-7C05-4B62-92E7-8C233888B6DD} = {11C5CDDC-7C05-4B62-92E7-8C233888B6DD}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bliGoodgame", "bliGoodgame\bliGoodgame.csproj", "{144B0B75-CA29-4221-A8E8-AF4E14F40AFD}"
@@ -16,6 +17,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bliWebClient", "bliWebClient\bliWebClient.csproj", "{41D9B56F-C8F1-400B-96CC-8BE73D2AE8E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bliTwitch", "bliTwitch\bliTwitch.csproj", "{544CDF90-72BB-4349-A9F1-B050BA712F7D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{41D9B56F-C8F1-400B-96CC-8BE73D2AE8E8} = {41D9B56F-C8F1-400B-96CC-8BE73D2AE8E8}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bliSC2TV", "bliSC2TV\bliSC2TV.csproj", "{11C5CDDC-7C05-4B62-92E7-8C233888B6DD}"
 	ProjectSection(ProjectDependencies) = postProject
 		{41D9B56F-C8F1-400B-96CC-8BE73D2AE8E8} = {41D9B56F-C8F1-400B-96CC-8BE73D2AE8E8}
 	EndProjectSection
@@ -42,15 +48,19 @@ Global
 		{544CDF90-72BB-4349-A9F1-B050BA712F7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{544CDF90-72BB-4349-A9F1-B050BA712F7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{544CDF90-72BB-4349-A9F1-B050BA712F7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11C5CDDC-7C05-4B62-92E7-8C233888B6DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11C5CDDC-7C05-4B62-92E7-8C233888B6DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11C5CDDC-7C05-4B62-92E7-8C233888B6DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11C5CDDC-7C05-4B62-92E7-8C233888B6DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		BuildVersion_AssemblyInfoFilename = 
-		BuildVersion_BuildVersioningStyle = None.None.None.None
-		BuildVersion_UpdateAssemblyVersion = False
-		BuildVersion_UpdateFileVersion = False
 		BuildVersion_UseGlobalSettings = False
+		BuildVersion_UpdateFileVersion = False
+		BuildVersion_UpdateAssemblyVersion = False
+		BuildVersion_BuildVersioningStyle = None.None.None.None
+		BuildVersion_AssemblyInfoFilename = 
 	EndGlobalSection
 EndGlobal

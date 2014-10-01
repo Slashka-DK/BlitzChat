@@ -28,6 +28,7 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 using BlitzChat.UI;
 using bliTwitch;
+using bliSC2TV;
 namespace BlitzChat
 {
     /// <summary>
@@ -48,7 +49,7 @@ namespace BlitzChat
         ChatSettingsXML settingsChat;
         ChannelsSaveXML channels;
         Twitch twitch;
-        Sc2Tv sc2tv;
+        SC2TV sc2tv;
         CybergameTV cyberg;
         Goodgame goodgame;
         private volatile bool bTwitchEnd;
@@ -442,13 +443,19 @@ namespace BlitzChat
 
         private void contextMenu_Close_Click(object sender, RoutedEventArgs e)
         {
-            saveHistory();
+            if (MessageBox.Show("Do you want to save your chat to history?", "Save history?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                saveHistory();
+            }
             this.Close();
         }
 
         private void bttnClose_Click(object sender, RoutedEventArgs e)
         {
-            saveHistory();
+            if (MessageBox.Show("Do you want to save your chat to history?", "Save history?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                saveHistory();
+            }
             this.Close();
         }
 
@@ -548,15 +555,13 @@ namespace BlitzChat
             addMessageToChat(2, nick, msg, "");
         }
 
-        private void sc2tv_MessageReceived(object sender, dotSC2TV.Sc2Chat.Sc2MessageEvent e)
+        private void sc2tv_MessageReceived(object sender, SC2TVMessage e)
         {
-            string to = e.message.to;
+            string to = e.ToName;
             if (to == null)
                 to = "";
-            string msg = e.message.message;
-            if (msg.Contains(":s:"))
-                msg = msg.Replace(":s:", ":");
-            addMessageToChat(1, e.message.name, msg, to);
+            string msg = e.Text;
+            addMessageToChat(1, e.Name, msg, to);
         }
 
         private void twitch_MessageReceived(object sender, TwitchMessage e)
@@ -611,8 +616,8 @@ namespace BlitzChat
             {
                 //do
                 //{
-                sc2tv = new Sc2Tv(channels.SC2TV);
-                sc2tv.chat.MessageReceived += sc2tv_MessageReceived;
+                sc2tv = new SC2TV(channels.SC2TV);
+                sc2tv.messageReceived += sc2tv_MessageReceived;
                 //    if (sc2tv.chat.chat.messages == null)
                 //    {
                 //        //MessageBox.Show("SC2TV chat is not loaded. There are some problems with server or you have not loaded chat on sc2tv. Try write something in channel.");
@@ -621,7 +626,7 @@ namespace BlitzChat
                 //} while (sc2tv.chat.chat.messages == null);
                 while (!bSC2TVEnd)
                 {
-                    sc2tv.chat.DownloadChat(false);
+                    sc2tv.loadChat();
                     Thread.Sleep(100);
                 }
             }
@@ -631,7 +636,7 @@ namespace BlitzChat
             }
             finally
             {
-                sc2tv.chat.Stop();
+                sc2tv.Stop();
                 sc2tv = null;
             }
         }
@@ -674,16 +679,16 @@ namespace BlitzChat
                         viewers.lblViewersGG.Content = goodgame.getViewersCount();
 
                 }));
-                Thread.Sleep(20000);
+                Thread.Sleep(5000);
             }
         }
 
         public void threadSaveHistory(object obj)
         {
-            while(true){
-                Thread.Sleep(60000);
-                saveHistory();
-            }
+            //while(true){
+            //    Thread.Sleep(60000);
+            //    saveHistory();
+            //}
         }
         #endregion
 
@@ -693,24 +698,40 @@ namespace BlitzChat
             if (frmAddChat.listStreamers.SelectedItem.ToString().Contains(Constants.TWITCH))
             {
                 frmAddChat.cmbAddChat.Items.Add(Constants.TWITCH);
+                Paragraph p = new Paragraph();
+                p.Foreground = Brushes.Red;
+                p.Inlines.Add(String.Format("~~~~{0} Channel: \"{1}\" disconnected;", Constants.TWITCH, channels.Twitch));
+                usrRTB.richChat.Document.Blocks.Add(p);
                 channels.Twitch = "";
                 bTwitchEnd = true;
             }
             else if (frmAddChat.listStreamers.SelectedItem.ToString().Contains(Constants.SC2TV))
             {
                 frmAddChat.cmbAddChat.Items.Add(Constants.SC2TV);
+                Paragraph p = new Paragraph();
+                p.Foreground = Brushes.Red;
+                p.Inlines.Add(String.Format("~~~~{0} Channel: \"{1}\" disconnected;", Constants.SC2TV, channels.SC2TV));
+                usrRTB.richChat.Document.Blocks.Add(p);
                 channels.SC2TV = "";
                 bSC2TVEnd = true;
             }
             else if (frmAddChat.listStreamers.SelectedItem.ToString().Contains(Constants.CYBERGAME))
             {
                 frmAddChat.cmbAddChat.Items.Add(Constants.CYBERGAME);
+                Paragraph p = new Paragraph();
+                p.Foreground = Brushes.Red;
+                p.Inlines.Add(String.Format("~~~~{0} Channel: \"{1}\" disconnected;", Constants.CYBERGAME, channels.Cybergame));
+                usrRTB.richChat.Document.Blocks.Add(p);
                 channels.Cybergame = "";
                 bCybergameEnd = true;
             }
             else if (frmAddChat.listStreamers.SelectedItem.ToString().Contains(Constants.GOODGAME))
             {
                 frmAddChat.cmbAddChat.Items.Add(Constants.GOODGAME);
+                Paragraph p = new Paragraph();
+                p.Foreground = Brushes.Red;
+                p.Inlines.Add(String.Format("~~~~{0} Channel: \"{1}\" disconnected;", Constants.GOODGAME, channels.GoodGame));
+                usrRTB.richChat.Document.Blocks.Add(p);
                 channels.GoodGame = "";
                 bGoodgameEnd = true;
             }
@@ -919,6 +940,10 @@ namespace BlitzChat
             threadGoodg.Name = "Goodgame Thread";
             threadGoodg.IsBackground = true;
             bGoodgameEnd = false;
+            Paragraph p = new Paragraph();
+            p.Foreground = Brushes.Green;
+            p.Inlines.Add(String.Format("~~~~{0} Channel: \"{1}\" connected;", Constants.GOODGAME, channels.GoodGame));
+            usrRTB.richChat.Document.Blocks.Add(p);
             threadGoodg.Start();
         }
 
@@ -929,6 +954,10 @@ namespace BlitzChat
             threadCyber.Name = "Cybergame Thread";
             threadCyber.IsBackground = true;
             bCybergameEnd = false;
+            Paragraph p = new Paragraph();
+            p.Foreground = Brushes.Green;
+            p.Inlines.Add(String.Format("~~~~{0} Channel: \"{1}\" connected;", Constants.CYBERGAME, channels.Cybergame));
+            usrRTB.richChat.Document.Blocks.Add(p);
             threadCyber.Start();
         }
 
@@ -939,6 +968,10 @@ namespace BlitzChat
             thrSC2TV.IsBackground = true;
             thrSC2TV.Name = "SC2TV Thread";
             bSC2TVEnd = false;
+            Paragraph p = new Paragraph();
+            p.Foreground = Brushes.Green;
+            p.Inlines.Add(String.Format("~~~~{0} Channel: \"{1}\" connected;", Constants.SC2TV, channels.SC2TV));
+            usrRTB.richChat.Document.Blocks.Add(p);
             thrSC2TV.Start();
         }
 
@@ -949,6 +982,10 @@ namespace BlitzChat
             twitchThread.IsBackground = true;
             twitchThread.Name = "Twitch Thread";
             bTwitchEnd = false;
+            Paragraph p = new Paragraph();
+            p.Foreground = Brushes.Green;
+            p.Inlines.Add(String.Format("~~~~{0} Channel: \"{1}\" connected;", Constants.TWITCH, channels.Twitch));
+            usrRTB.richChat.Document.Blocks.Add(p);
             twitchThread.Start();
         }
 
@@ -1034,12 +1071,16 @@ namespace BlitzChat
                 //smiles.checkEmotions(ref paragraph, settingsChat.SmileSize);
                 usrRTB.richChat.Document.Blocks.Add(paragraph);
                 string uri = "";
-                while (!String.IsNullOrEmpty(uri = UrlTools.DetectURLs(paragraph)))
+                TextRange trMessage = FindWordFromPosition(paragraph.ContentStart, msg);
+                replaceAllSmiles(chattype, msg, paragraph);
+                while (!String.IsNullOrEmpty(uri = UrlTools.DetectURLs(trMessage)))
                 {
-                    replaceLink(paragraph, uri);
+                    
+                    TextRange trUri = FindWordFromPosition(trMessage.Start, uri);
+                    replaceLink(trUri, uri);
                 }
 
-                replaceAllSmiles(chattype, msg, paragraph);
+                
                 
                 if (usrRTB.richChat.VerticalScrollBarVisibility != ScrollBarVisibility.Visible)
                     usrRTB.richChat.ScrollToEnd();
@@ -1048,18 +1089,28 @@ namespace BlitzChat
 
         private void replaceAllSmiles(int type,string msg, Paragraph p)
         {
+            TextRange tr = FindWordFromPosition(p.ContentStart, msg);
             switch (type) { 
                 case 0:
-                    TwitchSmile smile;
-                    TextRange tr = new TextRange(p.ContentStart, p.ContentEnd);
-                    while ((smile = twitch.checkSmiles(tr.Text)) != null)
+                    TwitchSmile twitchsmile;
+                    while ((twitchsmile = twitch.checkSmiles(tr.Text)) != null)
                     {
-                        replaceTwitchSmile(smile, p);
+                        replaceTwitchSmile(twitchsmile, p);
                     }
                     break;
                 case 1:
+                    foreach (KeyValuePair<string, SC2TVSmile> smile in sc2tv.checkSmiles(msg))
+                    {
+                        replaceSC2TVSmile(smile.Value, p);
+                    }
+                    break;
                 case 2:
                 case 3:
+                    foreach (KeyValuePair<string, GoodGameSmile> smile in goodgame.checkSmiles(msg))
+                    {
+                        replaceGoodgameSmile(smile.Value, p);
+                    }
+                    break;
                 case 4:
                 case 5:
                 default:
@@ -1068,9 +1119,48 @@ namespace BlitzChat
 
         }
 
+        private void replaceGoodgameSmile(GoodGameSmile smile, Paragraph p)
+        {
+            TextRange tr = FindWordFromPosition(p.ContentStart, smile.code);
+            if (tr != null)
+            {
+                tr.Text = "";
+                Image img = new Image();
+                BitmapImage bitmapImage = new BitmapImage(new Uri(@"pack://application:,,,/BlitzChat;component/Smiles/goodgame/"+ smile.path));
+                
+                // Create a CroppedBitmap based off of a xaml defined resource.
+                //CroppedBitmap cb = new CroppedBitmap(bitmapImage,
+                //   new Int32Rect(0, smile.y, smile.width, smile.heght));       //select region rect
+
+                img.Source = bitmapImage;
+                //img.Stretch = Stretch.Fill;
+                img.Width = bitmapImage.Width/2 + settingsChat.SmileSize;
+                img.Height = bitmapImage.Height/2 + settingsChat.SmileSize;
+                new InlineUIContainer(img, tr.Start);
+            }
+
+           
+        }
+
+        private void replaceSC2TVSmile(SC2TVSmile smile, Paragraph p)
+        {
+            TextRange tr = FindWordFromPosition(p.ContentStart, smile.code);
+            if (tr != null)
+            {
+                tr.Text = "";
+                Image img = new Image();
+                BitmapImage bitmapImage = new BitmapImage(smile.uri);
+                img.Source = bitmapImage;
+                //img.Stretch = Stretch.Fill;
+                img.Width = smile.width+ settingsChat.SmileSize;
+                img.Height = smile.height + settingsChat.SmileSize;
+                new InlineUIContainer(img, tr.Start);
+            }
+        }
+
         private void replaceTwitchSmile(TwitchSmile smile, Paragraph p)
         {
-            TextRange tr = FindWordFromPosition(p.ContentStart,smile.regex);
+            TextRange tr = FindWordFromPosition(p.ContentStart,smile.key);
             if (tr != null)
             {
                 tr.Text = "";
@@ -1178,13 +1268,14 @@ namespace BlitzChat
             else
                 tr.Text = "";
         }
-        private void replaceLink(Paragraph paragraph, string uri)
+        private void replaceLink(TextRange tr, string uri)
         {
-            TextRange tr = FindWordFromPosition(paragraph.ContentStart, uri);
             tr.Text = "";
             string link = uri;
-            Run r = new Run("Link");
-            Hyperlink hl = new Hyperlink(r, tr.Start);
+            
+            Hyperlink hl = new Hyperlink(tr.Start, tr.End);
+            hl.Inlines.Add("Link");
+            hl.ToolTip = uri;
             Regex regex = new Regex("href=\"([^\"]*)\"");
             if (regex.IsMatch(uri))
             {
@@ -1251,6 +1342,8 @@ namespace BlitzChat
             if (File.Exists("Config/" + WindowName + "_" + "ChatSettings.xml"))
             {
                 ChatSettingsXML newSettings = (ChatSettingsXML)XMLSerializer.deserialize(settingsChat, "Config/" + WindowName + "_" + "ChatSettings.xml");
+                if (newSettings == null)
+                    return;
                 settingsChat.BackgroundColor = newSettings.BackgroundColor;
                 settingsChat.ChatOpacity = newSettings.ChatOpacity;
                 settingsChat.ForeColor = newSettings.ForeColor;
@@ -1276,6 +1369,8 @@ namespace BlitzChat
             if (File.Exists("Config/" + WindowName + "_" + "Channels.xml"))
             {
                 ChannelsSaveXML desChannels = (ChannelsSaveXML)XMLSerializer.deserialize(channels, "Config/" + WindowName + "_" + "Channels.xml");
+                if(desChannels == null)
+                    return;
                 channels.Twitch = desChannels.Twitch;
                 channels.SC2TV = desChannels.SC2TV;
                 channels.Cybergame = desChannels.Cybergame;

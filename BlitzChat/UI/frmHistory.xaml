@@ -7,7 +7,7 @@
     <shell:WindowChrome.WindowChrome>
         <shell:WindowChrome
             ResizeBorderThickness="5"
-            CornerRadius="20,20,20,20"
+            CornerRadius="0"
             CaptionHeight="40"
             GlassFrameThickness="0">
         </shell:WindowChrome>

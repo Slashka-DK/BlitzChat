@@ -24,9 +24,9 @@ namespace BlitzChat
            }
            return false;
         }
-        public static string DetectURLs(Paragraph par)
+        public static string DetectURLs(TextRange tr)
         {
-            string paragraphText = new TextRange(par.ContentStart, par.ContentEnd).Text;
+            string paragraphText = tr.Text;
             Regex aRegex = new Regex("(<a.*href=\".*\".*(</a>|/>))");
             if (aRegex.IsMatch(paragraphText)) {
                 MatchCollection mCol = aRegex.Matches(paragraphText);

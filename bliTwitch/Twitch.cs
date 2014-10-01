@@ -19,6 +19,7 @@ namespace bliTwitch
         private string ircUrl;
         private int port;
         private bool isStopped = false;
+        private string[] regexSignsEmotions;
         Dictionary<string, TwitchSmile> smiles;
         public string getChannelName {
             get { return channelName; }
@@ -32,6 +33,25 @@ namespace bliTwitch
             BackgroundWorker bg = new BackgroundWorker();
             bg.DoWork += bg_DoWork;
             bg.RunWorkerAsync();
+            regexSignsEmotions = new string[]{"B-?\\)",
+                                            "\\:-?[z|Z|\\|]",
+                                            "\\:-?\\)",
+                                            "\\:-?\\(",
+                                            "\\:-?(p|P)",
+                                            "\\;-?(p|P)",
+                                            "\\&lt\\;3",
+                                            "\\:-?(?:\\/|\\\\)(?!\\/)",
+                                            "\\;-?\\)",
+                                            "R-?\\)",
+                                            "[o|O](_|\\.)[o|O]",
+                                            "\\:-?D",
+                                            "\\:-?(o|O)",
+                                            "\\&gt\\;\\(",
+                                            "\\:\\&gt\\;",
+                                            "\\:-?(S|s)",
+                                            "#-?[\\\\/]",
+                                            "\\&lt\\;\\]",
+                                            ":-?(?:7|L)"};
         }
 
         void bg_DoWork(object sender, DoWorkEventArgs e)
@@ -229,6 +249,7 @@ namespace bliTwitch
                                 smile.uri = new Uri(imgopt[0]["url"].ToString());
                                 if(imgopt[0]["emoticon_set"]!=null)
                                     smile.emoticon_set = imgopt[0]["emoticon_set"].ToString();
+                                smile.key = smile.regex;
                                 smiles.Add(smile.regex, smile);
                             }
 
@@ -242,9 +263,23 @@ namespace bliTwitch
 
         public TwitchSmile checkSmiles(string message) {
             string[] arrWords = message.Split(' ');
+
             foreach (string word in arrWords) {
                 if (smiles.ContainsKey(word)) {
                     return smiles[word];
+                }
+                else{
+                    Regex reg = null;
+                    foreach(string pattern in regexSignsEmotions){
+                        string newWord = word.Replace("<","&lt;");
+                        newWord = newWord.Replace(">", "&gt;");
+                        reg = new Regex(pattern);
+                        if (reg.IsMatch(newWord))
+                        {
+                            smiles[pattern].key = word;
+                            return smiles[pattern];
+                        }
+                    }
                 }
             }
             return null;
@@ -263,6 +298,7 @@ namespace bliTwitch
     {
         public Uri uri { get; set; }
         public string regex { get; set; }
+        public string key { get; set; }
         public int width { get; set; }
         public int height { get; set; }
         public string emoticon_set { get; set; }
