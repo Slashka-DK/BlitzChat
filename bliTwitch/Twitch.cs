@@ -263,7 +263,8 @@ namespace bliTwitch
 
         public TwitchSmile checkSmiles(string message) {
             string[] arrWords = message.Split(' ');
-
+            if (smiles.Count <= 0)
+                return null;
             foreach (string word in arrWords) {
                 if (smiles.ContainsKey(word)) {
                     return smiles[word];

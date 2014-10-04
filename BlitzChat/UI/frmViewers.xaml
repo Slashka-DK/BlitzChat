@@ -1,7 +1,7 @@
 ﻿<Window x:Class="BlitzChat.frmViewers"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Viewers" Height="97.304" Width="Auto" Background="#FF444141" BorderBrush="#FF00BFBF" BorderThickness="0,1,0,0" WindowStyle="None" ResizeMode="NoResize" AllowsTransparency="False" MouseDown="Window_MouseDown">
+        Title="Viewers" Height="97.304" Width="Auto" Background="#FF444141" BorderBrush="#FF00BFBF" BorderThickness="0,1,0,0" WindowStyle="None" ResizeMode="NoResize" AllowsTransparency="False" MouseDown="Window_MouseDown" ShowInTaskbar="False">
     <Grid UseLayoutRounding="False">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

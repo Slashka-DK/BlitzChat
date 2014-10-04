@@ -1,19 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using BlitzChat;
 
 namespace BlitzChat.UI
 {
@@ -58,6 +49,7 @@ namespace BlitzChat.UI
         private void bttnLoad_Click(object sender, RoutedEventArgs e)
         {
             Paragraph p = new Paragraph();
+
             usrRTB.richChat.Width = col0.ActualWidth + col1.ActualWidth;
             p.Inlines.Add("Loading...");
             
@@ -85,7 +77,15 @@ namespace BlitzChat.UI
                         tr.Load(fs, DataFormats.XamlPackage);
                     }
                 }
+                foreach (Block b in usrRTB.richChat.Document.Blocks) {
+                    b.TextAlignment = TextAlignment.Left;
+                }
             }));  
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            usrRTB.richChat.Width = col0.ActualWidth + col1.ActualWidth;
         }
     }
 }

@@ -1,17 +1,9 @@
 ﻿using BlitzChat.Serialized;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BlitzChat.UI;
 using System.Windows;
 using System.IO;
-using NCrash.WinForms;
-using NCrash;
-using NCrash.Plugins;
-using NCrash.WPF;
-using System.Threading;
 namespace BlitzChat
 {
     class WindowControl

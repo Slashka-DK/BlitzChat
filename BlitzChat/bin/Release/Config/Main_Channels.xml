@@ -2,6 +2,7 @@
 <ChannelsSaveXML xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Twitch>qqmb3r</Twitch>
   <SC2TV>qqmber</SC2TV>
+  <SC2TVLastMessageId>0</SC2TVLastMessageId>
   <Cybergame>qqmber</Cybergame>
   <GoodGame>qqmber</GoodGame>
 </ChannelsSaveXML>

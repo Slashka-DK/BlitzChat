@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using Blue.Windows;
 using System.Windows.Input;
 namespace BlitzChat
 {

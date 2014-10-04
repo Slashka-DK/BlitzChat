@@ -14,7 +14,6 @@
             GlassFrameThickness="0">
         </shell:WindowChrome>
     </shell:WindowChrome.WindowChrome>
-    
     <Window.Resources>
         <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">10</sys:Double>
         <Style x:Key="{x:Type ContextMenu}" TargetType="{x:Type ContextMenu}">

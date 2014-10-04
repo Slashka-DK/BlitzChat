@@ -1,26 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using BlitzChat;
 using System.IO;
 using System.Threading;
 using System.Windows.Media.Animation;
-using Blue.Windows;
 using System.Reflection;
-using dotCybergame;
 using System.Net;
 using HtmlAgilityPack;
 using bliGoodgame;
@@ -29,6 +19,7 @@ using System.Diagnostics;
 using BlitzChat.UI;
 using bliTwitch;
 using bliSC2TV;
+using bliCybergame;
 namespace BlitzChat
 {
     /// <summary>
@@ -50,7 +41,7 @@ namespace BlitzChat
         ChannelsSaveXML channels;
         Twitch twitch;
         SC2TV sc2tv;
-        CybergameTV cyberg;
+        Cybergame cyberg;
         Goodgame goodgame;
         private volatile bool bTwitchEnd;
         private volatile bool bSC2TVEnd;
@@ -70,6 +61,7 @@ namespace BlitzChat
         #region Constructors
         public MainWindow(string name)
         {
+            Timeline.DesiredFrameRateProperty.OverrideMetadata(typeof(Timeline), new FrameworkPropertyMetadata { DefaultValue = 20 });
             historydoc = new FlowDocument();
             header = new usrHeader();
             header.lblProgramName.Content = name;
@@ -123,6 +115,7 @@ namespace BlitzChat
             preSetSettings();
             RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
             loadHistory();
+            
         }
         #endregion
 
@@ -481,12 +474,26 @@ namespace BlitzChat
         {
             if (frmAddChat != null && frmAddChat.IsLoaded)
                 return;
+
             frmAddChat = new ChatControl();
+            foreach (object item in listChats)
+                frmAddChat.listStreamers.Items.Add(item);
             frmAddChat.bttnAddChat.Click += bttnAddChat_Click;
             frmAddChat.listStreamers.SelectionChanged += listStreamers_SelectionChanged;
             frmAddChat.bttnRemove.Click += bttnRemove_Click;
-            foreach (object item in listChats)
-                frmAddChat.listStreamers.Items.Add(item);
+            initCmbAddChat();
+            frmAddChat.cmbAddChat.SelectedIndex = 0;
+            frmAddChat.Show();
+        }
+
+        private void initCmbAddChat()
+        {
+            frmAddChat.cmbAddChat.Items.Add(Constants.TWITCH);
+            frmAddChat.cmbAddChat.Items.Add(Constants.SC2TV);
+            frmAddChat.cmbAddChat.Items.Add(Constants.CYBERGAME);
+            frmAddChat.cmbAddChat.Items.Add(Constants.GOODGAME);
+            frmAddChat.cmbAddChat.Items.Add(Constants.HITBOX);
+            frmAddChat.cmbAddChat.Items.Add(Constants.EMPIRE);
             if (channels != null && !String.IsNullOrEmpty(channels.Twitch))
             {
                 frmAddChat.cmbAddChat.Items.Remove(Constants.TWITCH);
@@ -506,8 +513,6 @@ namespace BlitzChat
                 frmAddChat.cmbAddChat.Items.Remove(Constants.GOODGAME);
 
             }
-            frmAddChat.cmbAddChat.SelectedIndex = 0;
-            frmAddChat.Show();
         }
 
         private void bttnRemove_Click(object sender, RoutedEventArgs e)
@@ -551,11 +556,9 @@ namespace BlitzChat
         }
 
 
-        private void cybergame_MessageReceived(object sender, MessageReceivedEventArgs e)
+        private void cybergame_MessageReceived(object sender, CybergameMessage e)
         {
-            string nick = e.Message.alias;
-            string msg = e.Message.message;
-            addMessageToChat(2, nick, msg, "");
+            addMessageToChat(2, e.Name, e.Text, e.ToName);
         }
 
         private void sc2tv_MessageReceived(object sender, SC2TVMessage e)
@@ -598,18 +601,15 @@ namespace BlitzChat
         {
             try
             {
-                cyberg = new CybergameTV(channels.Cybergame);
-                cyberg.cb.Start();
-                cyberg.connectCybergame();
+                cyberg = new Cybergame(channels.Cybergame, true);
             }
             catch (WrongChannelNameException)
             {
                 MessageBox.Show("Wrong channelname was saved to the file. If it happens again. Please delete data from file Channels.xml or use Add chat form to delete it.");
             }
-            cyberg.cb.OnChatMessage += new EventHandler<MessageReceivedEventArgs>(cybergame_MessageReceived);
+            cyberg.messageReceived += new EventHandler<CybergameMessage>(cybergame_MessageReceived);
             while (!bCybergameEnd) { Thread.Sleep(100); }
-            cyberg.cb.Stop();
-            cyberg.cb.Close();
+            cyberg.Stop();
             cyberg = null;
         }
 
@@ -673,7 +673,7 @@ namespace BlitzChat
                         //TODO Cannot parse from webpage, because no viewer counter available
                     }
                     if (cyberg != null)
-                        viewers.lblViewersCyber.Content = cyberg.cb.Viewers;
+                        //viewers.lblViewersCyber.Content = cyberg.cb.Viewers;
                     if (goodgame != null)
                         viewers.lblViewersGG.Content = goodgame.getViewersCount();
 
@@ -696,34 +696,32 @@ namespace BlitzChat
         {
             if (frmAddChat.listStreamers.SelectedItem.ToString().Contains(Constants.TWITCH))
             {
-                frmAddChat.cmbAddChat.Items.Add(Constants.TWITCH);
-                notificateToChat(String.Format("~~~~{0} Channel: \"{1}\" disconnected;", Constants.TWITCH, channels.Twitch), Brushes.Red);
+                notificateToChat(String.Format("-{0} Channel: \"{1}\" disconnected;", Constants.TWITCH, channels.Twitch), Brushes.Red);
                 channels.Twitch = "";
                 bTwitchEnd = true;
             }
             else if (frmAddChat.listStreamers.SelectedItem.ToString().Contains(Constants.SC2TV))
             {
-                frmAddChat.cmbAddChat.Items.Add(Constants.SC2TV);
-                notificateToChat(String.Format("~~~~{0} Channel: \"{1}\" disconnected;", Constants.SC2TV, channels.SC2TV), Brushes.Red);
+                notificateToChat(String.Format("-{0} Channel: \"{1}\" disconnected;", Constants.SC2TV, channels.SC2TV), Brushes.Red);
                 channels.SC2TV = "";
                 bSC2TVEnd = true;
             }
             else if (frmAddChat.listStreamers.SelectedItem.ToString().Contains(Constants.CYBERGAME))
             {
-                frmAddChat.cmbAddChat.Items.Add(Constants.CYBERGAME);
-                notificateToChat(String.Format("~~~~{0} Channel: \"{1}\" disconnected;", Constants.CYBERGAME, channels.Cybergame), Brushes.Red); 
+                notificateToChat(String.Format("-{0} Channel: \"{1}\" disconnected;", Constants.CYBERGAME, channels.Cybergame), Brushes.Red); 
                 channels.Cybergame = "";
                 bCybergameEnd = true;
             }
             else if (frmAddChat.listStreamers.SelectedItem.ToString().Contains(Constants.GOODGAME))
             {
-                frmAddChat.cmbAddChat.Items.Add(Constants.GOODGAME);
-                notificateToChat(String.Format("~~~~{0} Channel: \"{1}\" disconnected;", Constants.GOODGAME, channels.GoodGame), Brushes.Red); 
+                notificateToChat(String.Format("-{0} Channel: \"{1}\" disconnected;", Constants.GOODGAME, channels.GoodGame), Brushes.Red); 
                 channels.GoodGame = "";
                 bGoodgameEnd = true;
             }
             listChats.RemoveAt(frmAddChat.listStreamers.SelectedIndex);
             frmAddChat.listStreamers.Items.Remove(frmAddChat.listStreamers.SelectedItem);
+            frmAddChat.cmbAddChat.Items.Clear();
+            initCmbAddChat();
             frmAddChat.cmbAddChat.SelectedIndex = 0;
             if (frmAddChat.listStreamers.Items.Count <= 0)
             {
@@ -745,7 +743,8 @@ namespace BlitzChat
                         {
                             channels.Twitch = frmAddChat.txtChannel.Text;
                             frmAddChat.listStreamers.Items.Add(Constants.TWITCH + ": " + channels.Twitch);
-                            frmAddChat.cmbAddChat.Items.Remove(Constants.TWITCH);
+                            frmAddChat.cmbAddChat.Items.Clear();
+                            initCmbAddChat();
                             frmAddChat.cmbAddChat.SelectedIndex = 0;
                             addTwitch();
                         }
@@ -759,7 +758,8 @@ namespace BlitzChat
                             webcl.Load("http://sc2tv.ru/channel/" + frmAddChat.txtChannel.Text);
                             channels.SC2TV = frmAddChat.txtChannel.Text;
                             frmAddChat.listStreamers.Items.Add(Constants.SC2TV + ": " + channels.SC2TV);
-                            frmAddChat.cmbAddChat.Items.Remove(Constants.SC2TV);
+                            frmAddChat.cmbAddChat.Items.Clear();
+                            initCmbAddChat();
                             frmAddChat.cmbAddChat.SelectedIndex = 0;
                             addSC2TV();
                         }
@@ -770,23 +770,16 @@ namespace BlitzChat
 
                         break;
                     case Constants.CYBERGAME:
-                        try
+                        if(Cybergame.channelExists(frmAddChat.txtChannel.Text))
                         {
-                            //new CybergameTV(frmAddChat.txtChannel.Text);
-                            using (var client = new NewWebClient())
-                            {
-                                client.HeadOnly = true;
-                                // fine, no content downloaded
-                                // throws 404
-                                client.DownloadString("http://cybergame.tv/" + frmAddChat.txtChannel.Text);
-                            }
                             channels.Cybergame = frmAddChat.txtChannel.Text;
                             frmAddChat.listStreamers.Items.Add(Constants.CYBERGAME + ": " + channels.Cybergame);
-                            frmAddChat.cmbAddChat.Items.Remove(Constants.CYBERGAME);
+                            frmAddChat.cmbAddChat.Items.Clear();
+                            initCmbAddChat();
                             frmAddChat.cmbAddChat.SelectedIndex = 0;
                             addCybergame();
                         }
-                        catch (WebException)
+                        else
                         {
                             MessageBox.Show("Cybergame channel " + frmAddChat.txtChannel.Text + " not exists! Please try again!", "Channel not exists", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
@@ -796,7 +789,8 @@ namespace BlitzChat
                         {
                             channels.GoodGame = frmAddChat.txtChannel.Text;
                             frmAddChat.listStreamers.Items.Add(Constants.GOODGAME + ": " + channels.GoodGame);
-                            frmAddChat.cmbAddChat.Items.Remove(Constants.GOODGAME);
+                            frmAddChat.cmbAddChat.Items.Clear();
+                            initCmbAddChat();
                             frmAddChat.cmbAddChat.SelectedIndex = 0;
                             addGoodgame();
                         }
@@ -927,7 +921,7 @@ namespace BlitzChat
             threadGoodg.Name = "Goodgame Thread";
             threadGoodg.IsBackground = true;
             bGoodgameEnd = false;
-            notificateToChat(String.Format("~~~~{0} Channel: \"{1}\" connected;", Constants.GOODGAME, channels.GoodGame), Brushes.Green);
+            notificateToChat(String.Format("+{0} Channel: \"{1}\" connected;", Constants.GOODGAME, channels.GoodGame), Brushes.Green);
             threadGoodg.Start();
         }
 
@@ -938,7 +932,7 @@ namespace BlitzChat
             threadCyber.Name = "Cybergame Thread";
             threadCyber.IsBackground = true;
             bCybergameEnd = false;
-            notificateToChat(String.Format("~~~~{0} Channel: \"{1}\" connected;", Constants.CYBERGAME, channels.Cybergame), Brushes.Green);
+            notificateToChat(String.Format("+{0} Channel: \"{1}\" connected;", Constants.CYBERGAME, channels.Cybergame), Brushes.Green);
             threadCyber.Start();
         }
 
@@ -949,7 +943,7 @@ namespace BlitzChat
             thrSC2TV.IsBackground = true;
             thrSC2TV.Name = "SC2TV Thread";
             bSC2TVEnd = false;
-            notificateToChat(String.Format("~~~~{0} Channel: \"{1}\" connected;", Constants.SC2TV, channels.SC2TV), Brushes.Green);
+            notificateToChat(String.Format("+{0} Channel: \"{1}\" connected;", Constants.SC2TV, channels.SC2TV), Brushes.Green);
             thrSC2TV.Start();
         }
 
@@ -960,7 +954,7 @@ namespace BlitzChat
             twitchThread.IsBackground = true;
             twitchThread.Name = "Twitch Thread";
             bTwitchEnd = false;
-            notificateToChat(String.Format("~~~~{0} Channel: \"{1}\" connected;", Constants.TWITCH, channels.Twitch), Brushes.Green);
+            notificateToChat(String.Format("+{0} Channel: \"{1}\" connected;", Constants.TWITCH, channels.Twitch), Brushes.Green);
             twitchThread.Start();
         }
 
@@ -983,11 +977,19 @@ namespace BlitzChat
             {
                 string path = "pack://application:,,,/BlitzChat;component/images/";
                 Paragraph paragraph = new Paragraph();
-                paragraph.TextAlignment = TextAlignment.Left;
+                Paragraph parHist = new Paragraph();
+                TextBlock block = new TextBlock();
+                
+                block.TextWrapping = TextWrapping.Wrap;
                 if (settingsChat.DateEnabled)
-                    paragraph.Inlines.Add(new Run(DateTime.Now.ToShortTimeString() + " ") { FontWeight = FontWeights.Normal, Foreground = dateBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
-                else
-                    paragraph.Inlines.Add("");
+                {
+                    block.Inlines.Add(new Run(DateTime.Now.ToShortTimeString() + " ") { FontWeight = FontWeights.Normal, Foreground = dateBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
+                    parHist.Inlines.Add(new Run(DateTime.Now.ToShortTimeString() + " ") { FontWeight = FontWeights.Normal, Foreground = dateBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
+                }
+                else{
+                    block.Inlines.Add("");
+                    parHist.Inlines.Add("");
+                }
                 string imagesource = "";
                 double imagewidth = 16;
                 double imageheight = 16;
@@ -1033,66 +1035,97 @@ namespace BlitzChat
                 }
                 if (!String.IsNullOrEmpty(imagesource))
                 {
-                    AddImage(paragraph, imagesource, imagewidth, imageheight);
-                    paragraph.Inlines.Add(" ");
+                    AddImage(block.Inlines, imagesource, imagewidth, imageheight);
+                    AddImage(parHist.Inlines, imagesource, imagewidth, imageheight);
+                    block.Inlines.Add(" ");
+                    parHist.Inlines.Add(" ");
                 }
-                paragraph.Inlines.Add(new Run(nickname + ": ") { FontWeight = nicknameWeight, Foreground = nicknameBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
+                block.Inlines.Add(new Run(nickname + ": ") { FontWeight = nicknameWeight, Foreground = nicknameBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
+                parHist.Inlines.Add(new Run(nickname + ": ") { FontWeight = nicknameWeight, Foreground = nicknameBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
                 if (!String.IsNullOrEmpty(to) && quoteColor)
-                {
-                    paragraph.Inlines.Add(new Run(to + ", ") { FontWeight = FontWeights.Bold, Foreground = quoteBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
+                {  
+                    block.Inlines.Add(new Run(to + ", ") { FontWeight = FontWeights.Bold, Foreground = quoteBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
+                    parHist.Inlines.Add(new Run(to + ", ") { FontWeight = FontWeights.Bold, Foreground = quoteBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
                 }
                 else if (!quoteColor && !String.IsNullOrEmpty(to))
                 {
-                    paragraph.Inlines.Add(new Run(to + ", ") { FontWeight = FontWeights.Bold, Foreground = textBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
+                    block.Inlines.Add(new Run(to + ", ") { FontWeight = FontWeights.Bold, Foreground = textBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
+                    parHist.Inlines.Add(new Run(to + ", ") { FontWeight = FontWeights.Bold, Foreground = textBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
                 }
                 if (quoteColor)
-                    paragraph.Inlines.Add(new Run(msg) { FontWeight = this.textWeight, Foreground = quoteBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
-
+                {
+                    block.Inlines.Add(new Run(msg) { FontWeight = this.textWeight, Foreground = quoteBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
+                    parHist.Inlines.Add(new Run(msg) { FontWeight = this.textWeight, Foreground = quoteBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
+                }
                 else
-                    paragraph.Inlines.Add(new Run(msg) { FontWeight = this.textWeight, Foreground = textBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
-
-
+                {
+                    block.Inlines.Add(new Run(msg) { FontWeight = this.textWeight, Foreground = textBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
+                    parHist.Inlines.Add(new Run(msg) { FontWeight = this.textWeight, Foreground = textBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
+                }
                 //smiles.checkEmotions(ref paragraph, settingsChat.SmileSize);
+                paragraph.Inlines.Add(block);
                 usrRTB.richChat.Document.Blocks.Add(paragraph);
+                historydoc.Blocks.Add(parHist);
                 string uri = "";
-                TextRange trMessage = FindWordFromPosition(paragraph.ContentStart, msg);
-                replaceAllSmiles(chattype, msg, paragraph);
+                TextRange trMessage = FindWordFromPosition(block.ContentStart, msg);
+                TextRange trMessageHist = FindWordFromPosition(parHist.ContentStart, msg);
+                replaceAllSmiles(chattype, msg, trMessage);
+                replaceAllSmiles(chattype, msg, trMessageHist);
                 while (!String.IsNullOrEmpty(uri = UrlTools.DetectURLs(trMessage)))
                 {
                     
                     TextRange trUri = FindWordFromPosition(trMessage.Start, uri);
+                    TextRange trUriHist = FindWordFromPosition(trMessageHist.Start, uri);
                     replaceLink(trUri, uri);
+                    replaceLink(trUriHist, uri);
                 }
 
-                
-                
                 if (usrRTB.richChat.VerticalScrollBarVisibility != ScrollBarVisibility.Visible)
                     usrRTB.richChat.ScrollToEnd();
+                //ColorAnimation animColor = new ColorAnimation();
+                //animColor.From = Colors.Transparent;
+                //SolidColorBrush brush = new SolidColorBrush(Colors.Transparent);
+                //brush.Opacity = 0.15;
+                //paragraph.Background = brush;
+                //animColor.From = fromHexColor("#FFDAA520");
+                //RepeatBehaviorConverter rbc = new RepeatBehaviorConverter();
+                //animColor.RepeatBehavior = (RepeatBehavior)rbc.ConvertFromString("0:0:3");
+                //animColor.Duration = TimeSpan.FromSeconds(1.5);
+                //paragraph.Background.BeginAnimation(SolidColorBrush.ColorProperty, animColor);
+                DoubleAnimation da = new DoubleAnimation();
+                da.From = 0;
+                da.To = 1;
+                da.RepeatBehavior = (RepeatBehavior)new RepeatBehaviorConverter().ConvertFromString("0:0:1");
+                da.Duration = TimeSpan.FromSeconds(1);
+                block.BeginAnimation(OpacityProperty, da);
             }));
         }
 
-        private void replaceAllSmiles(int type,string msg, Paragraph p)
+        private void replaceAllSmiles(int type,string msg, TextRange range)
         {
-            TextRange tr = FindWordFromPosition(p.ContentStart, msg);
+            TextRange tr = FindWordFromPosition(range.Start, msg);
+            if (tr == null)
+                return;
             switch (type) { 
                 case 0:
                     TwitchSmile twitchsmile;
                     while ((twitchsmile = twitch.checkSmiles(tr.Text)) != null)
                     {
-                        replaceTwitchSmile(twitchsmile, p);
+                        replaceTwitchSmile(twitchsmile, tr);
                     }
                     break;
                 case 1:
                     foreach (KeyValuePair<string, SC2TVSmile> smile in sc2tv.checkSmiles(msg))
                     {
-                        replaceSC2TVSmile(smile.Value, p);
+                        replaceSC2TVSmile(smile.Value, tr);
                     }
                     break;
                 case 2:
+                    break;
                 case 3:
                     foreach (KeyValuePair<string, GoodGameSmile> smile in goodgame.checkSmiles(msg))
                     {
-                        replaceGoodgameSmile(smile.Value, p);
+                        replaceGoodgameSmile(smile.Value, tr);
                     }
                     break;
                 case 4:
@@ -1103,9 +1136,9 @@ namespace BlitzChat
 
         }
 
-        private void replaceGoodgameSmile(GoodGameSmile smile, Paragraph p)
+        private void replaceGoodgameSmile(GoodGameSmile smile, TextRange range)
         {
-            TextRange tr = FindWordFromPosition(p.ContentStart, smile.code);
+            TextRange tr = FindWordFromPosition(range.Start, smile.code);
             if (tr != null)
             {
                 tr.Text = "";
@@ -1120,15 +1153,15 @@ namespace BlitzChat
                 //img.Stretch = Stretch.Fill;
                 img.Width = bitmapImage.Width/2 + settingsChat.SmileSize;
                 img.Height = bitmapImage.Height/2 + settingsChat.SmileSize;
-                new InlineUIContainer(img, tr.Start);
+                new InlineUIContainer(img, range.Start);
             }
 
            
         }
 
-        private void replaceSC2TVSmile(SC2TVSmile smile, Paragraph p)
+        private void replaceSC2TVSmile(SC2TVSmile smile, TextRange range)
         {
-            TextRange tr = FindWordFromPosition(p.ContentStart, smile.code);
+            TextRange tr = FindWordFromPosition(range.Start, smile.code);
             if (tr != null)
             {
                 tr.Text = "";
@@ -1138,13 +1171,13 @@ namespace BlitzChat
                 //img.Stretch = Stretch.Fill;
                 img.Width = smile.width+ settingsChat.SmileSize;
                 img.Height = smile.height + settingsChat.SmileSize;
-                new InlineUIContainer(img, tr.Start);
+                new InlineUIContainer(img, range.Start);
             }
         }
 
-        private void replaceTwitchSmile(TwitchSmile smile, Paragraph p)
+        private void replaceTwitchSmile(TwitchSmile smile, TextRange range)
         {
-            TextRange tr = FindWordFromPosition(p.ContentStart,smile.key);
+            TextRange tr = FindWordFromPosition(range.Start, smile.key);
             if (tr != null)
             {
                 tr.Text = "";
@@ -1154,25 +1187,25 @@ namespace BlitzChat
                 //img.Stretch = Stretch.Fill;
                 img.Width = smile.width + settingsChat.SmileSize;
                 img.Height = smile.height + settingsChat.SmileSize;
-                new InlineUIContainer(img, tr.Start);
+                new InlineUIContainer(img, range.Start);
             }
         }
 
         private void saveHistory()
         {
-            if (Dispatcher.CheckAccess())
-            {
-                if (!File.Exists(Constants.HISTORYDIR + WindowName + "_" + DateTime.Now.ToString("dd.MM.yyyy") + ".hist"))
-                    historydoc.Blocks.Clear();
-                AddDocument(usrRTB.richChat.Document, historydoc);
-            }
-            else
-                Dispatcher.BeginInvoke(new Action(delegate
-            {
-                if (!File.Exists(Constants.HISTORYDIR + WindowName + "_" + DateTime.Now.ToString("dd.MM.yyyy") + ".hist"))
-                    historydoc.Blocks.Clear();
-                AddDocument(usrRTB.richChat.Document, historydoc);
-            }));
+            //if (Dispatcher.CheckAccess())
+            //{
+            //    if (!File.Exists(Constants.HISTORYDIR + WindowName + "_" + DateTime.Now.ToString("dd.MM.yyyy") + ".hist"))
+            //        historydoc.Blocks.Clear();
+            //    AddDocument(usrRTB.richChat.Document, historydoc);
+            //}
+            //else
+            //    Dispatcher.BeginInvoke(new Action(delegate
+            //{
+            //    if (!File.Exists(Constants.HISTORYDIR + WindowName + "_" + DateTime.Now.ToString("dd.MM.yyyy") + ".hist"))
+            //        historydoc.Blocks.Clear();
+            //    AddDocument(usrRTB.richChat.Document, historydoc);
+            //}));
             
             if (!Directory.Exists(Constants.HISTORYDIR)) {
                 Directory.CreateDirectory(Constants.HISTORYDIR);
@@ -1245,8 +1278,16 @@ namespace BlitzChat
                 {
                     if (tr.CanLoad(DataFormats.XamlPackage))
                     {
-                        tr.Load(fs, DataFormats.XamlPackage);
-                    }
+                        try
+                        {
+                            tr.Load(fs, DataFormats.XamlPackage);
+                        }
+                        catch (Exception e) {
+                            Debug.WriteLine(e.Message);
+                            fs.Close();
+                            File.Move(file, file + "corrupted/");
+                        }
+                     }
                 }
             }
             else
@@ -1307,7 +1348,7 @@ namespace BlitzChat
             return null;
         }
 
-        private void AddImage(Paragraph paragraph, string path, double w, double h)
+        private void AddImage(InlineCollection inlines, string path, double w, double h)
         {
             BitmapImage bi = new BitmapImage(new Uri(@path));
             Image image = new Image();
@@ -1316,7 +1357,7 @@ namespace BlitzChat
             image.Height = h;
             InlineUIContainer container = new InlineUIContainer(image);
             container.BaselineAlignment = BaselineAlignment.Center;
-            paragraph.Inlines.Add(container);
+            inlines.Add(container);
         }
         #endregion
 

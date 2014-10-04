@@ -81,6 +81,9 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="bliCybergame">
+      <HintPath>..\bliCybergame\bin\Debug\bliCybergame.dll</HintPath>
+    </Reference>
     <Reference Include="bliGoodgame">
       <HintPath>..\bliGoodgame\bin\Debug\bliGoodgame.dll</HintPath>
     </Reference>
@@ -90,27 +93,9 @@
     <Reference Include="bliTwitch">
       <HintPath>..\bliTwitch\bin\Debug\bliTwitch.dll</HintPath>
     </Reference>
-    <Reference Include="dotCybergame">
-      <HintPath>E:\Ubiquitous\dotCybergame\bin\Debug\dotCybergame.dll</HintPath>
-    </Reference>
-    <Reference Include="dotInterfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>E:\Ubiquitous\dotSC2TV\bin\Debug\dotInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="dotIRC, Version=0.4.1.20677, Culture=neutral, PublicKeyToken=1f67a0ba34110caa, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>E:\Ubiquitous\dotIRC\bin\Debug\net40\dotIRC.dll</HintPath>
-    </Reference>
-    <Reference Include="dotJson, Version=4.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>E:\Ubiquitous\dotSC2TV\bin\Debug\dotJson.dll</HintPath>
-    </Reference>
-    <Reference Include="dotSC2TV, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>E:\Ubiquitous\dotSC2TV\bin\Debug\dotSC2TV.dll</HintPath>
-    </Reference>
-    <Reference Include="dotWebSocket">
-      <HintPath>E:\Ubiquitous\dotCybergame\bin\Debug\dotWebSocket.dll</HintPath>
     </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.4.8.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -119,20 +104,8 @@
     <Reference Include="Microsoft.Windows.Shell">
       <HintPath>..\..\..\..\..\Users\Dimitry\Desktop\WpfCustomChromeLib\Libraries\CustomChromeLibrary\bin\Debug\Microsoft.Windows.Shell.dll</HintPath>
     </Reference>
-    <Reference Include="NCrash">
-      <HintPath>E:\GitHub\NCrash\NCrash.WPF\bin\Debug\NCrash.dll</HintPath>
-    </Reference>
-    <Reference Include="NCrash.WinForms">
-      <HintPath>E:\GitHub\NCrash\NCrash.WinForms\bin\Debug\NCrash.WinForms.dll</HintPath>
-    </Reference>
-    <Reference Include="NCrash.WPF">
-      <HintPath>E:\GitHub\NCrash\NCrash.WPF\bin\Debug\NCrash.WPF.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Ookii.Dialogs.Wpf">
-      <HintPath>E:\GitHub\NCrash\NCrash.WPF\bin\Debug\Ookii.Dialogs.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="StickyWindow, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -162,13 +135,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Settings\Settings.Designer.cs">
+    <Compile Include="Settings\URLs.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
+      <DependentUpon>URLs.settings</DependentUpon>
     </Compile>
     <Compile Include="UI\frmHistory.xaml.cs">
       <DependentUpon>frmHistory.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\usrAbout.xaml.cs">
+      <DependentUpon>usrAbout.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\usrRichTextBox.xaml.cs">
       <DependentUpon>usrRichTextBox.xaml</DependentUpon>
@@ -183,7 +159,6 @@
     <Compile Include="Serialized\ChannelsSaveXML.cs" />
     <Compile Include="Serialized\ChatSettingsXML.cs" />
     <Compile Include="Utilities\Constants.cs" />
-    <Compile Include="Controls\Cybergame.cs" />
     <Compile Include="Serialized\Windows.cs" />
     <Compile Include="Utilities\HTMLParsing.cs" />
     <Compile Include="Utilities\Irc.cs" />
@@ -201,7 +176,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Sc2Tv.cs" />
     <Compile Include="Utilities\UrlTools.cs" />
     <Compile Include="UI\frmViewers.xaml.cs">
       <DependentUpon>frmViewers.xaml</DependentUpon>
@@ -219,6 +193,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\frmWindowsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\usrAbout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -278,9 +256,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="Settings\Settings.settings">
+    <None Include="Settings\URLs.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <LastGenOutput>URLs.Designer.cs</LastGenOutput>
     </None>
     <None Include="Version.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -385,7 +363,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_DetectChanges="False" BuildVersion_IncrementBeforeBuild="False" BuildVersion_UseUniversalClock="False" BuildVersion_StartDate="2014/9/1" BuildVersion_AssemblyInfoFilename="" BuildVersion_UpdateFileVersion="False" BuildVersion_UpdateAssemblyVersion="False" BuildVersion_BuildAction="Both" BuildVersion_BuildVersioningStyle="None.None.None.None" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.None" BuildVersion_BuildAction="Both" BuildVersion_UpdateAssemblyVersion="False" BuildVersion_UpdateFileVersion="False" BuildVersion_AssemblyInfoFilename="" BuildVersion_StartDate="2014/9/1" BuildVersion_UseUniversalClock="False" BuildVersion_IncrementBeforeBuild="False" BuildVersion_DetectChanges="False" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>

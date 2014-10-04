@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:shell="clr-namespace:Microsoft.Windows.Shell;assembly=Microsoft.Windows.Shell"
         xmlns:ui="clr-namespace:BlitzChat.UI"
-        Title="History" Background="#FF444141" WindowStyle="None" Topmost="True" BorderBrush="#FF00BFBF" BorderThickness="2" AllowsTransparency="False" ResizeMode="CanResize" MouseDown="frmHistory_MouseDown" Width="299" Height="287">
+        Title="History" Background="#FF444141" WindowStyle="None" Topmost="True" BorderBrush="#FF00BFBF" BorderThickness="2" AllowsTransparency="False" ResizeMode="CanResize" SizeChanged="Window_SizeChanged" MouseDown="frmHistory_MouseDown" Width="299" Height="287" ShowInTaskbar="False">
     <shell:WindowChrome.WindowChrome>
         <shell:WindowChrome
             ResizeBorderThickness="5"

@@ -2,7 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Settings" Background="#FF444141" WindowStyle="None" Topmost="True" BorderBrush="#FF00BFBF" BorderThickness="2" AllowsTransparency="False" ResizeMode="NoResize" MouseDown="frmSettings_MouseDown" Width="299" Height="287">
+        xmlns:ui="clr-namespace:BlitzChat.UI"
+        Title="Settings" Background="#FF444141" WindowStyle="None" Topmost="True" BorderBrush="#FF00BFBF" BorderThickness="2" AllowsTransparency="False" ResizeMode="NoResize" MouseDown="frmSettings_MouseDown" Width="299" Height="287" ShowInTaskbar="False">
     <Grid Background="Transparent" Margin="2,0,-2,0">
         <Button x:Name="bttnClose" Height="18" Width="18" RenderTransformOrigin="-1.278,0.556" BorderBrush="#FF00BFBF" Click="bttnClose_Click" Foreground="Transparent" BorderThickness="0" OpacityMask="#FF36A68D" Margin="271,0,6,263" VerticalAlignment="Bottom" Panel.ZIndex="1">
             <Button.Style>
@@ -82,7 +83,7 @@
                     <Button x:Name="bttnSmileSmaller" Content="-" HorizontalAlignment="Left" Margin="136,111,0,0" VerticalAlignment="Top" Width="20" Height="23" RenderTransformOrigin="1.494,0.342" BorderBrush="#FF00BFBF"/>
                 </Grid>
             </TabItem>
-            <TabItem x:Name="tabServers" Header="Servers" Foreground="#FF00BFBF" Height="21" VerticalAlignment="Bottom" Opacity="0.8" Margin="0,0,-11,1" BorderBrush="{x:Null}" FontSize="14" HorizontalAlignment="Right" Width="56">
+            <TabItem x:Name="tabServers" Header="URLs" Foreground="#FF00BFBF" Height="21" VerticalAlignment="Bottom" Opacity="0.8" Margin="0,0,-11,1" BorderBrush="{x:Null}" FontSize="14" HorizontalAlignment="Right" Width="56">
                 <TabItem.Background>
                     <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
                         <GradientStop Color="#FFF0F0F0" Offset="0"/>
@@ -92,6 +93,17 @@
                 <Grid Margin="-2,20,2,-26" Height="236">
                     <TextBox x:Name="txtTwitch" HorizontalAlignment="Right" HorizontalContentAlignment="Center" Height="23" Margin="0,16,10,0" TextWrapping="Wrap" Text="irc.twitch.tv" VerticalAlignment="Top" Width="171" TextChanged="txtTwitch_TextChanged" IsHitTestVisible="True" BorderBrush="#FF00BFBF"/>
                     <Label Content="Twitch:" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="10,12,0,0" VerticalAlignment="Top"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="About" Foreground="#FF00BFBF" Height="21" VerticalAlignment="Bottom" Opacity="0.8" Margin="0,0,-11,1" BorderBrush="{x:Null}" FontSize="14" HorizontalAlignment="Right" Width="56">
+                <TabItem.Background>
+                    <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                        <GradientStop Color="#FFF0F0F0" Offset="0"/>
+                        <GradientStop Color="#FF444141" Offset="1"/>
+                    </LinearGradientBrush>
+                </TabItem.Background>
+                <Grid Margin="-2,20,2,-26" Height="236">
+                    <ui:usrAbout />
                 </Grid>
             </TabItem>
         </TabControl>

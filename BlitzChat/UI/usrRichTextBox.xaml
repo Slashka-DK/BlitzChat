@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <RichTextBox x:Name="richChat" 
@@ -12,10 +12,11 @@
                          BorderThickness="0" 
                          VerticalScrollBarVisibility="Auto" 
                          SelectionBrush="{x:Null}" 
-                         
+                         HorizontalContentAlignment="Left"
                          TextOptions.TextFormattingMode="Display" 
                          HorizontalAlignment="Left" IsUndoEnabled="False" 
                          IsTabStop="False" Panel.ZIndex="1" IsDocumentEnabled="True">
+
             <RichTextBox.Resources>
                 <Style TargetType="{x:Type RichTextBox}">
                     <Setter Property="Template">
@@ -31,7 +32,7 @@
                         </Setter.Value>
                     </Setter>
                 </Style>
-                <Style TargetType="{x:Type Paragraph}">
+                <Style TargetType="{x:Type TextBlock}">
                     <Setter Property="Margin" Value="0"/>
                     <Setter Property="Padding" Value="0"/>
                 </Style>
@@ -126,15 +127,14 @@
                     <Style TargetType="{x:Type Paragraph}">
                         <Setter Property="Margin" Value="5,5,20,5"/>
                         <Setter Property="Padding" Value="0"/>
+
                     </Style>
                     <Style TargetType="{x:Type InlineUIContainer}">
                         <Setter Property="BaselineAlignment" Value="Bottom"/>
                     </Style>
                 </FlowDocument.Resources>
-                <Paragraph OverridesDefaultStyle="True" TextAlignment="Left">
-                    <InlineUIContainer x:Name="inlUISmiles" />
-                </Paragraph>
             </FlowDocument>
+
         </RichTextBox>
     </Grid>
 </UserControl>

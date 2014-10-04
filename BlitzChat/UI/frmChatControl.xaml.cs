@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace BlitzChat
 {
@@ -22,12 +13,7 @@ namespace BlitzChat
         public ChatControl()
         {
             InitializeComponent();
-            cmbAddChat.Items.Add(Constants.TWITCH);
-            cmbAddChat.Items.Add(Constants.SC2TV);
-            cmbAddChat.Items.Add(Constants.CYBERGAME);
-            cmbAddChat.Items.Add(Constants.GOODGAME);
-            cmbAddChat.Items.Add(Constants.HITBOX);
-            cmbAddChat.Items.Add(Constants.EMPIRE);
+            
             cmbAddChat.SelectedIndex = 0;
             txtChannel.AddHandler(FrameworkElement.MouseLeftButtonDownEvent, new MouseButtonEventHandler(txtChannel_MouseLeftButtonDown), true);
         }

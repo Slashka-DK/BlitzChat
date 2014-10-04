@@ -26,6 +26,8 @@ namespace BlitzChat
         }
         public static string DetectURLs(TextRange tr)
         {
+            if (tr == null)
+                return "";
             string paragraphText = tr.Text;
             Regex aRegex = new Regex("(<a.*href=\".*\".*(</a>|/>))");
             if (aRegex.IsMatch(paragraphText)) {

@@ -1,7 +1,7 @@
 ﻿<Window x:Name="frmAddChat" x:Class="BlitzChat.ChatControl"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Add chat" Height="300" Width="300" WindowStyle="None" Topmost="True" BorderBrush="#FF00BFBF" BorderThickness="2" AllowsTransparency="False" ResizeMode="NoResize" Background="Transparent" MouseDown="frmAddChat_MouseDown" >
+        Title="Add chat" Height="300" Width="300" WindowStyle="None" Topmost="True" BorderBrush="#FF00BFBF" BorderThickness="2" AllowsTransparency="False" ResizeMode="NoResize" Background="Transparent" MouseDown="frmAddChat_MouseDown" ShowInTaskbar="False" >
     <Grid Background="#FF444141" Margin="0,-1,0,1">
         <Button x:Name="bttnClose" RenderTransformOrigin="0.717,0.5" BorderBrush="#FF00BFBF" Click="bttnClose_Click" Foreground="Transparent" BorderThickness="0" OpacityMask="#FF36A68D" Margin="265,10,10,266">
             <Button.Style>
