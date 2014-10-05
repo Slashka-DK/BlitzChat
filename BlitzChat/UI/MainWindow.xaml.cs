@@ -20,6 +20,7 @@ using BlitzChat.UI;
 using bliTwitch;
 using bliSC2TV;
 using bliCybergame;
+using System.ComponentModel;
 namespace BlitzChat
 {
     /// <summary>
@@ -43,17 +44,20 @@ namespace BlitzChat
         SC2TV sc2tv;
         Cybergame cyberg;
         Goodgame goodgame;
+        private volatile bool bScrolled = true;
         private volatile bool bTwitchEnd;
         private volatile bool bSC2TVEnd;
         private volatile bool bCybergameEnd;
         private volatile bool bGoodgameEnd;
         private volatile bool bViewersEnd = true;
+        bool stopSaveBlocks = false;
         FlowDocument historydoc;
         public string WindowName { get; set; }
         List<string> listChats;
         FontWeight nicknameWeight { get; set; }
         FontWeight textWeight { get; set; }
         FontFamily font { get; set; }
+        private List<TextBlock> listMessages;
         public frmViewers viewers { get; set; }
         public event EventHandler<MainWindow> OnAdditionalWindows; 
         #endregion
@@ -61,10 +65,11 @@ namespace BlitzChat
         #region Constructors
         public MainWindow(string name)
         {
-            Timeline.DesiredFrameRateProperty.OverrideMetadata(typeof(Timeline), new FrameworkPropertyMetadata { DefaultValue = 20 });
+            
             historydoc = new FlowDocument();
             header = new usrHeader();
             header.lblProgramName.Content = name;
+            listMessages = new List<TextBlock>();
             WindowName = name;
             listChats = new List<string>();
             InitializeComponent();
@@ -113,10 +118,52 @@ namespace BlitzChat
             Version vers = Assembly.GetExecutingAssembly().GetName().Version;
             header.lblProgramName.Content = "BlitzСhat v." + vers.ToString() + " Alpha";
             preSetSettings();
-            RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
+            //RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
             loadHistory();
-            
+            usrRTB.richChat.TextChanged += richChat_TextChanged;
+            usrRTB.richChat.LayoutUpdated += richChat_LayoutUpdated;
         }
+
+        void richChat_LayoutUpdated(object sender, EventArgs e)
+        {
+            if (!bScrolled)
+            {
+                if (usrRTB.richChat.VerticalScrollBarVisibility != ScrollBarVisibility.Visible)
+                {
+                    usrRTB.richChat.ScrollToEnd();
+                    bScrolled = true;
+                }
+            }
+        }
+
+        void richChat_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        void richChat_Loaded(object sender, RoutedEventArgs e)
+        {
+           Thread thr = new Thread(thread_Scroll);
+           thr.Name = "Scroll thread";
+           thr.IsBackground = true;
+           //thr.Start();
+        }
+
+        private void thread_Scroll(object state)
+        {
+            while (true)
+            {
+                Dispatcher.BeginInvoke(new Action(delegate
+                {
+                    if (usrRTB.richChat.VerticalScrollBarVisibility != ScrollBarVisibility.Visible)
+                    {
+                        usrRTB.richChat.ScrollToEnd();
+                    }
+                    Thread.Sleep(10);
+                }));
+            }
+        }
+
         #endregion
 
         #region UI Events
@@ -652,8 +699,34 @@ namespace BlitzChat
                 MessageBox.Show("Exception: "+e.Message);
             }
             twitch.messageReceived += twitch_MessageReceived;
+            twitch.smilesLoaded += twitch_smilesLoaded;
+            
             while (!bTwitchEnd) { Thread.Sleep(100); }
             twitch.Stop();
+        }
+
+        private void twitch_smilesLoaded(object sender, EventArgs e)
+        {
+            if (listMessages == null)
+                return;
+            
+            Dispatcher.BeginInvoke(new Action(delegate
+            {
+                stopSaveBlocks = true;
+                foreach (TextBlock block in listMessages)
+                {
+                    foreach (Inline inl in block.Inlines)
+                    {
+                        if (inl.Name == "Message") {
+
+                                TextRange trMessage = new TextRange(inl.ContentStart, inl.ContentEnd);
+                                replaceAllSmiles(0, trMessage.Text, trMessage);
+                         
+                        }
+                    }
+                }
+                listMessages = null;
+            }));
         }
 
         private void threadViewersShow(object obj)
@@ -728,7 +801,7 @@ namespace BlitzChat
                 frmAddChat.bttnRemove.IsEnabled = false;
             }
             serializeChannels();
-
+            bScrolled = false;
         }
 
         private void addChannel()
@@ -803,7 +876,7 @@ namespace BlitzChat
                         break;
                 }
                 serializeChannels();
-
+                bScrolled = false;
             }
         }
 
@@ -1054,34 +1127,38 @@ namespace BlitzChat
                 }
                 if (quoteColor)
                 {
-                    block.Inlines.Add(new Run(msg) { FontWeight = this.textWeight, Foreground = quoteBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
-                    parHist.Inlines.Add(new Run(msg) { FontWeight = this.textWeight, Foreground = quoteBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
+                    block.Inlines.Add(new Run(msg) { FontWeight = this.textWeight, Foreground = quoteBrush, FontSize = settingsChat.TextFontSize, FontFamily = font, Name="Message" });
+                    parHist.Inlines.Add(new Run(msg) { FontWeight = this.textWeight, Foreground = quoteBrush, FontSize = settingsChat.TextFontSize, FontFamily = font, Name = "Message" });
                 }
                 else
                 {
-                    block.Inlines.Add(new Run(msg) { FontWeight = this.textWeight, Foreground = textBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
-                    parHist.Inlines.Add(new Run(msg) { FontWeight = this.textWeight, Foreground = textBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
+                    block.Inlines.Add(new Run(msg) { FontWeight = this.textWeight, Foreground = textBrush, FontSize = settingsChat.TextFontSize, FontFamily = font, Name = "Message" });
+                    parHist.Inlines.Add(new Run(msg) { FontWeight = this.textWeight, Foreground = textBrush, FontSize = settingsChat.TextFontSize, FontFamily = font, Name = "Message" });
                 }
                 //smiles.checkEmotions(ref paragraph, settingsChat.SmileSize);
                 paragraph.Inlines.Add(block);
+                if(!stopSaveBlocks)
+                    listMessages.Add(block);
                 usrRTB.richChat.Document.Blocks.Add(paragraph);
                 historydoc.Blocks.Add(parHist);
                 string uri = "";
                 TextRange trMessage = FindWordFromPosition(block.ContentStart, msg);
                 TextRange trMessageHist = FindWordFromPosition(parHist.ContentStart, msg);
-                replaceAllSmiles(chattype, msg, trMessage);
+                double lineheight = settingsChat.TextFontSize;
+                lineheight = replaceAllSmiles(chattype, msg, trMessage);
                 replaceAllSmiles(chattype, msg, trMessageHist);
                 while (!String.IsNullOrEmpty(uri = UrlTools.DetectURLs(trMessage)))
                 {
-                    
                     TextRange trUri = FindWordFromPosition(trMessage.Start, uri);
                     TextRange trUriHist = FindWordFromPosition(trMessageHist.Start, uri);
                     replaceLink(trUri, uri);
                     replaceLink(trUriHist, uri);
                 }
-
-                if (usrRTB.richChat.VerticalScrollBarVisibility != ScrollBarVisibility.Visible)
-                    usrRTB.richChat.ScrollToEnd();
+                bScrolled = false;
+                //if (usrRTB.richChat.VerticalScrollBarVisibility != ScrollBarVisibility.Visible)
+                //{
+                //    usrRTB.richChat.ScrollToVerticalOffset(dVer + dViewport);
+                //}
                 //ColorAnimation animColor = new ColorAnimation();
                 //animColor.From = Colors.Transparent;
                 //SolidColorBrush brush = new SolidColorBrush(Colors.Transparent);
@@ -1095,49 +1172,67 @@ namespace BlitzChat
                 DoubleAnimation da = new DoubleAnimation();
                 da.From = 0;
                 da.To = 1;
-                da.RepeatBehavior = (RepeatBehavior)new RepeatBehaviorConverter().ConvertFromString("0:0:1");
-                da.Duration = TimeSpan.FromSeconds(1);
-                block.BeginAnimation(OpacityProperty, da);
+                da.RepeatBehavior = (RepeatBehavior)new RepeatBehaviorConverter().ConvertFromString("0:0:0.7");
+                da.Duration = TimeSpan.FromSeconds(0.7);
+                //block.BeginAnimation(OpacityProperty, da);
             }));
         }
 
-        private void replaceAllSmiles(int type,string msg, TextRange range)
+        private double replaceAllSmiles(int type, string msg, TextRange range)
         {
-            TextRange tr = FindWordFromPosition(range.Start, msg);
-            if (tr == null)
-                return;
-            switch (type) { 
-                case 0:
-                    TwitchSmile twitchsmile;
-                    while ((twitchsmile = twitch.checkSmiles(tr.Text)) != null)
-                    {
-                        replaceTwitchSmile(twitchsmile, tr);
-                    }
-                    break;
-                case 1:
-                    foreach (KeyValuePair<string, SC2TVSmile> smile in sc2tv.checkSmiles(msg))
-                    {
-                        replaceSC2TVSmile(smile.Value, tr);
-                    }
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    foreach (KeyValuePair<string, GoodGameSmile> smile in goodgame.checkSmiles(msg))
-                    {
-                        replaceGoodgameSmile(smile.Value, tr);
-                    }
-                    break;
-                case 4:
-                case 5:
-                default:
-                    break;
-            }
-
+            double maxHeight = 0; 
+            Dispatcher.BeginInvoke(new Action(delegate
+            {
+                TextRange tr = FindWordFromPosition(range.Start, msg);
+                if (tr == null)
+                    return;
+                switch (type)
+                {
+                    case 0:
+                        TwitchSmile twitchsmile;
+                        while ((twitchsmile = twitch.checkSmiles(tr.Text)) != null)
+                        {
+                            double imgHeight = replaceTwitchSmile(twitchsmile, tr);
+                            if (imgHeight > maxHeight)
+                            {
+                                maxHeight = imgHeight;
+                            }
+                        }
+                        break;
+                    case 1:
+                        foreach (KeyValuePair<string, SC2TVSmile> smile in sc2tv.checkSmiles(msg))
+                        {
+                            double imgHeight = replaceSC2TVSmile(smile.Value, tr);
+                            if (imgHeight > maxHeight)
+                            {
+                                maxHeight = imgHeight;
+                            }
+                        }
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        foreach (KeyValuePair<string, GoodGameSmile> smile in goodgame.checkSmiles(msg))
+                        {
+                            double imgHeight = replaceGoodgameSmile(smile.Value, tr);
+                            if (imgHeight > maxHeight)
+                            {
+                                maxHeight = imgHeight;
+                            }
+                        }
+                        break;
+                    case 4:
+                    case 5:
+                    default:
+                        break;
+                }
+            }));
+            return maxHeight;
         }
 
-        private void replaceGoodgameSmile(GoodGameSmile smile, TextRange range)
+        private double replaceGoodgameSmile(GoodGameSmile smile, TextRange range)
         {
+            double h = 0;
             TextRange tr = FindWordFromPosition(range.Start, smile.code);
             if (tr != null)
             {
@@ -1153,14 +1248,15 @@ namespace BlitzChat
                 //img.Stretch = Stretch.Fill;
                 img.Width = bitmapImage.Width/2 + settingsChat.SmileSize;
                 img.Height = bitmapImage.Height/2 + settingsChat.SmileSize;
+                h = img.Height;
                 new InlineUIContainer(img, range.Start);
             }
-
-           
+            return h;
         }
 
-        private void replaceSC2TVSmile(SC2TVSmile smile, TextRange range)
+        private double replaceSC2TVSmile(SC2TVSmile smile, TextRange range)
         {
+            double h = 0;
             TextRange tr = FindWordFromPosition(range.Start, smile.code);
             if (tr != null)
             {
@@ -1171,12 +1267,15 @@ namespace BlitzChat
                 //img.Stretch = Stretch.Fill;
                 img.Width = smile.width+ settingsChat.SmileSize;
                 img.Height = smile.height + settingsChat.SmileSize;
+                h = img.Height;
                 new InlineUIContainer(img, range.Start);
             }
+            return h;
         }
 
-        private void replaceTwitchSmile(TwitchSmile smile, TextRange range)
+        private double replaceTwitchSmile(TwitchSmile smile, TextRange range)
         {
+            double h = 0;
             TextRange tr = FindWordFromPosition(range.Start, smile.key);
             if (tr != null)
             {
@@ -1187,8 +1286,10 @@ namespace BlitzChat
                 //img.Stretch = Stretch.Fill;
                 img.Width = smile.width + settingsChat.SmileSize;
                 img.Height = smile.height + settingsChat.SmileSize;
+                h = img.Height;
                 new InlineUIContainer(img, range.Start);
             }
+            return h = 0;
         }
 
         private void saveHistory()

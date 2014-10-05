@@ -14,6 +14,7 @@ namespace bliTwitch
     public class Twitch
     {
         public event EventHandler<TwitchMessage> messageReceived;
+        public event EventHandler smilesLoaded;
         private IrcClient ircClient;
         private string channelName;
         private string ircUrl;
@@ -254,7 +255,8 @@ namespace bliTwitch
                             }
 
                         }
-                    
+                        if (smilesLoaded != null)
+                            smilesLoaded(this, new EventArgs());
                     }
                 };
                 wc.DownloadStringAsync(new Uri(@"https://api.twitch.tv/kraken/chat/emoticons"));

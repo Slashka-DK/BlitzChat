@@ -14,6 +14,7 @@
                          SelectionBrush="{x:Null}" 
                          HorizontalContentAlignment="Left"
                          TextOptions.TextFormattingMode="Display" 
+                         Padding="0,0,0,5" 
                          HorizontalAlignment="Left" IsUndoEnabled="False" 
                          IsTabStop="False" Panel.ZIndex="1" IsDocumentEnabled="True">
 
@@ -25,16 +26,12 @@
                                 <Border x:Name="Bd" 
 										SnapsToDevicePixels="True"
 										Background="{TemplateBinding Background}">
-                                    <ScrollViewer x:Name="PART_ContentHost"/>
+                                    <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                                 </Border>
                             </ControlTemplate>
 
                         </Setter.Value>
                     </Setter>
-                </Style>
-                <Style TargetType="{x:Type TextBlock}">
-                    <Setter Property="Margin" Value="0"/>
-                    <Setter Property="Padding" Value="0"/>
                 </Style>
 
                 <!--Scrollbar Thumbs-->
@@ -44,13 +41,10 @@
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type Thumb}">
                                 <Grid x:Name="Grid">
-                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" Fill="Transparent" />
-                                    <Border x:Name="Rectangle1" CornerRadius="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto"  Background="#FF00BFBF" />
+                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" Fill="#FF00BFBF" />
                                 </Grid>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="Tag" Value="Horizontal">
-                                        <Setter TargetName="Rectangle1" Property="Width" Value="Auto" />
-                                        <Setter TargetName="Rectangle1" Property="Height" Value="7" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -59,7 +53,7 @@
                 </Style>
 
                 <!--ScrollBars-->
-                <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
+                <Style x:Name="scrollbarVert" x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
                     <Setter Property="Stylus.IsFlicksEnabled" Value="false" />
                     <Setter Property="Foreground" Value="Transparent" />
                     <Setter Property="Background" Value="Transparent" />
@@ -69,7 +63,7 @@
                             <ControlTemplate TargetType="{x:Type ScrollBar}">
                                 <Grid x:Name="GridRoot" Width="19" Background="{TemplateBinding Background}">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="0.00001*" />
+                                        <RowDefinition Height="{TemplateBinding Height}" />
                                     </Grid.RowDefinitions>
 
                                     <Track x:Name="PART_Track" Grid.Row="0" IsDirectionReversed="true" Focusable="false">
@@ -108,7 +102,7 @@
                                             </Setter.Value>
                                         </Setter>
                                         <Setter Property="Width" Value="Auto" />
-                                        <Setter Property="Height" Value="12" />
+                                        <Setter Property="Height" Value="Auto" />
                                         <Setter TargetName="Thumb" Property="Tag" Value="Horizontal" />
                                         <Setter TargetName="PageDown" Property="Command" Value="ScrollBar.PageLeftCommand" />
                                         <Setter TargetName="PageUp" Property="Command" Value="ScrollBar.PageRightCommand" />
@@ -120,21 +114,26 @@
                 </Style>
             </RichTextBox.Resources>
             <RichTextBox.BorderBrush>
-                <SolidColorBrush Color="#FFF7F9FF" Opacity="0.1"/>
+                <SolidColorBrush Color="#FFF7F9FF" Opacity="0"/>
             </RichTextBox.BorderBrush>
-            <FlowDocument PageHeight="Auto" PageWidth="{Binding ActualWidth, ElementName=richChat}">
+            <FlowDocument PageHeight="10"  PageWidth="{Binding ActualWidth, ElementName=richChat}">
                 <FlowDocument.Resources>
                     <Style TargetType="{x:Type Paragraph}">
-                        <Setter Property="Margin" Value="5,5,20,5"/>
-                        <Setter Property="Padding" Value="0"/>
-
-                    </Style>
+                        <Setter Property="Margin" Value="0,0,3,3"/>
+                        <Setter Property="Padding" Value="0,0,0,0"/>
+                        <Setter Property="LineStackingStrategy" Value="MaxHeight"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="BorderBrush" Value="White"/>
+                     </Style>
                     <Style TargetType="{x:Type InlineUIContainer}">
-                        <Setter Property="BaselineAlignment" Value="Bottom"/>
+                        <Setter Property="BaselineAlignment" Value="Center"/>
                     </Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="TextWrapping" Value="Wrap"/>
+                     </Style>
                 </FlowDocument.Resources>
             </FlowDocument>
-
         </RichTextBox>
     </Grid>
 </UserControl>

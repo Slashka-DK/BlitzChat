@@ -25,7 +25,7 @@ namespace BlitzChat.Settings {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("irc.twitch.tv")]
         public string Twitch {
             get {
                 return ((string)(this["Twitch"]));
@@ -37,19 +37,19 @@ namespace BlitzChat.Settings {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string TwitchSmileJson {
+        [global::System.Configuration.DefaultSettingValueAttribute("https://api.twitch.tv/kraken/chat/emoticons")]
+        public string TwitchSmiles {
             get {
-                return ((string)(this["TwitchSmileJson"]));
+                return ((string)(this["TwitchSmiles"]));
             }
             set {
-                this["TwitchSmileJson"] = value;
+                this["TwitchSmiles"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://chat.sc2tv.ru/memfs/channel-{0}.json")]
         public string SC2TV {
             get {
                 return ((string)(this["SC2TV"]));
@@ -61,7 +61,7 @@ namespace BlitzChat.Settings {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ws://cybergame.tv:9090/websocket")]
         public string Cybergame {
             get {
                 return ((string)(this["Cybergame"]));
@@ -73,7 +73,7 @@ namespace BlitzChat.Settings {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ws://chat.goodgame.ru:8080/chat/websocket")]
         public string Goodgame {
             get {
                 return ((string)(this["Goodgame"]));
@@ -85,13 +85,25 @@ namespace BlitzChat.Settings {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://chat.sc2tv.ru/js/smiles.js")]
         public string SC2TVSmiles {
             get {
                 return ((string)(this["SC2TVSmiles"]));
             }
             set {
                 this["SC2TVSmiles"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://api.twitch.tv/kraken/streams/")]
+        public string TwitchViewers {
+            get {
+                return ((string)(this["TwitchViewers"]));
+            }
+            set {
+                this["TwitchViewers"] = value;
             }
         }
     }

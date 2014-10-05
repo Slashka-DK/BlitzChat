@@ -3,22 +3,25 @@
   <Profiles />
   <Settings>
     <Setting Name="Twitch" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">irc.twitch.tv</Value>
     </Setting>
-    <Setting Name="TwitchSmileJson" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+    <Setting Name="TwitchSmiles" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://api.twitch.tv/kraken/chat/emoticons</Value>
     </Setting>
     <Setting Name="SC2TV" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">http://chat.sc2tv.ru/memfs/channel-{0}.json</Value>
     </Setting>
     <Setting Name="Cybergame" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">ws://cybergame.tv:9090/websocket</Value>
     </Setting>
     <Setting Name="Goodgame" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">ws://chat.goodgame.ru:8080/chat/websocket</Value>
     </Setting>
     <Setting Name="SC2TVSmiles" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">http://chat.sc2tv.ru/js/smiles.js</Value>
+    </Setting>
+    <Setting Name="TwitchViewers" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://api.twitch.tv/kraken/streams/</Value>
     </Setting>
   </Settings>
 </SettingsFile>
