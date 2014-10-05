@@ -16,7 +16,7 @@ namespace bliCybergame
         public event EventHandler<CybergameMessage> messageReceived;
 
         public Cybergame(string channel, bool start = false) {
-            channelName = channel.ToLower();
+            channelName = channel.Trim().ToLower();
             if (start)
                 this.Start();
         }

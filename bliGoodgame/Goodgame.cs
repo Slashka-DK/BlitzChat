@@ -27,7 +27,7 @@ namespace bliGoodgame
         private string token = "";
         private Dictionary<string, GoodGameSmile> smiles;
         public Goodgame(string channel, bool loadHistory = false) {
-            this.channelName = channel;
+            this.channelName = channel.Trim().ToLower();
             this.loadHistory = loadHistory;
             smiles = new Dictionary<string, GoodGameSmile>();
             loadSmiles();
@@ -110,7 +110,7 @@ namespace bliGoodgame
 
             foreach (string word in arrWords)
             {
-                if (smiles.ContainsKey(word))
+                if (smiles.ContainsKey(word) && !dictSmiles.ContainsKey(word))
                 {
                     dictSmiles.Add(word, smiles[word]);
                 }

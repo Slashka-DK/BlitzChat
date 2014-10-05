@@ -555,7 +555,7 @@ namespace BlitzChat
                 frmAddChat.cmbAddChat.Items.Remove(Constants.CYBERGAME);
 
             }
-            if (channels != null && !String.IsNullOrEmpty(channels.Cybergame))
+            if (channels != null && !String.IsNullOrEmpty(channels.GoodGame))
             {
                 frmAddChat.cmbAddChat.Items.Remove(Constants.GOODGAME);
 
@@ -777,6 +777,7 @@ namespace BlitzChat
             {
                 notificateToChat(String.Format("-{0} Channel: \"{1}\" disconnected;", Constants.SC2TV, channels.SC2TV), Brushes.Red);
                 channels.SC2TV = "";
+                channels.SC2TVLastMessageId = 0;
                 bSC2TVEnd = true;
             }
             else if (frmAddChat.listStreamers.SelectedItem.ToString().Contains(Constants.CYBERGAME))
@@ -1174,7 +1175,7 @@ namespace BlitzChat
                 da.To = 1;
                 da.RepeatBehavior = (RepeatBehavior)new RepeatBehaviorConverter().ConvertFromString("0:0:0.7");
                 da.Duration = TimeSpan.FromSeconds(0.7);
-                //block.BeginAnimation(OpacityProperty, da);
+                block.BeginAnimation(OpacityProperty, da);
             }));
         }
 
@@ -1202,10 +1203,13 @@ namespace BlitzChat
                     case 1:
                         foreach (KeyValuePair<string, SC2TVSmile> smile in sc2tv.checkSmiles(msg))
                         {
-                            double imgHeight = replaceSC2TVSmile(smile.Value, tr);
-                            if (imgHeight > maxHeight)
+                            while (tr.Text.Contains(smile.Key))
                             {
-                                maxHeight = imgHeight;
+                                double imgHeight = replaceSC2TVSmile(smile.Value, tr);
+                                if (imgHeight > maxHeight)
+                                {
+                                    maxHeight = imgHeight;
+                                }
                             }
                         }
                         break;
@@ -1214,10 +1218,12 @@ namespace BlitzChat
                     case 3:
                         foreach (KeyValuePair<string, GoodGameSmile> smile in goodgame.checkSmiles(msg))
                         {
-                            double imgHeight = replaceGoodgameSmile(smile.Value, tr);
-                            if (imgHeight > maxHeight)
-                            {
-                                maxHeight = imgHeight;
+                            while(tr.Text.Contains(smile.Key)){
+                                double imgHeight = replaceGoodgameSmile(smile.Value, tr);
+                                if (imgHeight > maxHeight)
+                                {
+                                    maxHeight = imgHeight;
+                                }
                             }
                         }
                         break;
@@ -1249,7 +1255,7 @@ namespace BlitzChat
                 img.Width = bitmapImage.Width/2 + settingsChat.SmileSize;
                 img.Height = bitmapImage.Height/2 + settingsChat.SmileSize;
                 h = img.Height;
-                new InlineUIContainer(img, range.Start);
+                new InlineUIContainer(img, tr.Start);
             }
             return h;
         }
@@ -1268,7 +1274,7 @@ namespace BlitzChat
                 img.Width = smile.width+ settingsChat.SmileSize;
                 img.Height = smile.height + settingsChat.SmileSize;
                 h = img.Height;
-                new InlineUIContainer(img, range.Start);
+                new InlineUIContainer(img, tr.Start);
             }
             return h;
         }
@@ -1287,7 +1293,7 @@ namespace BlitzChat
                 img.Width = smile.width + settingsChat.SmileSize;
                 img.Height = smile.height + settingsChat.SmileSize;
                 h = img.Height;
-                new InlineUIContainer(img, range.Start);
+                new InlineUIContainer(img, tr.Start);
             }
             return h = 0;
         }

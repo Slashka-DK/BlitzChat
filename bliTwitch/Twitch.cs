@@ -28,7 +28,7 @@ namespace bliTwitch
 
         public Twitch(string channel, string ircAdress, int port) {
             smiles = new Dictionary<string, TwitchSmile>();
-            channelName = channel;
+            channelName = channel.Trim().ToLower();
             ircUrl = ircAdress;
             this.port = port;
             BackgroundWorker bg = new BackgroundWorker();

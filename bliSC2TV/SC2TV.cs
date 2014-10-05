@@ -28,7 +28,7 @@ namespace bliSC2TV
         public SC2TV(string channelName) {
             lastMsgId = 0;
             smiles = new Dictionary<string, SC2TVSmile>();
-            this.channelName = channelName.ToLower();
+            this.channelName = channelName.Trim().ToLower();
             loadSmiles();
             Start();
         }
@@ -109,7 +109,7 @@ namespace bliSC2TV
             Dictionary<string, SC2TVSmile> dictSmiles = new Dictionary<string, SC2TVSmile>();
 
             foreach (string word in arrWords) {
-                if (smiles.ContainsKey(word)) {
+                if (smiles.ContainsKey(word) && !dictSmiles.ContainsKey(word)) {
                     SC2TVSmile s = new SC2TVSmile();
                     dictSmiles.Add(word, smiles[word]);
                 }
