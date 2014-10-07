@@ -1,4 +1,4 @@
-﻿//3
+﻿//10
 //36
 //0
 //1
@@ -8,5 +8,5 @@
 
 using System.Reflection;
 
-[assembly: AssemblyFileVersion("1.0.36.3")]
-[assembly: AssemblyVersion("1.0.36.3")]
+[assembly: AssemblyFileVersion("1.0.36.10")]
+[assembly: AssemblyVersion("1.0.36.10")]

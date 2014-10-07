@@ -124,7 +124,7 @@ namespace BlitzChat
         void richChat_LayoutUpdated(object sender, EventArgs e)
         {
 
-            if ((ScrollBarVisibility)listChat.GetValue(ScrollViewer.VerticalScrollBarVisibilityProperty) != ScrollBarVisibility.Visible)
+            if ((ScrollBarVisibility)listChat.GetValue(ScrollViewer.VerticalScrollBarVisibilityProperty) != ScrollBarVisibility.Visible && listChat.Items.Count > 0)
                 listChat.ScrollIntoView(listChat.Items[listChat.Items.Count - 1]);
         }
 
@@ -217,6 +217,23 @@ namespace BlitzChat
                     
                 }   
             }
+            foreach (Paragraph block in historydoc.Blocks)
+            {
+                foreach (Inline inline in block.Inlines)
+                {
+                    if (inline.Name == "Smile" && inline is InlineUIContainer)
+                    {
+                        InlineUIContainer uiContainer = (InlineUIContainer)inline;
+                        if (uiContainer.Child is Image)
+                        {
+                            Image image = (Image)uiContainer.Child;
+                            image.Width--;
+                            image.Height--;
+                        }
+                    }
+
+                }
+            }
             
             serializeSettings();
         }
@@ -240,6 +257,23 @@ namespace BlitzChat
                     }
                     
                 }   
+            }
+            foreach (Paragraph block in historydoc.Blocks)
+            {
+                foreach (Inline inline in block.Inlines)
+                {
+                    if (inline.Name == "Smile" && inline is InlineUIContainer)
+                    {
+                        InlineUIContainer uiContainer = (InlineUIContainer)inline;
+                        if (uiContainer.Child is Image)
+                        {
+                            Image image = (Image)uiContainer.Child;
+                            image.Width++;
+                            image.Height++;
+                        }
+                    }
+
+                }
             }
             serializeSettings();
         }
@@ -893,9 +927,6 @@ namespace BlitzChat
                         inline.FontSize = settingsChat.TextFontSize;
                     }
                 }
-                //TextRange tr = new TextRange(listChat.Conte.ContentStart, usrRTB.richChat.Document.ContentEnd);
-                //tr.ApplyPropertyValue(FontFamilyProperty, font);
-                //tr.ApplyPropertyValue(FontSizeProperty, settingsChat.TextFontSize);
             }
 
         }
