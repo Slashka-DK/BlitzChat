@@ -32,46 +32,47 @@
                 <TransformGroup>
                     <ScaleTransform/>
                     <SkewTransform/>
-                    <RotateTransform Angle="-0.386"/>
                     <TranslateTransform/>
                 </TransformGroup>
             </TabControl.RenderTransform>
 
-            <TabItem x:Name="tabFrame" Header="Frame" Height="22" VerticalAlignment="Bottom" Foreground="#FF00BFBF" Opacity="0.8" Margin="-3,0,-1,0" FontSize="14">
+            <TabItem x:Name="tabFrame" Header="Window" Height="22" VerticalAlignment="Bottom" Foreground="#FF00BFBF" Opacity="0.8" Margin="-3,0,-1,0" FontSize="14">
                 <TabItem.Background>
                     <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
                         <GradientStop Color="#FFF0F0F0" Offset="0"/>
                         <GradientStop Color="#FF474444" Offset="1"/>
                     </LinearGradientBrush>
                 </TabItem.Background>
-                <Grid Background="#FF444141" Margin="0,0,-84,-6">
+                <Grid Background="#FF444141">
                     <Slider x:Name="sliderOpacity" BorderBrush="#FF00BFBF" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="10,205,0,0" VerticalAlignment="Top" Width="260" Maximum="100" ValueChanged="sliderOpacity_ValueChanged" Value="100" SmallChange="1" IsMoveToPointEnabled="True" LargeChange="50"/>
                     <Label x:Name="lblOpacity" Content="100%" HorizontalAlignment="Left" Margin="147,176,0,0" VerticalAlignment="Top" Foreground="#FF00BFBF"/>
                     <Label Content="Opacity:" HorizontalAlignment="Left" Margin="82,176,0,0" VerticalAlignment="Top" Foreground="#FF00BFBF"/>
                     <Label Content="Backgroundcolor:" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-                    <xctk:ColorPicker Name="ClrPcker_Background" BorderBrush="#FF00BFBF" Margin="133,14,138,199"></xctk:ColorPicker>
-                    <CheckBox x:Name="chkOnTop" Content="" HorizontalAlignment="Left" Margin="211,66,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                    <xctk:ColorPicker Name="ClrPcker_Background" BorderBrush="#FF00BFBF" Margin="133,14,31,188"></xctk:ColorPicker>
+                    <CheckBox x:Name="chkOnTop" Content="" HorizontalAlignment="Left" Margin="232,62,0,0" VerticalAlignment="Top" IsChecked="True"/>
                     <Label Content="OnTop:" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="10,55,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Enable Transparency:" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="10,89,0,0" VerticalAlignment="Top"/>
+                    <CheckBox Content="" x:Name="cbTransparency" IsChecked="False" HorizontalAlignment="Left" Margin="232,95,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
-            <TabItem x:Name="tabText" Header="Text" Foreground="#FF00BFBF" Height="21" VerticalAlignment="Bottom" Opacity="0.8" Margin="1,0,-12,1" BorderBrush="{x:Null}" FontSize="14" TextOptions.TextHintingMode="Animated">
+            <TabItem x:Name="tabText" Header="Chat" Foreground="#FF00BFBF" Height="21" VerticalAlignment="Bottom" Opacity="0.8" Margin="1,0,-12,1" BorderBrush="{x:Null}" FontSize="14" TextOptions.TextHintingMode="Animated">
                 <TabItem.Background>
                     <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
                         <GradientStop Color="#FFF0F0F0" Offset="0"/>
                         <GradientStop Color="#FF444141" Offset="1"/>
                     </LinearGradientBrush>
                 </TabItem.Background>
-                <Grid Background="Transparent" Margin="0,0,-32,-6">
+                <Grid Background="Transparent">
                     <Label Content="Text Color:" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-                    <xctk:ColorPicker x:Name="ClrPcker_Text" Margin="91,14,119,199" BorderBrush="#FF00BFBF"/>
+                    <xctk:ColorPicker x:Name="ClrPcker_Text" Margin="91,14,119,193" BorderBrush="#FF00BFBF"/>
                     <Label Content="Nickname:" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top"/>
-                    <xctk:ColorPicker x:Name="ClrPcker_Nickname" Margin="91,39,119,174" BorderBrush="#FF00BFBF"/>
+                    <xctk:ColorPicker x:Name="ClrPcker_Nickname" Margin="91,39,119,166" BorderBrush="#FF00BFBF"/>
                     <Label Content="Size:" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="10,160,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.679,-1.255"/>
                     <Label Content="Font:" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="10,194,0,0" VerticalAlignment="Top"/>
-                    <xctk:IntegerUpDown x:Name="numSizeText" HorizontalContentAlignment="Right" Margin="91,165,134,44" BorderBrush="#FF00BFBF" />
+                    <xctk:IntegerUpDown x:Name="numSizeText" HorizontalContentAlignment="Right" Margin="91,165,127,38" BorderBrush="#FF00BFBF" />
                     <ComboBox x:Name="cmbFonts" HorizontalAlignment="Left" Margin="91,198,0,0" VerticalAlignment="Top" Width="185" BorderBrush="#FF00BFBF" Background="{x:Null}"/>
                     <Label Content="Date Color:" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="10,64,0,0" VerticalAlignment="Top"/>
-                    <xctk:ColorPicker x:Name="ClrPcker_Date" Margin="91,64,119,149" BorderBrush="#FF00BFBF"/>
+                    <xctk:ColorPicker x:Name="ClrPcker_Date" Margin="91,66,119,139" BorderBrush="#FF00BFBF"/>
                     <Label Content="Bold" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="191,-7,0,0" VerticalAlignment="Top"/>
                     <CheckBox x:Name="chkTextBold" Content="" HorizontalAlignment="Left" Margin="204,16,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.476,-0.013" BorderBrush="#FF00BFBF"/>
                     <CheckBox x:Name="chkNicknameBold" Content="" HorizontalAlignment="Left" Margin="204,41,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.476,-0.013" IsChecked="True" BorderBrush="#FF00BFBF"/>
@@ -79,8 +80,8 @@
                     <CheckBox x:Name="chkDateEnabled" Content="" HorizontalAlignment="Left" Margin="252,66,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.476,-0.013" IsChecked="True" BorderBrush="#FF00BFBF"/>
                     <Label Foreground="#FF00BFBF" Content="Smileys Scale:" HorizontalAlignment="Left" Margin="10,108,0,0" VerticalAlignment="Top" Width="97" Height="29"/>
                     <Label x:Name="lblSmileSize" Foreground="#FF00BFBF" Content="0" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="179,108,0,0" VerticalAlignment="Top" Width="45" RenderTransformOrigin="0.517,0.554" Height="29"/>
-                    <Button x:Name="bttnSmileBigger" Content="+" HorizontalAlignment="Left" Margin="239,111,0,0" VerticalAlignment="Top" Width="20" Height="23" RenderTransformOrigin="-1.654,-0.036" BorderBrush="#FF00BFBF"/>
-                    <Button x:Name="bttnSmileSmaller" Content="-" HorizontalAlignment="Left" Margin="136,111,0,0" VerticalAlignment="Top" Width="20" Height="23" RenderTransformOrigin="1.494,0.342" BorderBrush="#FF00BFBF"/>
+                    <RepeatButton x:Name="bttnSmileBigger" Delay="100" Content="+" HorizontalAlignment="Left" Margin="239,111,0,0" VerticalAlignment="Top" Width="20" Height="23" RenderTransformOrigin="-1.654,-0.036" BorderBrush="#FF00BFBF"/>
+                    <RepeatButton x:Name="bttnSmileSmaller" Delay="100" Content="-" HorizontalAlignment="Left" Margin="136,111,0,0" VerticalAlignment="Top" Width="20" Height="23" RenderTransformOrigin="1.494,0.342" BorderBrush="#FF00BFBF"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="tabServers" Header="URLs" Foreground="#FF00BFBF" Height="21" VerticalAlignment="Bottom" Opacity="0.8" Margin="0,0,-11,1" BorderBrush="{x:Null}" FontSize="14" HorizontalAlignment="Right" Width="56">
@@ -102,7 +103,7 @@
                         <GradientStop Color="#FF444141" Offset="1"/>
                     </LinearGradientBrush>
                 </TabItem.Background>
-                <Grid Margin="-2,20,2,-26" Height="236">
+                <Grid Height="236">
                     <ui:usrAbout />
                 </Grid>
             </TabItem>

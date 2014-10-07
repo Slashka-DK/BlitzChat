@@ -21,6 +21,7 @@ using bliTwitch;
 using bliSC2TV;
 using bliCybergame;
 using System.ComponentModel;
+using BlitzChat.Utilities;
 namespace BlitzChat
 {
     /// <summary>
@@ -44,13 +45,13 @@ namespace BlitzChat
         SC2TV sc2tv;
         Cybergame cyberg;
         Goodgame goodgame;
-        private volatile bool bScrolled = true;
         private volatile bool bTwitchEnd;
         private volatile bool bSC2TVEnd;
         private volatile bool bCybergameEnd;
         private volatile bool bGoodgameEnd;
         private volatile bool bViewersEnd = true;
-        bool stopSaveBlocks = false;
+        private volatile bool bSaveScreenEnd = false;
+        bool reload = false;
         FlowDocument historydoc;
         public string WindowName { get; set; }
         List<string> listChats;
@@ -59,20 +60,22 @@ namespace BlitzChat
         FontFamily font { get; set; }
         private List<TextBlock> listMessages;
         public frmViewers viewers { get; set; }
-        public event EventHandler<MainWindow> OnAdditionalWindows; 
+        public event EventHandler<MainWindow> OnAdditionalWindows;
+        public event EventHandler<MainWindow> OnTransparencyChanged;
+        ListBox listChat;
         #endregion
 
         #region Constructors
         public MainWindow(string name)
         {
-            
-            historydoc = new FlowDocument();
             header = new usrHeader();
-            header.lblProgramName.Content = name;
+            header.lblWindowName.Content = name;
+            InitializeComponent();
+            historydoc = new FlowDocument();
             listMessages = new List<TextBlock>();
             WindowName = name;
             listChats = new List<string>();
-            InitializeComponent();
+            listChat = usrLstChat.listChat;
             settingsChat = new ChatSettingsXML();
             channels = new ChannelsSaveXML();
             bTwitchEnd = false;
@@ -85,16 +88,13 @@ namespace BlitzChat
             nicknameWeight = FontWeights.Bold;
             header.Width = Column0.ActualWidth;
             header.Height = double.NaN;
-            usrRTB.richChat.Height = Row1.ActualHeight;
-            usrRTB.richChat.Width = Column0.ActualWidth;
-            usrRTB.richChat.IsReadOnly = true;
-            usrRTB.richChat.SelectionOpacity = 0;
-            usrRTB.richChat.MouseEnter += richChat_MouseEnter;
-            usrRTB.richChat.MouseLeave += richChat_MouseLeave;
-            usrRTB.richChat.MouseDown += chat_MouseDown;
+            listChat.Height = Row1.ActualHeight;
+            listChat.Width = Column0.ActualWidth;
+            listChat.MouseEnter += richChat_MouseEnter;
+            listChat.MouseLeave += richChat_MouseLeave;
             var bc = new BrushConverter();
             mainbackBrush = new SolidColorBrush(fromHexColor(settingsChat.BackgroundColor));
-            mainbackBrush.Opacity = 1;
+            mainbackBrush.Opacity = settingsChat.ChatOpacity;
             contextBrush = new SolidColorBrush(Colors.Black);
             textBrush = new SolidColorBrush(Colors.White);
             quoteBrush = new SolidColorBrush(Colors.Orange);
@@ -102,66 +102,30 @@ namespace BlitzChat
             dateBrush.Opacity = 0.7;
             nicknameColor = Colors.BlueViolet;
             nicknameBrush = new SolidColorBrush(nicknameColor);
-            usrRTB.richChat.Foreground = textBrush;
+            listChat.Foreground = textBrush;
             Background = mainbackBrush;
             mainContextMenu.Background = contextBrush;
             mainContextMenu.Foreground = new SolidColorBrush(Colors.White);
-            header.Background = mainbackBrush;
             deserializeSettings();
             frmSettings = new frmSettings();
-            usrRTB.richChat.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
-            setEvents();
+            //listChat.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
             deserializeChannels();
             this.ContextMenu = mainContextMenu;
-            usrRTB.richChat.ContextMenu = this.ContextMenu;
+            listChat.ContextMenu = this.ContextMenu;
             header.ContextMenu = mainContextMenu;
             Version vers = Assembly.GetExecutingAssembly().GetName().Version;
             header.lblProgramName.Content = "BlitzСhat v." + vers.ToString() + " Alpha";
             preSetSettings();
             //RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
             loadHistory();
-            usrRTB.richChat.TextChanged += richChat_TextChanged;
-            usrRTB.richChat.LayoutUpdated += richChat_LayoutUpdated;
+            listChat.LayoutUpdated += richChat_LayoutUpdated;
         }
 
         void richChat_LayoutUpdated(object sender, EventArgs e)
         {
-            if (!bScrolled)
-            {
-                if (usrRTB.richChat.VerticalScrollBarVisibility != ScrollBarVisibility.Visible)
-                {
-                    usrRTB.richChat.ScrollToEnd();
-                    bScrolled = true;
-                }
-            }
-        }
 
-        void richChat_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-        void richChat_Loaded(object sender, RoutedEventArgs e)
-        {
-           Thread thr = new Thread(thread_Scroll);
-           thr.Name = "Scroll thread";
-           thr.IsBackground = true;
-           //thr.Start();
-        }
-
-        private void thread_Scroll(object state)
-        {
-            while (true)
-            {
-                Dispatcher.BeginInvoke(new Action(delegate
-                {
-                    if (usrRTB.richChat.VerticalScrollBarVisibility != ScrollBarVisibility.Visible)
-                    {
-                        usrRTB.richChat.ScrollToEnd();
-                    }
-                    Thread.Sleep(10);
-                }));
-            }
+            if ((ScrollBarVisibility)listChat.GetValue(ScrollViewer.VerticalScrollBarVisibilityProperty) != ScrollBarVisibility.Visible)
+                listChat.ScrollIntoView(listChat.Items[listChat.Items.Count - 1]);
         }
 
         #endregion
@@ -234,86 +198,65 @@ namespace BlitzChat
         }
         void bttnSmileSmaller_Click(object sender, RoutedEventArgs e)
         {
-            bool changed = false;
-            foreach (Block block in usrRTB.richChat.Document.Blocks)
+            settingsChat.SmileSize--;
+            frmSettings.lblSmileSize.Content = settingsChat.SmileSize;
+            foreach (TextBlock block in listChat.Items)
             {
-                if (block is Paragraph)
+                foreach (Inline inline in block.Inlines)
                 {
-                    int index = 0;
-                    Paragraph paragraph = (Paragraph)block;
-                    foreach (Inline inline in paragraph.Inlines)
+                    if (inline.Name == "Smile" && inline is InlineUIContainer)
                     {
-                        if (index > 3 && inline is InlineUIContainer)
+                        InlineUIContainer uiContainer = (InlineUIContainer)inline;
+                        if (uiContainer.Child is Image)
                         {
-                            InlineUIContainer uiContainer = (InlineUIContainer)inline;
-                            if (uiContainer.Child is Image)
-                            {
-                                Image image = (Image)uiContainer.Child;
-                                if (image.Width - 1 > 0 && image.Height - 1 > 0)
-                                {
-                                    image.Width--;
-                                    image.Height--;
-                                    changed = true;
-                                }
-                            }
+                            Image image = (Image)uiContainer.Child;
+                            image.Width--;
+                            image.Height--;
                         }
-                        index++;
                     }
-                }
+                    
+                }   
             }
-            if (changed)
-            {
-                settingsChat.SmileSize--;
-                frmSettings.lblSmileSize.Content = settingsChat.SmileSize;
-            }
+            
             serializeSettings();
         }
         private void bttnSmileBigger_Click(object sender, RoutedEventArgs e)
         {
-            bool changed = false;
-            foreach (Block block in usrRTB.richChat.Document.Blocks)
+            settingsChat.SmileSize++;
+            frmSettings.lblSmileSize.Content = settingsChat.SmileSize;
+            foreach (TextBlock block in listChat.Items)
             {
-                if (block is Paragraph)
+                foreach (Inline inline in block.Inlines)
                 {
-                    int index = 0;
-                    Paragraph paragraph = (Paragraph)block;
-                    foreach (Inline inline in paragraph.Inlines)
+                    if (inline.Name == "Smile" && inline is InlineUIContainer)
                     {
-                        if (index > 3 && inline is InlineUIContainer)
+                        InlineUIContainer uiContainer = (InlineUIContainer)inline;
+                        if (uiContainer.Child is Image)
                         {
-                            InlineUIContainer uiContainer = (InlineUIContainer)inline;
-                            if (uiContainer.Child is Image)
-                            {
-                                Image image = (Image)uiContainer.Child;
-                                image.Width++;
-                                image.Height++;
-                                changed = true;
-                            }
+                            Image image = (Image)uiContainer.Child;
+                            image.Width++;
+                            image.Height++;
                         }
-                        index++;
                     }
-                }
-            }
-            if (changed)
-            {
-                settingsChat.SmileSize++;
-                frmSettings.lblSmileSize.Content = settingsChat.SmileSize;
+                    
+                }   
             }
             serializeSettings();
         }
         private void richChat_MouseEnter(object sender, MouseEventArgs e)
         {
-            usrRTB.richChat.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
-            usrRTB.richChat.Focus();
+            listChat.SetValue(ScrollViewer.VerticalScrollBarVisibilityProperty, ScrollBarVisibility.Visible);
+            listChat.Focus();
         }
+
 
         private void richChat_MouseLeave(object sender, MouseEventArgs e)
         {
-            usrRTB.richChat.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+            listChat.SetValue(ScrollViewer.VerticalScrollBarVisibilityProperty, ScrollBarVisibility.Hidden);
         }
         private void clear_Chat_Click(object sender, RoutedEventArgs e)
         {
-            usrRTB.richChat.Document.Blocks.Clear();
+            listChat.Items.Clear();
 
         }
 
@@ -324,7 +267,8 @@ namespace BlitzChat
             Thread threadHist = new Thread(threadSaveHistory);
             threadHist.Name = "Save history";
             threadHist.IsBackground = true;
-            threadHist.Start();
+            //threadHist.Start();
+            ThreadPool.QueueUserWorkItem(threadSaveScreenshot);
         }
 
 
@@ -334,10 +278,13 @@ namespace BlitzChat
             {
                 viewers = new frmViewers();
                 viewers.Topmost = settingsChat.TopMost;
+                viewers.AllowsTransparency = settingsChat.TransparencyEnabled;
                 viewers.Background = mainbackBrush;
+                viewers.Opacity = settingsChat.ChatOpacity;
                 viewers.Top = this.Top + this.ActualHeight;
                 viewers.Width = this.Width;
                 viewers.Left = this.Left;
+
                 viewers.Show();
                 bViewersEnd = false;
                 viewersMenuItem.Header = "Close viewers";
@@ -387,7 +334,7 @@ namespace BlitzChat
 
         private void chat_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ChangedButton == MouseButton.Left)
+            if (e.LeftButton == MouseButtonState.Pressed)
             {
                 // this prevents win7 aerosnap
                 if (this.ResizeMode != System.Windows.ResizeMode.NoResize)
@@ -401,6 +348,7 @@ namespace BlitzChat
 
         private void contextMenu_Settings_Click(object sender, RoutedEventArgs e)
         {
+            frmSettings = new frmSettings();
             settingsInit();
             if (this.AllowsTransparency == false)
             {
@@ -419,8 +367,7 @@ namespace BlitzChat
             //TODO: Maybe need loop change all blocks
             string newFont = frmSettings.cmbFonts.SelectedItem.ToString();
             font = new FontFamily(newFont);
-            usrRTB.richChat.FontFamily = font;
-            usrRTB.richChat.Document.FontFamily = font;
+            listChat.FontFamily = font;
             settingsChat.TextFont = newFont;
             serializeSettings();
             applySettingsToBlocks();
@@ -439,6 +386,8 @@ namespace BlitzChat
 
         private void ClrPcker_Nickname_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
         {
+            if (!frmSettings.IsLoaded)
+                return;
             Color newColor = frmSettings.ClrPcker_Nickname.SelectedColor;
             nicknameColor = newColor;
             settingsChat.NicknameColor = ToHexColor(newColor);
@@ -448,9 +397,11 @@ namespace BlitzChat
 
         private void ClrPcker_Text_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
         {
+            if (!frmSettings.IsLoaded)
+                return;
             Color newColor = frmSettings.ClrPcker_Text.SelectedColor;
             textBrush.Color = newColor;
-            usrRTB.richChat.Foreground = textBrush;
+            listChat.Foreground = textBrush;
             settingsChat.ForeColor = ToHexColor(newColor);
             serializeSettings();
             //applySettingsToBlocks();
@@ -458,10 +409,10 @@ namespace BlitzChat
 
         private void ClrPcker_Background_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
         {
+            if (!frmSettings.IsLoaded)
+                return;
             Color newColor = frmSettings.ClrPcker_Background.SelectedColor;
             mainbackBrush.Color = newColor;
-            //Background = mainBrush;
-
             settingsChat.BackgroundColor = ToHexColor(newColor);
             serializeSettings();
         }
@@ -481,31 +432,24 @@ namespace BlitzChat
             double newOpacity = e.NewValue / 100;
             mainbackBrush.Opacity = newOpacity;
             settingsChat.ChatOpacity = newOpacity;
+            //header.Opacity = settingsChat.ChatOpacity;
             serializeSettings();
         }
 
         private void contextMenu_Close_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Do you want to save your chat history?", "Save history?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-            {
-                saveHistory();
-            }
             this.Close();
         }
 
         private void bttnClose_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Do you want to save your chat istory?", "Save history?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-            {
-                saveHistory();
-            }
             this.Close();
         }
 
         private void frmChat_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            usrRTB.richChat.Width = Column0.ActualWidth;
-            usrRTB.richChat.Height = Row1.ActualHeight;
+            listChat.Width = Column0.ActualWidth;
+            listChat.Height = Row1.ActualHeight;
             header.Width = Column0.ActualWidth;
             settingsChat.Width = RestoreBounds.Width;
             settingsChat.Height = RestoreBounds.Height;
@@ -574,8 +518,32 @@ namespace BlitzChat
 
         private void frmChat_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (WindowName == "Main") {
-                System.Environment.Exit(0);
+            MessageBoxResult result = MessageBoxResult.None;
+            if (reload == true && (result = MessageBox.Show("Do you want to reload this window to apply settings?", "Reload window?", MessageBoxButton.YesNo)) == MessageBoxResult.Yes)
+            {
+                return;
+            }
+            else if (result == MessageBoxResult.No)
+            {
+                e.Cancel = true;
+                return;
+            }
+            else if (reload == false)
+            {
+                result = MessageBox.Show("Do you want to save your chat history?", "Save history?", MessageBoxButton.YesNoCancel);
+                if (result == MessageBoxResult.Yes)
+                {
+                    saveHistory();
+                }
+                else if (result == MessageBoxResult.Cancel)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+                if (WindowName == "Main")
+                {
+                    System.Environment.Exit(0);
+                }
             }
         }
 
@@ -687,6 +655,16 @@ namespace BlitzChat
             }
         }
 
+        private void threadSaveScreenshot(object obj) {
+            while (!bSaveScreenEnd) {
+                Dispatcher.BeginInvoke(new Action(delegate
+                {
+                    Screenshots.createScreenshot(this, "");
+                }));
+                Thread.Sleep(500);
+            }
+        }
+
         private void threadTwitch(object obj)
         {
             try
@@ -701,19 +679,18 @@ namespace BlitzChat
             twitch.messageReceived += twitch_MessageReceived;
             twitch.smilesLoaded += twitch_smilesLoaded;
             
-            while (!bTwitchEnd) { Thread.Sleep(100); }
+            while (!bTwitchEnd) {
+
+                Thread.Sleep(100); 
+            }
             twitch.Stop();
         }
 
         private void twitch_smilesLoaded(object sender, EventArgs e)
         {
-            if (listMessages == null)
-                return;
-            
             Dispatcher.BeginInvoke(new Action(delegate
             {
-                stopSaveBlocks = true;
-                foreach (TextBlock block in listMessages)
+                foreach (TextBlock block in listChat.Items)
                 {
                     foreach (Inline inl in block.Inlines)
                     {
@@ -721,11 +698,20 @@ namespace BlitzChat
 
                                 TextRange trMessage = new TextRange(inl.ContentStart, inl.ContentEnd);
                                 replaceAllSmiles(0, trMessage.Text, trMessage);
-                         
                         }
                     }
                 }
-                listMessages = null;
+                foreach (Paragraph p in historydoc.Blocks)
+                {
+                    foreach (Inline inl in p.Inlines)
+                    {
+                        if (inl.Name == "Message")
+                        {
+                            TextRange trMessage = new TextRange(inl.ContentStart, inl.ContentEnd);
+                            replaceAllSmiles(0, trMessage.Text, trMessage);
+                        }
+                    }
+                }
             }));
         }
 
@@ -802,7 +788,6 @@ namespace BlitzChat
                 frmAddChat.bttnRemove.IsEnabled = false;
             }
             serializeChannels();
-            bScrolled = false;
         }
 
         private void addChannel()
@@ -877,7 +862,6 @@ namespace BlitzChat
                         break;
                 }
                 serializeChannels();
-                bScrolled = false;
             }
         }
 
@@ -885,29 +869,33 @@ namespace BlitzChat
         {
             if (frmSettings.IsLoaded)
             {
-                foreach (Paragraph p in usrRTB.richChat.Document.Blocks)
+                foreach (TextBlock block in listChat.Items)
                 {
-                    if (p is Paragraph)
+                    foreach (Inline inline in block.Inlines) 
                     {
-                        int index = 0;
-                        foreach (Inline inl in p.Inlines)
-                        {
-                            if (index == 3)
-                            {
-                                inl.FontWeight = nicknameWeight;
-                            }
-                            else if (index > 3)
-                            {
-                                inl.FontWeight = textWeight;
-                            }
-                            index++;
-                        }
+                        if (inline.Name == "Nickname")
+                            inline.FontWeight = nicknameWeight;
+                        if (inline.Name == "Message")
+                            inline.FontWeight = textWeight;
+                        inline.FontFamily = new FontFamily(settingsChat.TextFont);
+                        inline.FontSize = settingsChat.TextFontSize;
                     }
-
                 }
-                TextRange tr = new TextRange(usrRTB.richChat.Document.ContentStart, usrRTB.richChat.Document.ContentEnd);
-                tr.ApplyPropertyValue(FontFamilyProperty, font);
-                tr.ApplyPropertyValue(FontSizeProperty, settingsChat.TextFontSize);
+                foreach (Paragraph p in historydoc.Blocks)
+                {
+                    foreach (Inline inline in p.Inlines)
+                    {
+                        if (inline.Name == "Nickname")
+                            inline.FontWeight = nicknameWeight;
+                        if (inline.Name == "Message")
+                            inline.FontWeight = textWeight;
+                        inline.FontFamily = new FontFamily(settingsChat.TextFont);
+                        inline.FontSize = settingsChat.TextFontSize;
+                    }
+                }
+                //TextRange tr = new TextRange(listChat.Conte.ContentStart, usrRTB.richChat.Document.ContentEnd);
+                //tr.ApplyPropertyValue(FontFamilyProperty, font);
+                //tr.ApplyPropertyValue(FontSizeProperty, settingsChat.TextFontSize);
             }
 
         }
@@ -928,6 +916,26 @@ namespace BlitzChat
             frmSettings.chkTextBold.Click += chkTextBold_Click;
             frmSettings.chkNicknameBold.Click += chkNicknameBold_Click;
             frmSettings.ClrPcker_Date.SelectedColorChanged += ClrPcker_Date_SelectedColorChanged;
+            frmSettings.cbTransparency.Checked += cbTransparency_Checked;
+            frmSettings.cbTransparency.Unchecked += cbTransparency_Checked;
+        }
+
+        private void cbTransparency_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!frmSettings.IsLoaded)
+                return;
+            settingsChat.TransparencyEnabled = frmSettings.cbTransparency.IsChecked.Value;
+            serializeSettings();
+            stopAll();
+            reload = true;
+            frmSettings.Close();
+            if(OnTransparencyChanged != null)
+                OnTransparencyChanged(sender, this);
+        }
+
+        private void setTransparency()
+        {
+            this.AllowsTransparency = settingsChat.TransparencyEnabled;
         }
 
 
@@ -948,6 +956,7 @@ namespace BlitzChat
             frmSettings.chkTextBold.IsChecked = settingsChat.TextBold;
             frmSettings.chkDateEnabled.IsChecked = settingsChat.DateEnabled;
             frmSettings.ClrPcker_Date.SelectedColor = dateBrush.Color;
+            frmSettings.cbTransparency.IsChecked = settingsChat.TransparencyEnabled;
             foreach (FontFamily fontFamily in Fonts.SystemFontFamilies)
             {
                 // FontFamily.Source contains the font family name.
@@ -955,7 +964,7 @@ namespace BlitzChat
             }
             frmSettings.cmbFonts.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("",
             System.ComponentModel.ListSortDirection.Ascending));
-
+            setEvents();
         }
 
         private void preSetSettings()
@@ -963,10 +972,10 @@ namespace BlitzChat
             this.nicknameColor = fromHexColor(settingsChat.NicknameColor);
             nicknameBrush.Color = nicknameColor;
             textBrush = new SolidColorBrush(fromHexColor(settingsChat.ForeColor));
-            this.usrRTB.richChat.Foreground = textBrush;
+            listChat.Foreground = textBrush;
             mainbackBrush.Color = fromHexColor(settingsChat.BackgroundColor);
             mainbackBrush.Opacity = settingsChat.ChatOpacity;
-            header.Background = mainbackBrush;
+            //header.Background = mainbackBrush;
             Topmost = settingsChat.TopMost;
             font = new FontFamily(settingsChat.TextFont);
             textWeight = settingsChat.TextBold ? FontWeights.Bold : FontWeights.Normal;
@@ -976,6 +985,7 @@ namespace BlitzChat
             this.Height = settingsChat.Height;
             this.Top = settingsChat.Top;
             this.Left = settingsChat.Left;
+            setTransparency();
         }
 
         void Handle(CheckBox checkBox)
@@ -1033,12 +1043,12 @@ namespace BlitzChat
         }
 
         private void notificateToChat(string msg, Brush brush) {
-            Paragraph p = new Paragraph();
-            p.Foreground = brush;
-            p.FontSize = settingsChat.TextFontSize;
-            p.FontFamily = new FontFamily(settingsChat.TextFont);
-            p.Inlines.Add(msg);
-            usrRTB.richChat.Document.Blocks.Add(p);
+            TextBlock b = new TextBlock();
+            b.Foreground = brush;
+            b.FontSize = settingsChat.TextFontSize;
+            b.FontFamily = new FontFamily(settingsChat.TextFont);
+            b.Inlines.Add(msg);
+            listChat.Items.Add(b);
         }
 
         /**
@@ -1050,10 +1060,8 @@ namespace BlitzChat
             Dispatcher.BeginInvoke(new Action(delegate
             {
                 string path = "pack://application:,,,/BlitzChat;component/images/";
-                Paragraph paragraph = new Paragraph();
-                Paragraph parHist = new Paragraph();
                 TextBlock block = new TextBlock();
-                
+                Paragraph parHist = new Paragraph();
                 block.TextWrapping = TextWrapping.Wrap;
                 if (settingsChat.DateEnabled)
                 {
@@ -1107,6 +1115,7 @@ namespace BlitzChat
                     default:
                         break;
                 }
+                Run r = new Run();
                 if (!String.IsNullOrEmpty(imagesource))
                 {
                     AddImage(block.Inlines, imagesource, imagewidth, imageheight);
@@ -1114,8 +1123,8 @@ namespace BlitzChat
                     block.Inlines.Add(" ");
                     parHist.Inlines.Add(" ");
                 }
-                block.Inlines.Add(new Run(nickname + ": ") { FontWeight = nicknameWeight, Foreground = nicknameBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
-                parHist.Inlines.Add(new Run(nickname + ": ") { FontWeight = nicknameWeight, Foreground = nicknameBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
+                block.Inlines.Add(new Run(nickname + ": ") { FontWeight = nicknameWeight, Foreground = nicknameBrush, FontSize = settingsChat.TextFontSize, FontFamily = font, Name = "Nickname" });
+                parHist.Inlines.Add(new Run(nickname + ": ") { FontWeight = nicknameWeight, Foreground = nicknameBrush, FontSize = settingsChat.TextFontSize, FontFamily = font, Name = "Nickname" });
                 if (!String.IsNullOrEmpty(to) && quoteColor)
                 {  
                     block.Inlines.Add(new Run(to + ", ") { FontWeight = FontWeights.Bold, Foreground = quoteBrush, FontSize = settingsChat.TextFontSize, FontFamily = font });
@@ -1137,10 +1146,7 @@ namespace BlitzChat
                     parHist.Inlines.Add(new Run(msg) { FontWeight = this.textWeight, Foreground = textBrush, FontSize = settingsChat.TextFontSize, FontFamily = font, Name = "Message" });
                 }
                 //smiles.checkEmotions(ref paragraph, settingsChat.SmileSize);
-                paragraph.Inlines.Add(block);
-                if(!stopSaveBlocks)
-                    listMessages.Add(block);
-                usrRTB.richChat.Document.Blocks.Add(paragraph);
+                listChat.Items.Add(block);
                 historydoc.Blocks.Add(parHist);
                 string uri = "";
                 TextRange trMessage = FindWordFromPosition(block.ContentStart, msg);
@@ -1155,21 +1161,6 @@ namespace BlitzChat
                     replaceLink(trUri, uri);
                     replaceLink(trUriHist, uri);
                 }
-                bScrolled = false;
-                //if (usrRTB.richChat.VerticalScrollBarVisibility != ScrollBarVisibility.Visible)
-                //{
-                //    usrRTB.richChat.ScrollToVerticalOffset(dVer + dViewport);
-                //}
-                //ColorAnimation animColor = new ColorAnimation();
-                //animColor.From = Colors.Transparent;
-                //SolidColorBrush brush = new SolidColorBrush(Colors.Transparent);
-                //brush.Opacity = 0.15;
-                //paragraph.Background = brush;
-                //animColor.From = fromHexColor("#FFDAA520");
-                //RepeatBehaviorConverter rbc = new RepeatBehaviorConverter();
-                //animColor.RepeatBehavior = (RepeatBehavior)rbc.ConvertFromString("0:0:3");
-                //animColor.Duration = TimeSpan.FromSeconds(1.5);
-                //paragraph.Background.BeginAnimation(SolidColorBrush.ColorProperty, animColor);
                 DoubleAnimation da = new DoubleAnimation();
                 da.From = 0;
                 da.To = 1;
@@ -1255,7 +1246,7 @@ namespace BlitzChat
                 img.Width = bitmapImage.Width/2 + settingsChat.SmileSize;
                 img.Height = bitmapImage.Height/2 + settingsChat.SmileSize;
                 h = img.Height;
-                new InlineUIContainer(img, tr.Start);
+                new InlineUIContainer(img, tr.Start).Name = "Smile";
             }
             return h;
         }
@@ -1274,7 +1265,7 @@ namespace BlitzChat
                 img.Width = smile.width+ settingsChat.SmileSize;
                 img.Height = smile.height + settingsChat.SmileSize;
                 h = img.Height;
-                new InlineUIContainer(img, tr.Start);
+                new InlineUIContainer(img, tr.Start).Name = "Smile";
             }
             return h;
         }
@@ -1293,7 +1284,7 @@ namespace BlitzChat
                 img.Width = smile.width + settingsChat.SmileSize;
                 img.Height = smile.height + settingsChat.SmileSize;
                 h = img.Height;
-                new InlineUIContainer(img, tr.Start);
+                new InlineUIContainer(img, tr.Start).Name = "Smile";
             }
             return h = 0;
         }
@@ -1341,24 +1332,37 @@ namespace BlitzChat
             }));
         }
 
-        public static void AddBlock(Block from, FlowDocument to)
+        public static void AddBlock(TextRange range, FlowDocument to)
         {
-            if (from != null)
+            if (range != null)
             {
-                TextRange range = new TextRange(from.ContentStart, from.ContentEnd);
+                try
+                {
+                    using (MemoryStream stream = new MemoryStream())
+                    {
 
-                MemoryStream stream = new MemoryStream();
+                        System.Windows.Markup.XamlWriter.Save(range, stream);
 
-                System.Windows.Markup.XamlWriter.Save(range, stream);
+                        range.Save(stream, DataFormats.XamlPackage);
 
-                range.Save(stream, DataFormats.XamlPackage);
+                        TextRange textRange2 = new TextRange(to.ContentEnd, to.ContentEnd);
 
-                TextRange textRange2 = new TextRange(to.ContentEnd, to.ContentEnd);
-
-                textRange2.Load(stream, DataFormats.XamlPackage);
-                to.Blocks.Add(new Paragraph());
-                to.TextAlignment = TextAlignment.Left;
+                        textRange2.Load(stream, DataFormats.XamlPackage);
+                        to.Blocks.Add(new Paragraph());
+                        to.TextAlignment = TextAlignment.Left;
+                    }
+                }catch(Exception){
+                
+                }
             }
+        }
+
+        public void stopAll() {
+            bTwitchEnd = true;
+            bSC2TVEnd = true;
+            bCybergameEnd = true;
+            bGoodgameEnd = true;
+            bSaveScreenEnd = true;
         }
 
         public static void AddDocument(FlowDocument from, FlowDocument to)
@@ -1466,6 +1470,24 @@ namespace BlitzChat
             container.BaselineAlignment = BaselineAlignment.Center;
             inlines.Add(container);
         }
+
+        private childItem FindVisualChild<childItem>(DependencyObject obj)
+        where childItem : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(obj, i);
+                if (child != null && child is childItem)
+                    return (childItem)child;
+                else
+                {
+                    childItem childOfChild = FindVisualChild<childItem>(child);
+                    if (childOfChild != null)
+                        return childOfChild;
+                }
+            }
+            return null;
+        }
         #endregion
 
         #region Deserializing
@@ -1476,22 +1498,23 @@ namespace BlitzChat
                 ChatSettingsXML newSettings = (ChatSettingsXML)XMLSerializer.deserialize(settingsChat, "Config/" + WindowName + "_" + "ChatSettings.xml");
                 if (newSettings == null)
                     return;
-                settingsChat.BackgroundColor = newSettings.BackgroundColor;
-                settingsChat.ChatOpacity = newSettings.ChatOpacity;
-                settingsChat.ForeColor = newSettings.ForeColor;
-                settingsChat.NicknameColor = newSettings.NicknameColor;
-                settingsChat.TextFont = newSettings.TextFont;
-                settingsChat.TextFontSize = newSettings.TextFontSize;
-                settingsChat.TopMost = newSettings.TopMost;
-                settingsChat.NicknameBold = newSettings.NicknameBold;
-                settingsChat.TextBold = newSettings.TextBold;
-                settingsChat.SmileSize = newSettings.SmileSize;
-                settingsChat.DateEnabled = newSettings.DateEnabled;
-                settingsChat.DateColor = newSettings.DateColor;
-                settingsChat.Width = newSettings.Width;
-                settingsChat.Height = newSettings.Height;
-                settingsChat.Top = newSettings.Top;
-                settingsChat.Left = newSettings.Left;
+                settingsChat = newSettings;
+                //settingsChat.BackgroundColor = newSettings.BackgroundColor;
+                //settingsChat.ChatOpacity = newSettings.ChatOpacity;
+                //settingsChat.ForeColor = newSettings.ForeColor;
+                //settingsChat.NicknameColor = newSettings.NicknameColor;
+                //settingsChat.TextFont = newSettings.TextFont;
+                //settingsChat.TextFontSize = newSettings.TextFontSize;
+                //settingsChat.TopMost = newSettings.TopMost;
+                //settingsChat.NicknameBold = newSettings.NicknameBold;
+                //settingsChat.TextBold = newSettings.TextBold;
+                //settingsChat.SmileSize = newSettings.SmileSize;
+                //settingsChat.DateEnabled = newSettings.DateEnabled;
+                //settingsChat.DateColor = newSettings.DateColor;
+                //settingsChat.Width = newSettings.Width;
+                //settingsChat.Height = newSettings.Height;
+                //settingsChat.Top = newSettings.Top;
+                //settingsChat.Left = newSettings.Left;
                 preSetSettings();
             }
         }
@@ -1503,11 +1526,12 @@ namespace BlitzChat
                 ChannelsSaveXML desChannels = (ChannelsSaveXML)XMLSerializer.deserialize(channels, "Config/" + WindowName + "_" + "Channels.xml");
                 if(desChannels == null)
                     return;
-                channels.Twitch = desChannels.Twitch;
-                channels.SC2TV = desChannels.SC2TV;
-                channels.Cybergame = desChannels.Cybergame;
-                channels.GoodGame = desChannels.GoodGame;
-                channels.SC2TVLastMessageId = desChannels.SC2TVLastMessageId;
+                channels = desChannels;
+                //channels.Twitch = desChannels.Twitch;
+                //channels.SC2TV = desChannels.SC2TV;
+                //channels.Cybergame = desChannels.Cybergame;
+                //channels.GoodGame = desChannels.GoodGame;
+                //channels.SC2TVLastMessageId = desChannels.SC2TVLastMessageId;
                 if (!String.IsNullOrEmpty(channels.Twitch))
                     addTwitch();
                 if (!String.IsNullOrEmpty(channels.SC2TV))

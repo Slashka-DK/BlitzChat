@@ -71,6 +71,7 @@ namespace bliSC2TV
                     }
                     message.Text = message.Text.Replace("[url]", "");
                     message.Text = message.Text.Replace("[/url]", "");
+                    message.Text = message.Text.Replace("&quot;", "\"");
                     messageReceived(this, message);
                     lastMsgId = Id;
                 }

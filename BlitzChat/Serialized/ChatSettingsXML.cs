@@ -17,6 +17,7 @@ namespace BlitzChat
         public bool NicknameBold { get; set; }
         public bool TextBold { get; set; }
         public bool DateEnabled { get; set; }
+        public bool TransparencyEnabled { get; set; }
         public double Left { get; set; }
         public double Top { get; set; }
         public double Width {get; set;}
@@ -36,6 +37,7 @@ namespace BlitzChat
             NicknameBold = true;
             TextBold = false;
             DateEnabled = false;
+            TransparencyEnabled = false;
         }
     }
 }

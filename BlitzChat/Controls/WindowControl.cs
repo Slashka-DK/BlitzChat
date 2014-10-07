@@ -83,8 +83,17 @@ namespace BlitzChat
         private void addWindow(string name){
             MainWindow newWindow = new MainWindow(name);
             newWindow.OnAdditionalWindows += newWindow_OnAdditionalWindows;
+            newWindow.OnTransparencyChanged += newWindow_OnTransparencyChanged;
             listMainWindows.Add(name,newWindow);
             listMainWindows[name].Show();
+        }
+
+        private void newWindow_OnTransparencyChanged(object sender, MainWindow e)
+        {
+            string name = e.WindowName;
+            listMainWindows[name].Close();
+            listMainWindows.Remove(name);
+            addWindow(name);
         }
         
         private void serializeWindows(){

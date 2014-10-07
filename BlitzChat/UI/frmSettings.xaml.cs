@@ -45,7 +45,7 @@ namespace BlitzChat
 
         private void bttnClose_Click(object sender, RoutedEventArgs e)
         {
-            this.Hide();
+            this.Close();
         }
     }
 }
