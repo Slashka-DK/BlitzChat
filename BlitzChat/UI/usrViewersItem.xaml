@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="BlitzChat.UI.usrViewersItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d">
+    <Grid>
+        <DockPanel LastChildFill="True" HorizontalAlignment="Center" Margin="3">
+            <StackPanel>
+            <Image Margin="1" x:Name="imgService" Source="pack://application:,,,/BlitzChat;component/Images/Empty.png" Width="25" Height="25"/>
+            <TextBlock Margin="1" FontWeight="Bold" FontSize="13" Foreground="#FF00BFBF" TextAlignment="Center" x:Name="tblStreamer" Text="Not added"/>
+            <TextBlock Margin="1" FontSize="13" Foreground="#FF00BFBF" TextAlignment="Center" x:Name="tblViewersCount" Text="-1"/>
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</UserControl>

@@ -5,15 +5,17 @@
         xmlns:local="clr-namespace:BlitzChat" x:Name="frmChat" x:Class="BlitzChat.MainWindow"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:ui="clr-namespace:BlitzChat.UI"
-        Title="BlitzChat" Opacity="1.0" Background="#FF444141"  Height="491" Width="379" AllowsTransparency="False" ResizeMode="CanResize" WindowStyle="None" MouseDown="chat_MouseDown" SizeChanged="frmChat_SizeChanged" LocationChanged="frmChat_LocationChanged" MouseUp="frmChat_MouseUp" Closing="frmChat_Closing" Loaded="frmChat_Loaded">
+        Title="BlitzChat" Opacity="1.0" Background="{x:Null}"  Height="491" Width="379" AllowsTransparency="False" ResizeMode="CanResize" WindowStyle="None" MouseDown="chat_MouseDown" SizeChanged="frmChat_SizeChanged" LocationChanged="frmChat_LocationChanged" MouseUp="chat_MouseUp" Closing="frmChat_Closing" Loaded="frmChat_Loaded" IsHitTestVisible="True" PreviewKeyUp="frmChat_PreviewKeyUp" PreviewKeyDown="frmChat_PreviewKeyDown">
     <shell:WindowChrome.WindowChrome>
-        <shell:WindowChrome
+        <shell:WindowChrome x:Name="shell"
             ResizeBorderThickness="5"
             CornerRadius="0"
             CaptionHeight="40"
             GlassFrameThickness="0">
         </shell:WindowChrome>
     </shell:WindowChrome.WindowChrome>
+    <Window.InputBindings>
+    </Window.InputBindings>
     <Window.Resources>
         <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">10</sys:Double>
         <Style x:Key="{x:Type ContextMenu}" TargetType="{x:Type ContextMenu}">
@@ -72,7 +74,7 @@
         <Button shell:WindowChrome.IsHitTestVisibleInChrome="True" Panel.ZIndex="50" x:Name="bttnClose" Grid.Column="0" Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Click="bttnClose_Click" BorderBrush="{x:Null}">
             <Image Width="16" Height="16" Source="pack://application:,,,/BlitzChat;component/Images/CloseButton.png" />
         </Button>
-        <ui:usrHeader shell:WindowChrome.IsHitTestVisibleInChrome="True" x:Name="header" Grid.Row="0" Margin="0,-5,0,5" />
-        <ui:usrListBoxChat shell:WindowChrome.IsHitTestVisibleInChrome="True" x:Name="usrLstChat" Grid.Row="1" Margin="3" />
+        <ui:usrHeader shell:WindowChrome.IsHitTestVisibleInChrome="True" x:Name="header" Grid.Row="0" Margin="0,-5,0,5" IsHitTestVisible="True" />
+        <ui:usrListBoxChat shell:WindowChrome.IsHitTestVisibleInChrome="True" x:Name="usrLstChat" Grid.Row="1" Margin="3" IsHitTestVisible="True" />
     </Grid>
 </Window>

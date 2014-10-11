@@ -87,6 +87,9 @@
     <Reference Include="bliCybergame">
       <HintPath>..\bliCybergame\bin\Debug\bliCybergame.dll</HintPath>
     </Reference>
+    <Reference Include="bliGamersTV">
+      <HintPath>..\bliGamersTV\bin\Debug\bliGamersTV.dll</HintPath>
+    </Reference>
     <Reference Include="bliGoodgame">
       <HintPath>..\bliGoodgame\bin\Debug\bliGoodgame.dll</HintPath>
     </Reference>
@@ -155,6 +158,9 @@
     <Compile Include="UI\usrRichTextBox.xaml.cs">
       <DependentUpon>usrRichTextBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\usrViewersItem.xaml.cs">
+      <DependentUpon>usrViewersItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\ErrorLog.cs" />
     <Compile Include="UI\frmWindowsControl.xaml.cs">
       <DependentUpon>frmWindowsControl.xaml</DependentUpon>
@@ -184,6 +190,7 @@
       <DependentUpon>frmViewers.xaml</DependentUpon>
     </Compile>
     <Compile Include="Exceptions\WrongChannelNameException.cs" />
+    <Compile Include="Utilities\WindowsServices.cs" />
     <Compile Include="Utilities\XMLSerializer.cs" />
     <Compile Include="Version.cs">
       <AutoGen>True</AutoGen>
@@ -236,6 +243,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\usrRichTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\usrViewersItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -370,10 +381,28 @@
   <ItemGroup>
     <Resource Include="icon.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\gamerstvicon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\empire.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\goha.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\hashd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\hitbox.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\empty.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.None" BuildVersion_BuildAction="Both" BuildVersion_UpdateAssemblyVersion="False" BuildVersion_UpdateFileVersion="False" BuildVersion_AssemblyInfoFilename="" BuildVersion_StartDate="2014/9/1" BuildVersion_UseUniversalClock="False" BuildVersion_IncrementBeforeBuild="False" BuildVersion_DetectChanges="False" />
+      <UserProperties BuildVersion_DetectChanges="False" BuildVersion_IncrementBeforeBuild="False" BuildVersion_UseUniversalClock="False" BuildVersion_StartDate="2014/9/1" BuildVersion_AssemblyInfoFilename="" BuildVersion_UpdateFileVersion="False" BuildVersion_UpdateAssemblyVersion="False" BuildVersion_BuildAction="Both" BuildVersion_BuildVersioningStyle="None.None.None.None" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>

@@ -12,8 +12,10 @@
   <NicknameBold>true</NicknameBold>
   <TextBold>false</TextBold>
   <DateEnabled>false</DateEnabled>
+  <TransparencyEnabled>false</TransparencyEnabled>
   <Left>997</Left>
   <Top>256</Top>
   <Width>377</Width>
   <Height>660</Height>
+  <BackgroundMode>false</BackgroundMode>
 </ChatSettingsXML>

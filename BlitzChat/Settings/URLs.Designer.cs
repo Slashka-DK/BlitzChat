@@ -25,7 +25,7 @@ namespace BlitzChat.Settings {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("irc.twitch.tv")]
+        [global::System.Configuration.DefaultSettingValueAttribute("irc.twitch.tv:80")]
         public string Twitch {
             get {
                 return ((string)(this["Twitch"]));
@@ -73,7 +73,7 @@ namespace BlitzChat.Settings {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ws://chat.goodgame.ru:8080/chat/websocket")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ws://chat.goodgame.ru:8081/chat/websocket")]
         public string Goodgame {
             get {
                 return ((string)(this["Goodgame"]));

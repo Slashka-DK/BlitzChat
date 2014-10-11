@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="Twitch" Type="System.String" Scope="User">
-      <Value Profile="(Default)">irc.twitch.tv</Value>
+      <Value Profile="(Default)">irc.twitch.tv:80</Value>
     </Setting>
     <Setting Name="TwitchSmiles" Type="System.String" Scope="User">
       <Value Profile="(Default)">https://api.twitch.tv/kraken/chat/emoticons</Value>
@@ -15,7 +15,7 @@
       <Value Profile="(Default)">ws://cybergame.tv:9090/websocket</Value>
     </Setting>
     <Setting Name="Goodgame" Type="System.String" Scope="User">
-      <Value Profile="(Default)">ws://chat.goodgame.ru:8080/chat/websocket</Value>
+      <Value Profile="(Default)">ws://chat.goodgame.ru:8081/chat/websocket</Value>
     </Setting>
     <Setting Name="SC2TVSmiles" Type="System.String" Scope="User">
       <Value Profile="(Default)">http://chat.sc2tv.ru/js/smiles.js</Value>

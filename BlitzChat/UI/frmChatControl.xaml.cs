@@ -15,18 +15,9 @@ namespace BlitzChat
             InitializeComponent();
             
             cmbAddChat.SelectedIndex = 0;
-            txtChannel.AddHandler(FrameworkElement.MouseLeftButtonDownEvent, new MouseButtonEventHandler(txtChannel_MouseLeftButtonDown), true);
+            //txtChannel.AddHandler(FrameworkElement.MouseLeftButtonDownEvent, new MouseButtonEventHandler(txtChannel_MouseLeftButtonDown), true);
         }
 
-        public static int Compare(String left, String right)
-        {
-            return left.GetHashCode() - right.GetHashCode();
-        } 
-                
-        private void txtChannel_MouseEnter(object sender, MouseEventArgs e)
-        {
-            
-        }
 
         private void bttnClose_Click(object sender, RoutedEventArgs e)
         {
@@ -39,15 +30,47 @@ namespace BlitzChat
                 this.DragMove();
         }
 
-        private void txtChannel_TextChanged(object sender, TextChangedEventArgs e)
+        private void txtChannel_GotFocus(object sender, RoutedEventArgs e)
         {
-
+            txtChannel.Clear();
         }
 
-        private void txtChannel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void cmbAddChat_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(txtChannel.Text == "StreamerName")
-                txtChannel.Clear();
+            if (cmbAddChat.SelectedValue == null)
+            {
+                txtChannel.Text = "Nothing to add";
+                return;
+            }
+            switch (cmbAddChat.SelectedValue.ToString()) { 
+                case Constants.TWITCH:
+                    txtChannel.Text = "Twitch streamer name";
+                    break;
+                case Constants.SC2TV:
+                    txtChannel.Text = "SC2TV streamer name";
+                    break;
+                case Constants.CYBERGAME:
+                    txtChannel.Text = "Cybergame streamer name";
+                    break;
+                case Constants.GOODGAME:
+                    txtChannel.Text = "Goodgame streamer name";
+                    break;
+                case Constants.GAMERSTV:
+                    txtChannel.Text = "GamersTV stream URL";
+                    break;
+                case Constants.GOHATV:
+                    txtChannel.Text = "GohaTV streamer name";
+                    break;
+                case Constants.HITBOX:
+                    txtChannel.Text = "Hitbox streamer name";
+                    break;
+                case Constants.EMPIRE:
+                    txtChannel.Text = "EmpireTV streamer name";
+                    break;
+                default:
+                    txtChannel.Text = "Nothing to add";
+                    break;
+            }
         }
     }
 }

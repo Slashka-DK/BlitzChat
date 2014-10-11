@@ -22,6 +22,7 @@ namespace BlitzChat
         public double Top { get; set; }
         public double Width {get; set;}
         public double Height { get; set; }
+        public bool BackgroundMode { get; set; }
 
         public ChatSettingsXML()
         {
@@ -38,6 +39,7 @@ namespace BlitzChat
             TextBold = false;
             DateEnabled = false;
             TransparencyEnabled = false;
+            BackgroundMode = false;
         }
     }
 }

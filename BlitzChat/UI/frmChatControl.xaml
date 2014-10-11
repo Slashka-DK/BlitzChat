@@ -26,7 +26,7 @@
             <Image Width="16" Height="16" Source="pack://application:,,,/BlitzChat;component/Images/CloseButton.png" />
         </Button>
         <Label Content="Choose streaming service:" Foreground="#FF00BFBF" HorizontalAlignment="Center" Margin="47,6,17,0" VerticalAlignment="Top" Height="40" Width="226" FontSize="16"/>
-        <ComboBox x:Name="cmbAddChat" BorderBrush="#FF00BFBF" BorderThickness="2" HorizontalAlignment="Left" Margin="53,36,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Width="183" >
+        <ComboBox x:Name="cmbAddChat" BorderBrush="#FF00BFBF" BorderThickness="2" HorizontalAlignment="Left" Margin="53,36,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Width="183" SelectionChanged="cmbAddChat_SelectionChanged" >
             <ComboBox.Background>
                 <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
                     <GradientStop Color="#FFF0F0F0" Offset="0"/>
@@ -34,7 +34,7 @@
                 </LinearGradientBrush>
             </ComboBox.Background>
         </ComboBox>
-        <TextBox x:Name="txtChannel" BorderBrush="#FF00BFBF" IsEnabled="true" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="23" Margin="53,211,0,0" TextWrapping="Wrap" Text="StreamerName" VerticalAlignment="Top" Width="182" MouseEnter="txtChannel_MouseEnter" TextChanged="txtChannel_TextChanged" MouseLeftButtonDown="txtChannel_MouseLeftButtonDown"/>
+        <TextBox x:Name="txtChannel" BorderBrush="#FF00BFBF" IsEnabled="true" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="23" Margin="53,211,0,0" TextWrapping="Wrap" Text="StreamerName" VerticalAlignment="Top" Width="182" GotFocus="txtChannel_GotFocus" />
         <Button x:Name="bttnAddChat" Content="Add" HorizontalAlignment="Left" Margin="53,246,0,0" VerticalAlignment="Top" Width="75" FontSize="14" Foreground="#FFFFFDFD" FontFamily="Global Serif" FontWeight="Bold" RenderTransformOrigin="0.604,2.19">
             <Button.BorderBrush>
                 <SolidColorBrush Color="#FF00BFBF" Opacity="0.6"/>

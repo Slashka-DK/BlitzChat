@@ -52,7 +52,14 @@
                     <CheckBox x:Name="chkOnTop" Content="" HorizontalAlignment="Left" Margin="232,62,0,0" VerticalAlignment="Top" IsChecked="True"/>
                     <Label Content="OnTop:" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="10,55,0,0" VerticalAlignment="Top"/>
                     <Label Content="Enable Transparency:" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="10,89,0,0" VerticalAlignment="Top"/>
+                    <Label Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="10,122,0,0" VerticalAlignment="Top">
+                        <TextBlock >Background mode: 
+                        <LineBreak/>
+                            (use CTRL to control)
+                        </TextBlock>
+                    </Label>
                     <CheckBox Content="" x:Name="cbTransparency" IsChecked="False" HorizontalAlignment="Left" Margin="232,95,0,0" VerticalAlignment="Top"/>
+                    <CheckBox Content="" x:Name="cbBackgroundMode" IsChecked="False" HorizontalAlignment="Left" Margin="232,128,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="tabText" Header="Chat" Foreground="#FF00BFBF" Height="21" VerticalAlignment="Bottom" Opacity="0.8" Margin="1,0,-12,1" BorderBrush="{x:Null}" FontSize="14" TextOptions.TextHintingMode="Animated">
@@ -71,12 +78,12 @@
                     <Label Content="Font:" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="10,194,0,0" VerticalAlignment="Top"/>
                     <xctk:IntegerUpDown x:Name="numSizeText" HorizontalContentAlignment="Right" Margin="91,165,127,38" BorderBrush="#FF00BFBF" />
                     <ComboBox x:Name="cmbFonts" HorizontalAlignment="Left" Margin="91,198,0,0" VerticalAlignment="Top" Width="185" BorderBrush="#FF00BFBF" Background="{x:Null}"/>
-                    <Label Content="Date Color:" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="10,64,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Time Color:" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="10,64,0,0" VerticalAlignment="Top"/>
                     <xctk:ColorPicker x:Name="ClrPcker_Date" Margin="91,66,119,139" BorderBrush="#FF00BFBF"/>
                     <Label Content="Bold" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="191,-7,0,0" VerticalAlignment="Top"/>
                     <CheckBox x:Name="chkTextBold" Content="" HorizontalAlignment="Left" Margin="204,16,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.476,-0.013" BorderBrush="#FF00BFBF"/>
                     <CheckBox x:Name="chkNicknameBold" Content="" HorizontalAlignment="Left" Margin="204,41,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.476,-0.013" IsChecked="True" BorderBrush="#FF00BFBF"/>
-                    <Label Content="Enabled" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="229,-7,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Enabled" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="225,-7,0,0" VerticalAlignment="Top"/>
                     <CheckBox x:Name="chkDateEnabled" Content="" HorizontalAlignment="Left" Margin="252,66,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.476,-0.013" IsChecked="True" BorderBrush="#FF00BFBF"/>
                     <Label Foreground="#FF00BFBF" Content="Smileys Scale:" HorizontalAlignment="Left" Margin="10,108,0,0" VerticalAlignment="Top" Width="97" Height="29"/>
                     <Label x:Name="lblSmileSize" Foreground="#FF00BFBF" Content="0" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="179,108,0,0" VerticalAlignment="Top" Width="45" RenderTransformOrigin="0.517,0.554" Height="29"/>

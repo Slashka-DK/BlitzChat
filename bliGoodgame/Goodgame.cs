@@ -17,7 +17,7 @@ namespace bliGoodgame
     {
         private WebSocket socket;
         private string channelName;
-        private const string socketAdress = @"ws://chat.goodgame.ru:8080/chat/websocket";
+        private const string socketAdress = @"ws://chat.goodgame.ru:8081/chat/websocket";
         private const string smileSpriteUri = @"http://goodgame.ru/images/chat/new-smiles-big-sprite.png";
         private int viewers = 0;
         private int lastMessageId = 0;
@@ -269,28 +269,22 @@ namespace bliGoodgame
             }
         }
 
-        public int getViewersCount() {
+        public string getViewersCount() {
             Random random = new Random();
-            WebClient wc = new WebClient();
-            try
+            using (WebClient wc = new WebClient())
             {
-                wc.DownloadStringCompleted += delegate(object b, DownloadStringCompletedEventArgs a)
+                try
                 {
-                    if (a.Error == null)
-                    {
-                        int value;
-                        if (int.TryParse(a.Result, out value))
-                        {
-                            viewers = value;
-                        }
-                    }
-                };
-                wc.DownloadStringAsync(new Uri(string.Format("http://ftp.goodgame.ru/counter/{0}.txt?rnd={1}", channelId, random.NextDouble()), UriKind.RelativeOrAbsolute));
-                return viewers;
-            }
-            catch {
-                Debug.Print("Cannot get Viewers count");
-                return 0;
+                    string info = wc.DownloadString(new Uri(string.Format("http://goodgame.ru/api/getchannelstatus?id={0}&fmt=json", channelId), UriKind.RelativeOrAbsolute));
+                    JObject jObj = JsonConvert.DeserializeObject<JObject>(info);
+                    return jObj[channelId.ToString()]["viewers"].ToString(); 
+                }
+                catch
+                {
+                    Debug.Print("Cannot get Viewers count");
+                    wc.Dispose();
+                    return "0";
+                }
             }
         }
 

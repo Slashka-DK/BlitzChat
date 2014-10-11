@@ -20,6 +20,7 @@ using BlitzChat.UI;
 using bliTwitch;
 using bliSC2TV;
 using bliCybergame;
+using bliGamersTV;
 using System.ComponentModel;
 using BlitzChat.Utilities;
 namespace BlitzChat
@@ -45,12 +46,14 @@ namespace BlitzChat
         SC2TV sc2tv;
         Cybergame cyberg;
         Goodgame goodgame;
+        GamersTV gamerstv;
         private volatile bool bTwitchEnd;
         private volatile bool bSC2TVEnd;
         private volatile bool bCybergameEnd;
         private volatile bool bGoodgameEnd;
         private volatile bool bViewersEnd = true;
         private volatile bool bSaveScreenEnd = false;
+        public volatile bool bGamersTVEnd = false;
         bool reload = false;
         FlowDocument historydoc;
         public string WindowName { get; set; }
@@ -92,6 +95,7 @@ namespace BlitzChat
             listChat.Width = Column0.ActualWidth;
             listChat.MouseEnter += richChat_MouseEnter;
             listChat.MouseLeave += richChat_MouseLeave;
+            
             var bc = new BrushConverter();
             mainbackBrush = new SolidColorBrush(fromHexColor(settingsChat.BackgroundColor));
             mainbackBrush.Opacity = settingsChat.ChatOpacity;
@@ -115,22 +119,48 @@ namespace BlitzChat
             header.ContextMenu = mainContextMenu;
             Version vers = Assembly.GetExecutingAssembly().GetName().Version;
             header.lblProgramName.Content = "BlitzСhat v." + vers.ToString() + " Alpha";
+            this.ContextMenu.Closed += ContextMenu_Closed;
             preSetSettings();
             //RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
             loadHistory();
             listChat.LayoutUpdated += richChat_LayoutUpdated;
+            
         }
 
-        void richChat_LayoutUpdated(object sender, EventArgs e)
+
+
+        #endregion
+
+        #region UI Events
+        private void frmChat_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+
+            if (settingsChat.BackgroundMode == true)
+            {
+                setBackgroundMode(true);
+            }
+            e.Handled = true;
+        }
+
+        private void frmChat_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (settingsChat.BackgroundMode == true && Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                setBackgroundMode(false);
+            }
+            e.Handled = true;
+        }
+        private void ContextMenu_Closed(object sender, RoutedEventArgs e)
+        {
+            if (settingsChat.BackgroundMode)
+                setBackgroundMode(true);
+        }
+        private void richChat_LayoutUpdated(object sender, EventArgs e)
         {
 
             if ((ScrollBarVisibility)listChat.GetValue(ScrollViewer.VerticalScrollBarVisibilityProperty) != ScrollBarVisibility.Visible && listChat.Items.Count > 0)
                 listChat.ScrollIntoView(listChat.Items[listChat.Items.Count - 1]);
         }
-
-        #endregion
-
-        #region UI Events
         private void history_Click(object sender, RoutedEventArgs e)
         {
             Thread historyThread = new Thread(delegate()
@@ -196,7 +226,7 @@ namespace BlitzChat
             applySettingsToBlocks();
             serializeSettings();
         }
-        void bttnSmileSmaller_Click(object sender, RoutedEventArgs e)
+        private void bttnSmileSmaller_Click(object sender, RoutedEventArgs e)
         {
             settingsChat.SmileSize--;
             frmSettings.lblSmileSize.Content = settingsChat.SmileSize;
@@ -303,6 +333,8 @@ namespace BlitzChat
             threadHist.IsBackground = true;
             //threadHist.Start();
             ThreadPool.QueueUserWorkItem(threadSaveScreenshot);
+            this.KeyDown += new KeyEventHandler(frmChat_PreviewKeyDown);
+            this.KeyUp += new KeyEventHandler(frmChat_PreviewKeyUp);
         }
 
 
@@ -314,18 +346,13 @@ namespace BlitzChat
                 viewers.Topmost = settingsChat.TopMost;
                 viewers.AllowsTransparency = settingsChat.TransparencyEnabled;
                 viewers.Background = mainbackBrush;
-                viewers.Opacity = settingsChat.ChatOpacity;
+                //viewers.Opacity = settingsChat.ChatOpacity;
                 viewers.Top = this.Top + this.ActualHeight;
                 viewers.Width = this.Width;
                 viewers.Left = this.Left;
-
                 viewers.Show();
-                bViewersEnd = false;
                 viewersMenuItem.Header = "Close viewers";
-                Thread threadViewers = new Thread(threadViewersShow);
-                threadViewers.IsBackground = true;
-                threadViewers.Name = "Viewers thread";
-                threadViewers.Start();
+                createViewersThread();
             }
             else
             {
@@ -334,6 +361,18 @@ namespace BlitzChat
                 viewers.Hide();
                 viewers.Close();
             }
+        }
+
+        private void createViewersThread()
+        {
+            bViewersEnd = true;
+            Thread.Sleep(500);
+            Thread threadViewers = new Thread(threadViewersShow);
+            threadViewers.IsBackground = true;
+            threadViewers.Name = "Viewers thread";
+            bViewersEnd = false;
+            threadViewers.Start();
+
         }
 
         private void frmChat_LocationChanged(object sender, EventArgs e)
@@ -350,7 +389,7 @@ namespace BlitzChat
             
         }
 
-        private void frmChat_MouseUp(object sender, MouseButtonEventArgs e)
+        private void chat_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (this.ResizeMode == System.Windows.ResizeMode.NoResize)
             {
@@ -517,8 +556,9 @@ namespace BlitzChat
             frmAddChat.cmbAddChat.Items.Add(Constants.SC2TV);
             frmAddChat.cmbAddChat.Items.Add(Constants.CYBERGAME);
             frmAddChat.cmbAddChat.Items.Add(Constants.GOODGAME);
-            frmAddChat.cmbAddChat.Items.Add(Constants.HITBOX);
-            frmAddChat.cmbAddChat.Items.Add(Constants.EMPIRE);
+            frmAddChat.cmbAddChat.Items.Add(Constants.GAMERSTV);
+            //frmAddChat.cmbAddChat.Items.Add(Constants.HITBOX);
+            //frmAddChat.cmbAddChat.Items.Add(Constants.EMPIRE);
             if (channels != null && !String.IsNullOrEmpty(channels.Twitch))
             {
                 frmAddChat.cmbAddChat.Items.Remove(Constants.TWITCH);
@@ -536,6 +576,11 @@ namespace BlitzChat
             if (channels != null && !String.IsNullOrEmpty(channels.GoodGame))
             {
                 frmAddChat.cmbAddChat.Items.Remove(Constants.GOODGAME);
+
+            }
+            if (channels != null && !String.IsNullOrEmpty(channels.GamersTV))
+            {
+                frmAddChat.cmbAddChat.Items.Remove(Constants.GAMERSTV);
 
             }
         }
@@ -610,6 +655,12 @@ namespace BlitzChat
             addMessageToChat(2, e.Name, e.Text, e.ToName);
         }
 
+        private void gamerstv_MessageReceived(object sender, GamersTVMessage e)
+        {
+
+            addMessageToChat(4, e.name, e.text, e.toName, e.toStreamer);
+        }
+
         private void sc2tv_MessageReceived(object sender, SC2TVMessage e)
         {
             string to = e.ToName;
@@ -662,6 +713,32 @@ namespace BlitzChat
             cyberg = null;
         }
 
+        private void thrGamersTV(object obj)
+        {
+            try
+            {
+                gamerstv = new GamersTV(channels.GamersTV);
+                gamerstv.messageReceived += gamerstv_MessageReceived;
+                gamerstv.lastMsgId = channels.GamersTVLastMessageId;
+                while (!bGamersTVEnd)
+                {
+                    channels.GamersTVLastMessageId = gamerstv.lastMsgId;
+                    serializeChannels();
+                    gamerstv.loadChat();
+                    Thread.Sleep(100);
+                }
+            }
+            catch (WrongChannelNameException)
+            {
+                MessageBox.Show("Wrong channelname was saved to the file. If it happens again. Please delete data from file Channels.xml or use Add chat form to delete it.");
+            }
+            finally
+            {
+                gamerstv = null;
+            }
+        }
+
+
         private void threadSC2TV(object obj)
         {
             try
@@ -703,7 +780,7 @@ namespace BlitzChat
         {
             try
             {
-                twitch = new Twitch(channels.Twitch, "irc.twitch.tv", 6667);
+                twitch = new Twitch(channels.Twitch, "irc.twitch.tv", 80);
                 twitch.Start();
             }
             catch(Exception e)
@@ -751,28 +828,74 @@ namespace BlitzChat
 
         private void threadViewersShow(object obj)
         {
-            while (!bViewersEnd)
-            {
+
+            usrViewersItem twitchItem = null;
+            usrViewersItem cybergameItem = null;
+            usrViewersItem goodgameItem = null;
+            usrViewersItem gamersTVItem = null;
                 Dispatcher.BeginInvoke(new Action(delegate
                 {
+                    if (viewers.stackViewers.Children.Count > 0)
+                        viewers.stackViewers.Children.Clear();
                     if (twitch != null)
                     {
-                        viewers.twitchName.Content = twitch.getChannelName;
-                        viewers.lblViewersTwitch.Content = twitch.getViewersCount();
+                        twitchItem = getViewersItem("twitch.png", channels.Twitch);
                     }
-
-                    if (sc2tv != null)
-                    {
-                        //TODO Cannot parse from webpage, because no viewer counter available
+                    if (cyberg != null){
+                        cybergameItem = getViewersItem("cybergame.png", channels.Cybergame);
                     }
-                    if (cyberg != null)
-                        //viewers.lblViewersCyber.Content = cyberg.cb.Viewers;
                     if (goodgame != null)
-                        viewers.lblViewersGG.Content = goodgame.getViewersCount();
-
+                    {
+                        goodgameItem = getViewersItem("goodgame.png", channels.GoodGame);
+                    }
+                    if (gamerstv != null)
+                    {
+                        gamersTVItem = getViewersItem("gamerstvicon.png", gamerstv.streamerName);
+                    }
                 }));
-                Thread.Sleep(5000);
-            }
+                while (!bViewersEnd)
+                {
+                    Dispatcher.BeginInvoke(new Action(delegate
+                        {
+                            if (twitch != null && twitchItem != null)
+                        {
+                            twitchItem.tblStreamer.Text = twitch.getChannelName;
+                            twitchItem.tblViewersCount.Text = twitch.getViewersCount().ToString();
+                        }
+                        if (sc2tv != null)
+                        {
+                            //TODO Cannot parse from webpage, because no viewer counter available
+                        }
+                        if (cyberg != null && cybergameItem != null)
+                        {
+                            cybergameItem.tblStreamer.Text = channels.Cybergame;
+                            cybergameItem.tblViewersCount.Text = cyberg.getViewers();
+                        }
+                        if (goodgame != null && goodgameItem != null)
+                        {
+                            goodgameItem.tblStreamer.Text = channels.GoodGame;
+                            goodgameItem.tblViewersCount.Text = goodgame.getViewersCount().ToString();
+                        }
+                        if (gamerstv != null && gamersTVItem != null)
+                        {
+                            gamersTVItem.tblStreamer.Text = gamerstv.streamerName;
+                            gamersTVItem.tblViewersCount.Text = "0";
+                        }            
+                    }));
+                    Thread.Sleep(5000);
+                }
+
+        }
+
+        private usrViewersItem getViewersItem(string imgpath, string channel) {
+            usrViewersItem item = new usrViewersItem();
+            string path = "pack://application:,,,/BlitzChat;component/Images/";
+            BitmapImage img = new BitmapImage(new Uri(path + imgpath));
+            item.imgService.Source = img;
+            item.imgService.Width = 20;
+            item.imgService.Height = 20;
+            viewers.stackViewers.Children.Add(item);
+            return item;
         }
 
         public void threadSaveHistory(object obj)
@@ -785,32 +908,42 @@ namespace BlitzChat
         #endregion
 
         #region Methods
+
+
+
         private void removeChannel()
         {
+            string notificate = "-{0} Channel: \"{1}\" disconnected;";
             if (frmAddChat.listStreamers.SelectedItem.ToString().Contains(Constants.TWITCH))
             {
-                notificateToChat(String.Format("-{0} Channel: \"{1}\" disconnected;", Constants.TWITCH, channels.Twitch), Brushes.Red);
+                notificateToChat(String.Format(notificate, Constants.TWITCH, channels.Twitch), Brushes.Red);
                 channels.Twitch = "";
                 bTwitchEnd = true;
             }
             else if (frmAddChat.listStreamers.SelectedItem.ToString().Contains(Constants.SC2TV))
             {
-                notificateToChat(String.Format("-{0} Channel: \"{1}\" disconnected;", Constants.SC2TV, channels.SC2TV), Brushes.Red);
+                notificateToChat(String.Format(notificate, Constants.SC2TV, channels.SC2TV), Brushes.Red);
                 channels.SC2TV = "";
                 channels.SC2TVLastMessageId = 0;
                 bSC2TVEnd = true;
             }
             else if (frmAddChat.listStreamers.SelectedItem.ToString().Contains(Constants.CYBERGAME))
             {
-                notificateToChat(String.Format("-{0} Channel: \"{1}\" disconnected;", Constants.CYBERGAME, channels.Cybergame), Brushes.Red); 
+                notificateToChat(String.Format(notificate, Constants.CYBERGAME, channels.Cybergame), Brushes.Red); 
                 channels.Cybergame = "";
                 bCybergameEnd = true;
             }
             else if (frmAddChat.listStreamers.SelectedItem.ToString().Contains(Constants.GOODGAME))
             {
-                notificateToChat(String.Format("-{0} Channel: \"{1}\" disconnected;", Constants.GOODGAME, channels.GoodGame), Brushes.Red); 
+                notificateToChat(String.Format(notificate, Constants.GOODGAME, channels.GoodGame), Brushes.Red); 
                 channels.GoodGame = "";
                 bGoodgameEnd = true;
+            }
+            else if (frmAddChat.listStreamers.SelectedItem.ToString().Contains(Constants.GAMERSTV))
+            {
+                notificateToChat(String.Format(notificate, Constants.GAMERSTV, GamersTV.getIdFromLink(channels.GamersTV)), Brushes.Red);
+                channels.GamersTV = "";
+                bGamersTVEnd = true;
             }
             listChats.RemoveAt(frmAddChat.listStreamers.SelectedIndex);
             frmAddChat.listStreamers.Items.Remove(frmAddChat.listStreamers.SelectedItem);
@@ -821,12 +954,14 @@ namespace BlitzChat
             {
                 frmAddChat.bttnRemove.IsEnabled = false;
             }
+            if (viewers != null && viewers.IsLoaded)
+                createViewersThread();
             serializeChannels();
         }
 
         private void addChannel()
         {
-            if (frmAddChat.cmbAddChat.SelectedItem.ToString() != "")
+            if (frmAddChat.cmbAddChat.SelectedItem != null && frmAddChat.cmbAddChat.SelectedItem.ToString() != "")
             {
                 switch (frmAddChat.cmbAddChat.SelectedItem.ToString())
                 {
@@ -890,14 +1025,30 @@ namespace BlitzChat
                         else
                             MessageBox.Show("Goodgame channel " + frmAddChat.txtChannel.Text + " not exists! Please try again!", "Channel not exists", MessageBoxButton.OK, MessageBoxImage.Error);
                         break;
+                    case Constants.GAMERSTV:
+                        if (GamersTV.channelExists(frmAddChat.txtChannel.Text)){
+                            channels.GamersTV = frmAddChat.txtChannel.Text;
+                            frmAddChat.listStreamers.Items.Add(Constants.GAMERSTV + ": " + channels.GamersTV);
+                            frmAddChat.cmbAddChat.Items.Clear();
+                            initCmbAddChat();
+                            frmAddChat.cmbAddChat.SelectedIndex = 0;
+                            addGamersTV();
+                        }
+                        else
+                            MessageBox.Show("GamersTV channel " + frmAddChat.txtChannel.Text + " not exists! Please try again!", "Channel not exists", MessageBoxButton.OK, MessageBoxImage.Error);
+                        break;
                     case Constants.HITBOX:
                     case Constants.EMPIRE:
                     default:
                         break;
                 }
+                if (viewers != null && viewers.IsLoaded) {
+                    createViewersThread();
+                }
                 serializeChannels();
             }
         }
+
 
         private void applySettingsToBlocks()
         {
@@ -949,6 +1100,33 @@ namespace BlitzChat
             frmSettings.ClrPcker_Date.SelectedColorChanged += ClrPcker_Date_SelectedColorChanged;
             frmSettings.cbTransparency.Checked += cbTransparency_Checked;
             frmSettings.cbTransparency.Unchecked += cbTransparency_Checked;
+            frmSettings.cbBackgroundMode.Checked += cbBackgroundMode_Checked;
+            frmSettings.cbBackgroundMode.Unchecked += cbBackgroundMode_Checked;
+        }
+
+        private void cbBackgroundMode_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!frmSettings.IsLoaded)
+                return;
+            settingsChat.BackgroundMode = frmSettings.cbBackgroundMode.IsChecked.Value;
+            serializeSettings();
+            setBackgroundMode(settingsChat.BackgroundMode);
+        }
+
+        private void setBackgroundMode(bool isBackground)
+        {
+            if (isBackground == true)
+            {
+                this.IsHitTestVisible = false;
+                shell.CaptionHeight = 0;
+                this.ResizeMode = ResizeMode.NoResize;
+            }
+            else {
+                this.IsHitTestVisible = true;
+                shell.CaptionHeight = 40;
+                this.ResizeMode = ResizeMode.CanResize;
+            }
+
         }
 
         private void cbTransparency_Checked(object sender, RoutedEventArgs e)
@@ -988,6 +1166,7 @@ namespace BlitzChat
             frmSettings.chkDateEnabled.IsChecked = settingsChat.DateEnabled;
             frmSettings.ClrPcker_Date.SelectedColor = dateBrush.Color;
             frmSettings.cbTransparency.IsChecked = settingsChat.TransparencyEnabled;
+            frmSettings.cbBackgroundMode.IsChecked = settingsChat.BackgroundMode;
             foreach (FontFamily fontFamily in Fonts.SystemFontFamilies)
             {
                 // FontFamily.Source contains the font family name.
@@ -1017,6 +1196,7 @@ namespace BlitzChat
             this.Top = settingsChat.Top;
             this.Left = settingsChat.Left;
             setTransparency();
+            setBackgroundMode(settingsChat.BackgroundMode);
         }
 
         void Handle(CheckBox checkBox)
@@ -1028,6 +1208,19 @@ namespace BlitzChat
             settingsChat.TopMost = flag;
             serializeSettings();
         }
+
+        private void addGamersTV()
+        {
+            listChats.Add(Constants.GAMERSTV + ": " + channels.GamersTV);
+            Thread thr = new Thread(thrGamersTV);
+            thr.Name = "GamersTV Thread";
+            thr.IsBackground = true;
+            bGamersTVEnd = false;
+            notificateToChat(String.Format("+{0} Channel: \"{1}\" connected;", Constants.GAMERSTV, GamersTV.getIdFromLink(channels.GamersTV)), Brushes.Green);
+            thr.Start();
+        }
+
+
 
         private void addGoodgame()
         {
@@ -1083,10 +1276,10 @@ namespace BlitzChat
         }
 
         /**
-         * @param name="chattype" 0-Twitch, 1-Sc2TV, 2-Cybergame, 3-Goodgame, 4-Hitbox, 5-Empire 
+         * @param name="chattype" 0-Twitch, 1-Sc2TV, 2-Cybergame, 3-Goodgame, 4-GamersTV, 5-GohaTV 
          * 
          * */
-        private void addMessageToChat(int chattype, string nickname, string msg, string to)
+        private void addMessageToChat(int chattype, string nickname, string msg, string to, bool quote=false)
         {
             Dispatcher.BeginInvoke(new Action(delegate
             {
@@ -1140,6 +1333,11 @@ namespace BlitzChat
                         imagesource = path + "goodgame.png";
                         break;
                     case 4:
+                        if (quote)
+                        {
+                            quoteColor = true;
+                        }
+                        imagesource = path + "gamerstvicon.png";
                         break;
                     case 5:
                         break;
@@ -1250,12 +1448,43 @@ namespace BlitzChat
                         }
                         break;
                     case 4:
+                        foreach (KeyValuePair<string, GamersTVSmile> smile in gamerstv.checkSmiles(msg))
+                        {
+                            while (tr.Text.Contains(smile.Key))
+                            {
+                                double imgHeight = replaceGamersTVSmile(smile.Value, tr);
+                                if (imgHeight > maxHeight)
+                                {
+                                    maxHeight = imgHeight;
+                                }
+                            }
+                        }
+                        break;
                     case 5:
                     default:
                         break;
                 }
             }));
             return maxHeight;
+        }
+
+        private double replaceGamersTVSmile(GamersTVSmile smile, TextRange range)
+        {
+            double h = 0;
+            TextRange tr = FindWordFromPosition(range.Start, smile.Code);
+            if (tr != null)
+            {
+                tr.Text = "";
+                Image img = new Image();
+                BitmapImage bitmapImage = new BitmapImage(new Uri(smile.Source));
+                img.Source = bitmapImage;
+                //img.Stretch = Stretch.Fill;
+                img.Width = smile.Width + settingsChat.SmileSize;
+                img.Height = smile.Height + settingsChat.SmileSize;
+                h = img.Height;
+                new InlineUIContainer(img, tr.Start).Name = "Smile";
+            }
+            return h;
         }
 
         private double replaceGoodgameSmile(GoodGameSmile smile, TextRange range)
@@ -1394,6 +1623,7 @@ namespace BlitzChat
             bCybergameEnd = true;
             bGoodgameEnd = true;
             bSaveScreenEnd = true;
+            bGamersTVEnd = true;
         }
 
         public static void AddDocument(FlowDocument from, FlowDocument to)
@@ -1530,22 +1760,6 @@ namespace BlitzChat
                 if (newSettings == null)
                     return;
                 settingsChat = newSettings;
-                //settingsChat.BackgroundColor = newSettings.BackgroundColor;
-                //settingsChat.ChatOpacity = newSettings.ChatOpacity;
-                //settingsChat.ForeColor = newSettings.ForeColor;
-                //settingsChat.NicknameColor = newSettings.NicknameColor;
-                //settingsChat.TextFont = newSettings.TextFont;
-                //settingsChat.TextFontSize = newSettings.TextFontSize;
-                //settingsChat.TopMost = newSettings.TopMost;
-                //settingsChat.NicknameBold = newSettings.NicknameBold;
-                //settingsChat.TextBold = newSettings.TextBold;
-                //settingsChat.SmileSize = newSettings.SmileSize;
-                //settingsChat.DateEnabled = newSettings.DateEnabled;
-                //settingsChat.DateColor = newSettings.DateColor;
-                //settingsChat.Width = newSettings.Width;
-                //settingsChat.Height = newSettings.Height;
-                //settingsChat.Top = newSettings.Top;
-                //settingsChat.Left = newSettings.Left;
                 preSetSettings();
             }
         }
@@ -1558,11 +1772,6 @@ namespace BlitzChat
                 if(desChannels == null)
                     return;
                 channels = desChannels;
-                //channels.Twitch = desChannels.Twitch;
-                //channels.SC2TV = desChannels.SC2TV;
-                //channels.Cybergame = desChannels.Cybergame;
-                //channels.GoodGame = desChannels.GoodGame;
-                //channels.SC2TVLastMessageId = desChannels.SC2TVLastMessageId;
                 if (!String.IsNullOrEmpty(channels.Twitch))
                     addTwitch();
                 if (!String.IsNullOrEmpty(channels.SC2TV))
@@ -1571,6 +1780,8 @@ namespace BlitzChat
                     addCybergame();
                 if (!String.IsNullOrEmpty(channels.GoodGame))
                     addGoodgame();
+                if (!String.IsNullOrEmpty(channels.GamersTV))
+                    addGamersTV();
 
             }
 
@@ -1630,6 +1841,9 @@ namespace BlitzChat
             return char.ToUpper(s[0]) + s.Substring(1);
         }
         #endregion
-    
+
+
+
+
     }
 }

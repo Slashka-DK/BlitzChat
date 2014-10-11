@@ -89,6 +89,24 @@ namespace bliCybergame
             Reconnect();
         }
 
+        public string getViewers() {
+            JObject jObject;
+            string info;
+            try
+            {
+                using (NewWebClient cl = new NewWebClient()) {
+                    info = cl.DownloadString(String.Format(infoUrl, channelName));
+                }
+                jObject = JsonConvert.DeserializeObject<JObject>(info);
+                return jObject["spectators"].ToString();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Viewers exception: " + ex.Message);
+                return "0";
+            }
+        }
+
         private void socket_MessageReceived(object sender, MessageReceivedEventArgs e)
         {
             JObject jObject;
