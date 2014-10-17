@@ -21,5 +21,6 @@ namespace BlitzChat
         public const string SETTINGSFILE = "ChatSettings.xml";
         public const string HISTORYDIR = "History/";
         public const string HISTORYPREFIX = "history_";
+        public const string BUILDPATH = "pack://application:,,,/BlitzChat;component/";
     }
 }

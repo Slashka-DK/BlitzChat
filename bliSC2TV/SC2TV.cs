@@ -106,13 +106,11 @@ namespace bliSC2TV
         }
 
         public Dictionary<string, SC2TVSmile> checkSmiles(string msg) { 
-            string[] arrWords = msg.Split(' ');
             Dictionary<string, SC2TVSmile> dictSmiles = new Dictionary<string, SC2TVSmile>();
 
-            foreach (string word in arrWords) {
-                if (smiles.ContainsKey(word) && !dictSmiles.ContainsKey(word)) {
-                    SC2TVSmile s = new SC2TVSmile();
-                    dictSmiles.Add(word, smiles[word]);
+            foreach (KeyValuePair<string, SC2TVSmile> s in smiles) {
+                if (msg.Contains(s.Key)) {
+                    dictSmiles.Add(s.Key, smiles[s.Key]);
                 }
             }
             return dictSmiles;

@@ -126,15 +126,13 @@ namespace bliGamersTV
 
         public Dictionary<string, GamersTVSmile> checkSmiles(string msg)
         {
-            string[] arrWords = msg.Split(' ');
             Dictionary<string, GamersTVSmile> dictSmiles = new Dictionary<string, GamersTVSmile>();
 
-            foreach (string word in arrWords)
+            foreach (KeyValuePair<string, GamersTVSmile> s in smiles)
             {
-                if (smiles.ContainsKey(word) && !dictSmiles.ContainsKey(word))
+                if (msg.Contains(s.Key))
                 {
-                    GamersTVSmile s = new GamersTVSmile();
-                    dictSmiles.Add(word, smiles[word]);
+                    dictSmiles.Add(s.Key, smiles[s.Key]);
                 }
             }
             return dictSmiles;
@@ -172,33 +170,15 @@ namespace bliGamersTV
         }
 
         public string getViewers() {
-            string uri = "http://gamerstv.ru/video/i" + chatId + ".html";
-            CookieContainer cookieContainer = new CookieContainer();
-            CookieAwareWebClient cookieAwareWebClient = new CookieAwareWebClient(cookieContainer);
-            cookieAwareWebClient.Headers.Add("user-agent", "BlitzChat");
-            cookieAwareWebClient.Headers.Add("Accept-Encoding", "");
-            cookieAwareWebClient.Encoding = Encoding.GetEncoding("Windows-1251");
-            int count = 0;
             try
             {
-                string input = cookieAwareWebClient.DownloadString(new Uri(uri, UriKind.RelativeOrAbsolute)).Replace('\n', ' ').Replace('\r', ' ');
-                Regex regex = new Regex("<div class=\"count_users\">(.*?)</div>", RegexOptions.Multiline);
-                Match match = regex.Match(input);
-                if (!match.Success)
+                using (WebClientTimeOut wc = new WebClientTimeOut(500))
                 {
-                    count = 0;
+                    string info = wc.DownloadString(String.Format(chatUsers, chatId));
+                    JObject jObj = JsonConvert.DeserializeObject<JObject>(info);
+                    JArray arr = (JArray)jObj["text"];
+                    return arr.Count.ToString(); 
                 }
-                if (match.Groups.Count > 0 && match.Groups[1].Value != "")
-                    count = int.Parse(match.Groups[1].Value);
-                regex = new Regex("<div class=\"count_guests\">(.*?)</div>", RegexOptions.Multiline);
-                match = regex.Match(input);
-                if (!match.Success)
-                {
-                    count = 0;
-                }
-                if(match.Groups.Count > 0 && match.Groups[1].Value != "")
-                    count += int.Parse(match.Groups[1].Value);
-                return count.ToString();
             }
             catch (Exception e)
             {

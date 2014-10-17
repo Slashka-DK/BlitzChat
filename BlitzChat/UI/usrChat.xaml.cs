@@ -18,9 +18,9 @@ namespace BlitzChat.UI
     /// <summary>
     /// Interaktionslogik für usrListBoxChat.xaml
     /// </summary>
-    public partial class usrListBoxChat : UserControl
+    public partial class usrChat : UserControl
     {
-        public usrListBoxChat()
+        public usrChat()
         {
             InitializeComponent();
         }

@@ -106,16 +106,14 @@ namespace bliGoodgame
 
         public Dictionary<string, GoodGameSmile> checkSmiles(string msg) {
             Dictionary<string,GoodGameSmile> dictSmiles = new Dictionary<string,GoodGameSmile>();
-            string[] arrWords = msg.Split(' ');
 
-            foreach (string word in arrWords)
+            foreach (KeyValuePair<string, GoodGameSmile> s in smiles)
             {
-                if (smiles.ContainsKey(word) && !dictSmiles.ContainsKey(word))
+                if (msg.Contains(s.Key))
                 {
-                    dictSmiles.Add(word, smiles[word]);
+                    dictSmiles.Add(s.Key, smiles[s.Key]);
                 }
             }
-
             return dictSmiles;
         }
 
