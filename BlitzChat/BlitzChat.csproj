@@ -144,10 +144,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Models\DateRun.cs" />
-    <Compile Include="Models\FullMessageTextBlock.cs" />
-    <Compile Include="Models\NicknameRun.cs" />
-    <Compile Include="Models\MessageRun.cs" />
+    <Compile Include="Holders\FullMessageTextBlock.cs" />
     <Compile Include="Settings\URLs.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -197,7 +194,6 @@
       <DependentUpon>frmViewers.xaml</DependentUpon>
     </Compile>
     <Compile Include="Exceptions\WrongChannelNameException.cs" />
-    <Compile Include="Utilities\WindowsServices.cs" />
     <Compile Include="Utilities\XMLSerializer.cs" />
     <Compile Include="Version.cs">
       <AutoGen>True</AutoGen>
@@ -413,7 +409,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.None" BuildVersion_BuildAction="Both" BuildVersion_UpdateAssemblyVersion="False" BuildVersion_UpdateFileVersion="False" BuildVersion_AssemblyInfoFilename="" BuildVersion_StartDate="2014/9/1" BuildVersion_UseUniversalClock="False" BuildVersion_IncrementBeforeBuild="False" BuildVersion_DetectChanges="False" />
+      <UserProperties BuildVersion_DetectChanges="False" BuildVersion_IncrementBeforeBuild="False" BuildVersion_UseUniversalClock="False" BuildVersion_StartDate="2014/9/1" BuildVersion_AssemblyInfoFilename="" BuildVersion_UpdateFileVersion="False" BuildVersion_UpdateAssemblyVersion="False" BuildVersion_BuildAction="Both" BuildVersion_BuildVersioningStyle="None.None.None.None" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>

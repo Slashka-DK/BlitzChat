@@ -24,6 +24,11 @@ using BlitzChat.Utilities;
 using bliGohaTV;
 using BlitzChat.Models;
 using System.Windows.Interop;
+using System.Windows.Markup;
+using System.Xml;
+using System.Text;
+using System.Windows.Resources;
+using System.Runtime.InteropServices;
 namespace BlitzChat
 {
     /// <summary>
@@ -41,7 +46,7 @@ namespace BlitzChat
         frmSettings frmSettings;
         Color nicknameColor { get; set; }
         ChatControl frmAddChat;
-        ChatSettingsXML settingsChat;
+        private ChatSettingsXML settingsChat { get; set; }
         ChannelsSaveXML channels;
         Twitch twitch;
         SC2TV sc2tv;
@@ -72,10 +77,96 @@ namespace BlitzChat
         ResourceDictionary resDict;
         #endregion
 
+        #region WinAPI
+        private const int GWL_EXSTYLE = -20;
+        private const int WS_EX_NOACTIVATE = 0x08000000;
+        const int WS_EX_TOPMOST = 0x00000008;
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll")]
+        public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+        public const int WS_EX_TRANSPARENT = 0x00000020;
+        private const int WS_EX_TRANSPARENT_OFF = 0x00000010;
+        private int _normalStyle;
+        private const int GWL_EXSTYLE_OFF = -16;
+        private const int WM_MOUSEACTIVATE = 0x0021;
+        private const int MA_NOACTIVATEANDEAT = 0x0004;
+        private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+        private LowLevelKeyboardProc _proc;
+        private IntPtr _hookID = IntPtr.Zero;
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr SetWindowsHookEx(int idHook, MainWindow.LowLevelKeyboardProc lpfn, IntPtr hMod, UInt32 dwThreadId);
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (settingsChat.BackgroundMode)
+            {
+                // Handle messages...
+                if (msg == WM_MOUSEACTIVATE)
+                {
+                    //handled = true;
+                    return new IntPtr(MA_NOACTIVATEANDEAT);
+                }
+            }
+            return IntPtr.Zero;
+        }
+
+        private IntPtr SetHook()
+        {
+            HwndSource hwnd = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
+            IntPtr result;
+            hwnd.AddHook(new HwndSourceHook(WndProc));
+            using (Process currentProcess = Process.GetCurrentProcess())
+            {
+                using (ProcessModule pm = currentProcess.MainModule)
+                {
+                    if (settingsChat.BackgroundMode)
+                        result = SetWindowsHookEx(13, _proc, GetModuleHandle(pm.ModuleName), 0);
+                    else
+                    {
+                        UnhookWindowsHookEx(_hookID);
+                        result = _hookID;
+                    }
+                }
+            }
+            return result;
+        }
+
+        private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            if (settingsChat.BackgroundMode == true)
+            {
+                if (nCode >= 0 && wParam == (IntPtr)256)
+                {
+                    setBackgroundMode(false);
+                }
+                else
+                {
+                    if (nCode >= 0 && wParam == (IntPtr)257)
+                    {
+                        setBackgroundMode(true);
+                    }
+                }
+            }
+            return MainWindow.CallNextHookEx(_hookID, nCode, wParam, lParam);
+        }
+        #endregion
+
         #region Constructors
         public MainWindow(string name)
         {
-            loadTheme();
+
+            loadTheme(Constants.BUILDPATH + "Theme/CurrentTheme.xaml");
             header = new usrHeader();
             header.lblWindowName.Content = name;
             InitializeComponent();
@@ -97,7 +188,7 @@ namespace BlitzChat
             header.Width = Column0.ActualWidth;
             header.Height = double.NaN;
             //listChat.Height = Row1.ActualHeight;
-            
+            settingsChat.PropertyChanged += settingsChat_PropertyChanged;
             this.MouseEnter += chat_MouseEnter;
             this.MouseLeave += chat_MouseLeave;
             
@@ -126,14 +217,26 @@ namespace BlitzChat
             header.lblProgramName.Content = "BlitzСhat v." + vers.ToString() + " Alpha";
             this.ContextMenu.Closed += ContextMenu_Closed;
             preSetSettings();
-            RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
+            //RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
             loadHistory();
             stackChat = usrLstChat.stackTBs;
             
             usrLstChat.scrollViewer.MouseEnter += chat_MouseEnter;
             usrLstChat.scrollViewer.MouseLeave += chat_MouseLeave;
             usrLstChat.stackTBs.LayoutUpdated += chat_LayoutUpdated;
-            
+        }
+
+        private void settingsChat_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch(e.PropertyName){
+                case "NicknameColor":
+                    resDict.Remove(e.PropertyName);
+                     resDict.Add(e.PropertyName, new SolidColorBrush(fromHexColor(settingsChat.NicknameColor)));
+                    break;
+            }
+            saveTheme(resDict, "Themes/DefaultTheme.xaml");
+            resDict.MergedDictionaries.Clear();
+            loadTheme("Themes/DefaultTheme.xaml");
         }
 
 
@@ -235,8 +338,8 @@ namespace BlitzChat
         }
         private void bttnSmileSmaller_Click(object sender, RoutedEventArgs e)
         {
-            settingsChat.SmileSize--;
-            frmSettings.lblSmileSize.Content = settingsChat.SmileSize;
+            settingsChat.SmileScale--;
+            frmSettings.lblSmileSize.Content = settingsChat.SmileScale;
             foreach (TextBlock block in stackChat.Children)
             {
                 foreach (Inline inline in block.Inlines)
@@ -276,8 +379,8 @@ namespace BlitzChat
         }
         private void bttnSmileBigger_Click(object sender, RoutedEventArgs e)
         {
-            settingsChat.SmileSize++;
-            frmSettings.lblSmileSize.Content = settingsChat.SmileSize;
+            settingsChat.SmileScale++;
+            frmSettings.lblSmileSize.Content = settingsChat.SmileScale;
             foreach (TextBlock block in stackChat.Children)
             {
                 foreach (Inline inline in block.Inlines)
@@ -345,7 +448,12 @@ namespace BlitzChat
             foreach (MessageTextBlock b in stackChat.Children)
             {
                 b.Width = Column0.ActualWidth - 6;
+            
             }
+            _normalStyle = GetWindowLong(new WindowInteropHelper(this).Handle, GWL_EXSTYLE); 
+            _proc = new LowLevelKeyboardProc(HookCallback);
+            _hookID = this.SetHook();
+            setBackgroundMode(settingsChat.BackgroundMode);
         }
 
 
@@ -815,9 +923,9 @@ namespace BlitzChat
             while (!bSaveScreenEnd) {
                 Dispatcher.BeginInvoke(new Action(delegate
                 {
-                    Screenshots.createScreenshot(this, "");
+                    Screenshots.createScreenshot(this, this.WindowName + "_screen.png");
                 }));
-                Thread.Sleep(500);
+                Thread.Sleep(200);
             }
         }
 
@@ -962,11 +1070,53 @@ namespace BlitzChat
         #endregion
 
         #region Methods
-        private void loadTheme(){
+        private void loadTheme(string path){
+            if (Directory.Exists("Themes") && Directory.GetFiles("Themes").Length > 0)
+            {
+                if (File.Exists(path))
+                {
+
+                    using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    {
+                        // Read in ResourceDictionary File
+                        resDict = (ResourceDictionary)XamlReader.Load(fs);
+                    }
+                }
+                else
+                {
+                    using (var fs = new FileStream("Themes/DefaultTheme.xaml", FileMode.Open, FileAccess.Read, FileShare.Read))
+                    {
+                        // Read in ResourceDictionary File
+                        resDict = (ResourceDictionary)XamlReader.Load(fs);
+                    }
+                }
+            }
+            else
+            {
+                resDict = new ResourceDictionary();
+                resDict.Source = new Uri(Constants.BUILDPATH + "Theme/CurrentTheme.xaml", UriKind.RelativeOrAbsolute);
+                saveTheme(resDict, "Themes/DefaultTheme.xaml");
+
+            }
             resDict = new ResourceDictionary();
-            resDict.Source = new Uri(Constants.BUILDPATH+"Theme/CurrentTheme.xaml", UriKind.RelativeOrAbsolute);
+            resDict.Source = new Uri(Constants.BUILDPATH + "Theme/CurrentTheme.xaml", UriKind.RelativeOrAbsolute);
+            saveTheme(resDict, "Themes/DefaultTheme.xaml");
             Application.Current.Resources.MergedDictionaries.Clear();
             Application.Current.Resources.MergedDictionaries.Add(resDict);
+        }
+
+        private void saveTheme(ResourceDictionary dict, string savePath)
+        {
+            if (!Directory.Exists("Themes"))
+                Directory.CreateDirectory("Themes");
+            XmlWriterSettings settings = new XmlWriterSettings();
+            XmlWriter writer = XmlWriter.Create(savePath, settings);
+            settings.Indent = true;
+            settings.IndentChars = "\t";
+            settings.Encoding = Encoding.UTF8;
+            settings.NewLineOnAttributes = true;
+            XamlWriter.Save(dict, writer);
+            writer.Close();
         }
         private void removeChat()
         {
@@ -1187,19 +1337,28 @@ namespace BlitzChat
             settingsChat.BackgroundMode = frmSettings.cbBackgroundMode.IsChecked.Value;
             serializeSettings();
             setBackgroundMode(settingsChat.BackgroundMode);
+            SetHook();
         }
+
 
         private void setBackgroundMode(bool isBackground)
         {
             if (isBackground == true)
             {
+                WindowInteropHelper helper = new WindowInteropHelper(this);
+                SetWindowLong(helper.Handle, GWL_EXSTYLE,
+                    GetWindowLong(helper.Handle, GWL_EXSTYLE) | WS_EX_TRANSPARENT);
+
                 this.IsHitTestVisible = false;
-                shell.CaptionHeight = 0;
+                //this.Focusable = false;
+                //shell.CaptionHeight = 0;
                 this.ResizeMode = ResizeMode.NoResize;
             }
             else {
+                WindowInteropHelper helper = new WindowInteropHelper(this);
+                SetWindowLong(helper.Handle, GWL_EXSTYLE, _normalStyle);
                 this.IsHitTestVisible = true;
-                shell.CaptionHeight = 40;
+                //shell.CaptionHeight = 40;
                 this.ResizeMode = ResizeMode.CanResize;
             }
 
@@ -1236,7 +1395,7 @@ namespace BlitzChat
             frmSettings.cmbFonts.SelectedValue = font.Source;
             frmSettings.sliderOpacity.Value = mainbackBrush.Opacity * 100;
             frmSettings.lblOpacity.Content = Convert.ToInt32(mainbackBrush.Opacity * 100) + "%";
-            frmSettings.lblSmileSize.Content = settingsChat.SmileSize;
+            frmSettings.lblSmileSize.Content = settingsChat.SmileScale;
             frmSettings.chkNicknameBold.IsChecked = settingsChat.NicknameBold;
             frmSettings.chkTextBold.IsChecked = settingsChat.TextBold;
             frmSettings.chkDateEnabled.IsChecked = settingsChat.DateEnabled;
@@ -1272,7 +1431,6 @@ namespace BlitzChat
             this.Top = settingsChat.Top;
             this.Left = settingsChat.Left;
             setTransparency();
-            setBackgroundMode(settingsChat.BackgroundMode);
         }
 
         void Handle(CheckBox checkBox)
@@ -1365,6 +1523,7 @@ namespace BlitzChat
             b.FontFamily = new FontFamily(settingsChat.TextFont);
             b.Inlines.Add(msg);
             usrLstChat.stackTBs.Children.Add(b);
+            b.Loaded += block_Loaded;
         }
 
         /**
@@ -1451,7 +1610,7 @@ namespace BlitzChat
                 parHist.Inlines.Add(new Run(nickname + ": ") { FontWeight = nicknameWeight, Foreground = nicknameBrush, FontSize = settingsChat.TextFontSize, FontFamily = font, Name = "Nickname" });
                 if (!String.IsNullOrEmpty(to) && quoteColor)
                 {
-                    block.ToName =  new Run(to + ", ") { FontWeight = FontWeights.Bold, Foreground = quoteBrush, FontSize = settingsChat.TextFontSize, FontFamily = font, Name = "ToName" };
+                    block.ToName = new Run(to + ", ") { FontWeight = FontWeights.Bold, Foreground = quoteBrush, FontSize = settingsChat.TextFontSize, FontFamily = font, Name = "ToName" };
                     parHist.Inlines.Add(new Run(to + ", ") { FontWeight = FontWeights.Bold, Foreground = quoteBrush, FontSize = settingsChat.TextFontSize, FontFamily = font, Name = "ToName" });
                 }
                 else if (!quoteColor && !String.IsNullOrEmpty(to))
@@ -1461,7 +1620,7 @@ namespace BlitzChat
                 }
                 if (quoteColor)
                 {
-                    block.Message = new Run(msg) { FontWeight = this.textWeight, Foreground = quoteBrush, FontSize = settingsChat.TextFontSize, FontFamily = font, Name="Message" };
+                    block.Message = new Run(msg) { FontWeight = this.textWeight, Foreground = quoteBrush, FontSize = settingsChat.TextFontSize, FontFamily = font, Name = "Message" };
                     parHist.Inlines.Add(new Run(msg) { FontWeight = this.textWeight, Foreground = quoteBrush, FontSize = settingsChat.TextFontSize, FontFamily = font, Name = "Message" });
                 }
                 else
@@ -1487,12 +1646,6 @@ namespace BlitzChat
                 }
                 lineheight = replaceAllSmiles(chattype, trMessage.Text, trMessage);
                 replaceAllSmiles(chattype, trMessageHist.Text, trMessageHist);
-                DoubleAnimation da = new DoubleAnimation();
-                da.From = 0;
-                da.To = 1;
-                da.RepeatBehavior = (RepeatBehavior)new RepeatBehaviorConverter().ConvertFromString("0:0:0.7");
-                da.Duration = TimeSpan.FromSeconds(0.7);
-                block.BeginAnimation(OpacityProperty, da);
                 if (usrLstChat.scrollViewer.VerticalScrollBarVisibility == ScrollBarVisibility.Hidden)
                 {
                     block.Loaded += block_Loaded;
@@ -1587,8 +1740,8 @@ namespace BlitzChat
                 BitmapImage bitmapImage = new BitmapImage(new Uri(smile.Source));
                 img.Source = bitmapImage;
                 //img.Stretch = Stretch.Fill;
-                img.Width = smile.Width + settingsChat.SmileSize;
-                img.Height = smile.Height + settingsChat.SmileSize;
+                img.Width = smile.Width + settingsChat.SmileScale;
+                img.Height = smile.Height + settingsChat.SmileScale;
                 h = img.Height;
                 new InlineUIContainer(img, tr.Start).Name = "Smile";
             }
@@ -1611,8 +1764,8 @@ namespace BlitzChat
 
                 img.Source = bitmapImage;
                 //img.Stretch = Stretch.Fill;
-                img.Width = bitmapImage.Width/2 + settingsChat.SmileSize;
-                img.Height = bitmapImage.Height/2 + settingsChat.SmileSize;
+                img.Width = bitmapImage.Width/2 + settingsChat.SmileScale;
+                img.Height = bitmapImage.Height/2 + settingsChat.SmileScale;
                 h = img.Height;
                 new InlineUIContainer(img, tr.Start).Name = "Smile";
             }
@@ -1630,8 +1783,8 @@ namespace BlitzChat
                 BitmapImage bitmapImage = new BitmapImage(smile.uri);
                 img.Source = bitmapImage;
                 //img.Stretch = Stretch.Fill;
-                img.Width = smile.width+ settingsChat.SmileSize;
-                img.Height = smile.height + settingsChat.SmileSize;
+                img.Width = smile.width+ settingsChat.SmileScale;
+                img.Height = smile.height + settingsChat.SmileScale;
                 h = img.Height;
                 new InlineUIContainer(img, tr.Start).Name = "Smile";
             }
@@ -1649,8 +1802,8 @@ namespace BlitzChat
                 BitmapImage bitmapImage = new BitmapImage(smile.uri);
                 img.Source = bitmapImage;
                 //img.Stretch = Stretch.Fill;
-                img.Width = smile.width + settingsChat.SmileSize;
-                img.Height = smile.height + settingsChat.SmileSize;
+                img.Width = smile.width + settingsChat.SmileScale;
+                img.Height = smile.height + settingsChat.SmileScale;
                 h = img.Height;
                 new InlineUIContainer(img, tr.Start).Name = "Smile";
             }
@@ -1868,6 +2021,7 @@ namespace BlitzChat
                 if (newSettings == null)
                     return;
                 settingsChat = newSettings;
+                settingsChat.PropertyChanged += settingsChat_PropertyChanged;
                 preSetSettings();
             }
         }

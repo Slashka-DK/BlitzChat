@@ -171,6 +171,7 @@ namespace bliTwitch
                 tm.Text = e.Text;
                 messageReceived(sender, tm);
             }
+            Thread.Sleep(100);
         }
 
         private void unsetEvents() {

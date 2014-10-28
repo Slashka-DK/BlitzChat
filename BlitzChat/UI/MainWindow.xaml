@@ -8,9 +8,9 @@
         Title="BlitzChat" Opacity="1.0" Background="{x:Null}"  Height="491" Width="379" AllowsTransparency="False" ResizeMode="CanResize" WindowStyle="None" MouseDown="chat_MouseDown" SizeChanged="frmChat_SizeChanged" LocationChanged="frmChat_LocationChanged" MouseUp="chat_MouseUp" Closing="frmChat_Closing" Loaded="frmChat_Loaded" IsHitTestVisible="True" PreviewKeyUp="frmChat_PreviewKeyUp" PreviewKeyDown="frmChat_PreviewKeyDown">
     <shell:WindowChrome.WindowChrome>
         <shell:WindowChrome x:Name="shell"
-            ResizeBorderThickness="3"
+            ResizeBorderThickness="5"
             CornerRadius="0"
-            CaptionHeight="20"
+            CaptionHeight="40"
             GlassFrameThickness="0">
         </shell:WindowChrome>
     </shell:WindowChrome.WindowChrome>
@@ -18,6 +18,7 @@
     </Window.InputBindings>
     <Window.Resources>
         <ResourceDictionary>
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source= "pack://application:,,,/BlitzChat;component/Theme/CurrentTheme.xaml" />
             </ResourceDictionary.MergedDictionaries>

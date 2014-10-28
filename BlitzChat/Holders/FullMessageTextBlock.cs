@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
-
+using BlitzChat.Models;
 namespace BlitzChat.Models
 {
     public class MessageTextBlock : TextBlock
@@ -22,22 +22,22 @@ namespace BlitzChat.Models
             Date = new Run("");
             chatImage = null;
             Nickname = new Run("");
-           
+
             ToName = new Run("");
             Message = new Run("");
         }
 
         public void createTextBlock(){
             this.Inlines.Add(Date);
-            //Date.Style = resDict["styleDateTime"] as Style;
+            Date.Style = resDict["styleDateTime"] as Style;
             this.Inlines.Add(chatImage);
             this.Inlines.Add(new Run(" "));
             this.Inlines.Add(Nickname);
-            //Nickname.Style = resDict["styleNickname"] as Style;
+            Nickname.Style = resDict["styleNickname"] as Style;
             this.Inlines.Add(ToName);
-            //ToName.Style = resDict["styleToName"] as Style;
+            ToName.Style = resDict["styleToName"] as Style;
             this.Inlines.Add(Message);
-            //Message.Style = resDict["styleText"] as Style;
+            Message.Style = resDict["styleText"] as Style;
         }
     }
 }

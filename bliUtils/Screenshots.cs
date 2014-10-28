@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
-namespace BlitzChat.Utilities
+namespace bliUtils
 {
     public class Screenshots
     {
-        public static void createScreenshot(MainWindow window, string savePath){
+        public static void createScreenshot(Window window, string savePath){
                 BitmapEncoder encoder = new PngBitmapEncoder();
                 RenderTargetBitmap render = new RenderTargetBitmap((int)window.ActualWidth, (int)window.ActualHeight, 96.0, 96.0, PixelFormats.Pbgra32);
                 render.Render(window);
