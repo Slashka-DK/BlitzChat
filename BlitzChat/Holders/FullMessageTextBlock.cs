@@ -30,6 +30,7 @@ namespace BlitzChat.Models
         public void createTextBlock(){
             this.Inlines.Add(Date);
             Date.Style = resDict["styleDateTime"] as Style;
+            chatImage.BaselineAlignment = BaselineAlignment.Center;
             this.Inlines.Add(chatImage);
             this.Inlines.Add(new Run(" "));
             this.Inlines.Add(Nickname);

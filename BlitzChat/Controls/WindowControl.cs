@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using BlitzChat.UI;
 using System.Windows;
 using System.IO;
+using System.Windows.Threading;
+using System.Threading;
+using System.Threading.Tasks;
 namespace BlitzChat
 {
     class WindowControl
@@ -85,6 +88,7 @@ namespace BlitzChat
             newWindow.OnAdditionalWindows += newWindow_OnAdditionalWindows;
             newWindow.OnTransparencyChanged += newWindow_OnTransparencyChanged;
             listMainWindows.Add(name,newWindow);
+            listMainWindows[name].setTransparency();
             listMainWindows[name].Show();
         }
 
@@ -92,6 +96,9 @@ namespace BlitzChat
         {
             string name = e.WindowName;
             listMainWindows[name].Close();
+            Task.WaitAll();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
             listMainWindows.Remove(name);
             addWindow(name);
         }

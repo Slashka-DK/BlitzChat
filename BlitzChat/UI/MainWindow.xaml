@@ -49,6 +49,6 @@
             <Image Width="16" Height="16" Source="pack://application:,,,/BlitzChat;component/Images/CloseButton.png" />
         </Button>
         <ui:usrHeader shell:WindowChrome.IsHitTestVisibleInChrome="True" x:Name="header" Grid.Row="0" Margin="3" IsHitTestVisible="True" />
-        <ui:usrChat shell:WindowChrome.IsHitTestVisibleInChrome="True" x:Name="usrLstChat" Margin="3" Grid.Row="1" IsHitTestVisible="True" />
+        <ui:usrChat shell:WindowChrome.IsHitTestVisibleInChrome="True" x:Name="usrChat" Margin="3" Grid.Row="1" IsHitTestVisible="True" />
     </Grid>
 </Window>

@@ -70,6 +70,8 @@ namespace bliTwitch
         public bool Stop() {
             isStopped = true;
             stopIrc();
+            smiles.Clear();
+            ircClient.Dispose();
             return true;
         }
 
@@ -180,7 +182,8 @@ namespace bliTwitch
             ircClient.ConnectFailed -= ircClient_ConnectFailed;
             ircClient.Disconnected -= ircClient_Disconnected;
             ircClient.ProtocolError -= ircClient_ProtocolError;
-            ircClient.Channels[0].MessageReceived -= Twitch_MessageReceived;
+            if(ircClient.Channels.Count > 0)
+                ircClient.Channels[0].MessageReceived -= Twitch_MessageReceived;
         }
 
         private void ircClient_ProtocolError(object sender, IrcProtocolErrorEventArgs e)
@@ -216,17 +219,21 @@ namespace bliTwitch
 
         public int getViewersCount() {
             int viewers = 0;
-            using (var wc = new WebClient())
+            try
             {
-
-                string json_data = wc.DownloadString("https://api.twitch.tv/kraken/streams/" + channelName);
-                JObject stream = JObject.Parse(json_data);
-                if (stream["stream"].HasValues)
+                using (var wc = new WebClient())
                 {
-                    int.TryParse(stream["stream"]["viewers"].ToString(), out viewers);
-                    return viewers;
+
+                    string json_data = wc.DownloadString("https://api.twitch.tv/kraken/streams/" + channelName);
+                    JObject stream = JObject.Parse(json_data);
+                    if (stream["stream"].HasValues)
+                    {
+                        int.TryParse(stream["stream"]["viewers"].ToString(), out viewers);
+                        return viewers;
+                    }
                 }
             }
+            catch { }
             return viewers;
         }
 
@@ -243,6 +250,10 @@ namespace bliTwitch
                         {
                             foreach (JObject jobj in stream["emoticons"])
                             {
+                                if (isStopped)
+                                {
+                                    wc.CancelAsync();
+                                }
                                 TwitchSmile smile = new TwitchSmile();
                                 smile.regex = jobj["regex"].ToString();
                                 JArray imgopt = (JArray)JsonConvert.DeserializeObject(jobj["images"].ToString());
@@ -254,7 +265,6 @@ namespace bliTwitch
                                 smile.key = smile.regex;
                                 smiles.Add(smile.regex, smile);
                             }
-
                         }
                         if (smilesLoaded != null)
                             smilesLoaded(this, new EventArgs());

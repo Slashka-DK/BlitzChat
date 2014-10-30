@@ -76,7 +76,7 @@
                     <xctk:ColorPicker x:Name="ClrPcker_Nickname" Margin="91,39,119,166" BorderBrush="#FF00BFBF"/>
                     <Label Content="Size:" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="10,160,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.679,-1.255"/>
                     <Label Content="Font:" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="10,194,0,0" VerticalAlignment="Top"/>
-                    <xctk:IntegerUpDown x:Name="numSizeText" HorizontalContentAlignment="Right" Margin="91,165,127,38" BorderBrush="#FF00BFBF" />
+                    <xctk:IntegerUpDown x:Name="numSizeText" Minimum="1" HorizontalContentAlignment="Right" Margin="91,165,127,38" BorderBrush="#FF00BFBF" />
                     <ComboBox x:Name="cmbFonts" HorizontalAlignment="Left" Margin="91,198,0,0" VerticalAlignment="Top" Width="185" BorderBrush="#FF00BFBF" Background="{x:Null}"/>
                     <Label Content="Time Color:" Foreground="#FF00BFBF" HorizontalAlignment="Left" Margin="10,64,0,0" VerticalAlignment="Top"/>
                     <xctk:ColorPicker x:Name="ClrPcker_Date" Margin="91,66,119,139" BorderBrush="#FF00BFBF"/>

@@ -48,6 +48,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bliGamingLive", "bliGamingL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bliUtils", "bliUtils\bliUtils.csproj", "{C3A92D75-DB4C-464F-A91B-F5BC63B10254}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bliYoutube", "bliYoutube\bliYoutube.csproj", "{E5D1AAA8-4212-48EB-9530-B4A38E6AC618}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -94,15 +96,19 @@ Global
 		{C3A92D75-DB4C-464F-A91B-F5BC63B10254}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3A92D75-DB4C-464F-A91B-F5BC63B10254}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3A92D75-DB4C-464F-A91B-F5BC63B10254}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5D1AAA8-4212-48EB-9530-B4A38E6AC618}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5D1AAA8-4212-48EB-9530-B4A38E6AC618}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5D1AAA8-4212-48EB-9530-B4A38E6AC618}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5D1AAA8-4212-48EB-9530-B4A38E6AC618}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		BuildVersion_AssemblyInfoFilename = 
-		BuildVersion_BuildVersioningStyle = None.None.None.None
-		BuildVersion_UpdateAssemblyVersion = False
-		BuildVersion_UpdateFileVersion = False
 		BuildVersion_UseGlobalSettings = False
+		BuildVersion_UpdateFileVersion = False
+		BuildVersion_UpdateAssemblyVersion = False
+		BuildVersion_BuildVersioningStyle = None.None.None.None
+		BuildVersion_AssemblyInfoFilename = 
 	EndGlobalSection
 EndGlobal

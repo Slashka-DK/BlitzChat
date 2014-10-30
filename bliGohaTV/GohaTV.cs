@@ -85,7 +85,7 @@ namespace bliGohaTV
             ircClient.ConnectFailed += ircClient_ConnectFailed;
             ircClient.Disconnected += ircClient_Disconnected;
             ircClient.ProtocolError += ircClient_ProtocolError;
-            ircClient.Channels[0].MessageReceived += GohaTV_MessageReceived;
+            ircClient.Channels[ircClient.Channels.Count-1].MessageReceived += GohaTV_MessageReceived;
         }
 
         private void GohaTV_MessageReceived(object sender, IrcMessageEventArgs e)
@@ -110,7 +110,7 @@ namespace bliGohaTV
             ircClient.ConnectFailed -= ircClient_ConnectFailed;
             ircClient.Disconnected -= ircClient_Disconnected;
             ircClient.ProtocolError -= ircClient_ProtocolError;
-            ircClient.Channels[0].MessageReceived -= GohaTV_MessageReceived;
+            ircClient.Channels[ircClient.Channels.Count - 1].MessageReceived -= GohaTV_MessageReceived;
         }
 
         private void ircClient_ProtocolError(object sender, IrcProtocolErrorEventArgs e)

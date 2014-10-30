@@ -136,16 +136,24 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <ScrollViewer BorderBrush="Wheat" BorderThickness="1" x:Name="scrollViewer" HorizontalScrollBarVisibility="Disabled" CanContentScroll="True" VerticalScrollBarVisibility="Hidden" VerticalAlignment="Stretch">
-            <StackPanel Margin="3" x:Name="stackTBs">
-                <StackPanel.Resources>
+        
+            <DockPanel Margin="3" x:Name="messageContainer" VerticalAlignment="Top">
+            
+                <DockPanel.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
                             <ResourceDictionary Source= "pack://application:,,,/BlitzChat;component/Theme/CurrentTheme.xaml" />
                         </ResourceDictionary.MergedDictionaries>
                     </ResourceDictionary>
-                </StackPanel.Resources>
-            </StackPanel>
-        </ScrollViewer>
+                </DockPanel.Resources>
+            <ScrollViewer x:Name="scrollViewer" HorizontalScrollBarVisibility="Disabled" CanContentScroll="True" VerticalScrollBarVisibility="Hidden" VerticalAlignment="Stretch">
+                <ItemsControl x:Name="itemControl" DockPanel.Dock="Top"
+                        VirtualizingStackPanel.IsVirtualizing="True"
+                        VirtualizingStackPanel.VirtualizationMode="Recycling">
+    
+                </ItemsControl>
+            </ScrollViewer>
+        </DockPanel>
+
     </Grid>
 </UserControl>

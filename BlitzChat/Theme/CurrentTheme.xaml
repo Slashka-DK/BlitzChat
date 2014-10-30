@@ -53,9 +53,9 @@
     </Style>
     <!-- Each message is new TextBlock -->
     <Style TargetType="{x:Type mods:MessageTextBlock}">
-        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Top"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
-        <Setter Property="Margin" Value="0, 0, 0, 0"/>
+        <Setter Property="Margin" Value="0, 3, 0, 3"/>
         <Setter Property="Height" Value="Auto"/>
         <Setter Property="Background" Value="Transparent"></Setter>
         <Style.Triggers>
